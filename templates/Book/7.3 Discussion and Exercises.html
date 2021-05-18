@@ -1,0 +1,624 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0068)http://opendatastructures.org/ods-java/7_3_Discussion_Exercises.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>7.3 Discussion and Exercises</title>
+<meta name="description" content="7.3 Discussion and Exercises">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<link rel="STYLESHEET" href="static/7.3 Discussion and Exercises_files/ods-book.css">
+
+<link rel="previous" href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/7_Random_Binary_Search_Tree.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/8_Scapegoat_Trees.html">
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF">
+
+
+
+<h1><a name="SECTION001030000000000000000">
+<span class="arabic">7</span>.<span class="arabic">3</span> Discussion and Exercises</a>
+</h1>
+
+<p>
+Random binary search trees have been studied extensively.  Devroye
+[<a href="http://opendatastructures.org/ods-java/Bibliography.html#d88">19</a>] gives a proof of Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a> and related results. There are
+much stronger results in the literature as well, the most impressive
+of which is due to Reed [<a href="http://opendatastructures.org/ods-java/Bibliography.html#r03">64</a>], who shows that the expected height
+of a random binary search tree is
+</p><p><!-- MATH
+ \begin{displaymath}
+\alpha\ln n - \beta\ln\ln n + O(1)
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="157" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3095.png" alt="$\displaystyle \alpha\ln n - \beta\ln\ln n + O(1)
+$">
+</div><p></p>
+where <!-- MATH
+ $\alpha\approx4.31107$
+ -->
+<span class="MATH"><img width="88" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3096.png" alt="$ \alpha\approx4.31107$"></span> is the unique solution on the
+interval <!-- MATH
+ $[2,\infty)$
+ -->
+<span class="MATH"><img width="44" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3097.png" alt="$ [2,\infty)$"></span> of the equation <!-- MATH
+ $\alpha\ln((2e/\alpha))=1$
+ -->
+<span class="MATH"><img width="111" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3098.png" alt="$ \alpha\ln((2e/\alpha))=1$"></span> and
+<!-- MATH
+ $\beta=\frac{3}{2\ln(\alpha/2)}$
+ -->
+<span class="MATH"><img width="81" height="36" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3099.png" alt="$ \beta=\frac{3}{2\ln(\alpha/2)}$"></span> .  Furthermore, the variance of the
+height is constant.
+
+<p>
+The name <tt>Treap</tt> was coined by Seidel and Aragon [<a href="http://opendatastructures.org/ods-java/Bibliography.html#as96">67</a>] who discussed
+<tt>Treap</tt>s and some of their variants.  However, their basic structure was
+studied much earlier by Vuillemin [<a href="http://opendatastructures.org/ods-java/Bibliography.html#v80">76</a>] who called them Cartesian
+trees.
+
+</p><p>
+One possible space-optimization of the <tt>Treap</tt> data structure 
+is the elimination of the explicit storage of the priority <!-- MATH
+ $\mathtt{p}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3100.png" alt="$ \mathtt{p}$"></span>
+in each node. Instead, the priority of a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3101.png" alt="$ \mathtt{u}$"></span>, is computed by
+hashing <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3102.png" alt="$ \mathtt{u}$"></span>'s address in memory (in 32-bit Java, this is equivalent
+to hashing <!-- MATH
+ $\mathtt{u.hashCode()}$
+ -->
+<span class="MATH"><img width="95" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3103.png" alt="$ \mathtt{u.hashCode()}$"></span>).  Although a number of hash functions will
+probably work well for this in practice, for the important parts of the
+proof of Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a> to remain valid, the hash function should be randomized
+and have the <span class="textit">min-wise independent property</span>:
+<a name="21615"></a>For any distinct
+values <!-- MATH
+ $x_1,\ldots,x_k$
+ -->
+<span class="MATH"><img width="63" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3104.png" alt="$ x_1,\ldots,x_k$"></span>, each of the hash values <!-- MATH
+ $h(x_1),\ldots,h(x_k)$
+ -->
+<span class="MATH"><img width="101" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3105.png" alt="$ h(x_1),\ldots,h(x_k)$"></span>
+should be distinct with high probability and, for each <!-- MATH
+ $i\in\{1,\ldots,k\}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3106.png" alt="$ i\in\{1,\ldots,k\}$"></span>,
+</p><p><!-- MATH
+ \begin{displaymath}
+\Pr\{h(x_i) = \min\{h(x_1),\ldots,h(x_k)\}\} \le c/k
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="256" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3107.png" alt="$\displaystyle \Pr\{h(x_i) = \min\{h(x_1),\ldots,h(x_k)\}\} \le c/k
+$">
+</div><p></p>
+for some constant <span class="MATH"><img width="11" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3108.png" alt="$ c$"></span>.
+One such class of hash functions that is easy to implement and fairly
+fast is <span class="textit">tabulation hashing</span> (Section&nbsp;<a href="http://opendatastructures.org/ods-java/5_2_LinearHashTable_Linear_.html#sec:tabulation">5.2.3</a>).
+<a name="21618"></a><a name="21619"></a>
+<p>
+Another <tt>Treap</tt> variant that doesn't store priorities at each node is
+the randomized binary search tree
+<a name="21621"></a><a name="21622"></a>of Martínez and Roura [<a href="http://opendatastructures.org/ods-java/Bibliography.html#mr98">51</a>].
+In this variant, every node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3109.png" alt="$ \mathtt{u}$"></span>, stores the size, <!-- MATH
+ $\mathtt{u.size}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3110.png" alt="$ \mathtt{u.size}$"></span>, of the
+subtree rooted at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3111.png" alt="$ \mathtt{u}$"></span>.  Both the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3112.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3113.png" alt="$ \mathtt{remove(x)}$"></span> algorithms are
+randomized. The algorithm for adding <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3114.png" alt="$ \mathtt{x}$"></span> to the subtree rooted at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3115.png" alt="$ \mathtt{u}$"></span>
+does the following:
+
+</p><ol>
+<li>With probability <!-- MATH
+ $1/(\ensuremath{\mathtt{size(u)}}+1)$
+ -->
+<span class="MATH"><img width="106" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3116.png" alt="$ 1/(\ensuremath{\mathtt{size(u)}}+1)$"></span>, the value <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3117.png" alt="$ \mathtt{x}$"></span> is added
+   the usual way, as a leaf, and rotations are then done to bring <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3118.png" alt="$ \mathtt{x}$"></span>
+   up to the root of this subtree.
+</li>
+<li>Otherwise (with probability <!-- MATH
+ $1-1/(\ensuremath{\mathtt{size(u)}}+1)$
+ -->
+<span class="MATH"><img width="130" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3119.png" alt="$ 1-1/(\ensuremath{\mathtt{size(u)}}+1)$"></span>), the value <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3120.png" alt="$ \mathtt{x}$"></span>
+   is recursively added into one of the two subtrees rooted at <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3121.png" alt="$ \mathtt{u.left}$"></span>
+   or <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3122.png" alt="$ \mathtt{u.right}$"></span>, as appropriate.
+</li>
+</ol>
+The first case corresponds to an <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3123.png" alt="$ \mathtt{add(x)}$"></span> operation in a <tt>Treap</tt> where
+<!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3124.png" alt="$ \mathtt{x}$"></span>'s node receives a random priority that is smaller than any of the
+<!-- MATH
+ $\mathtt{size(u)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3125.png" alt="$ \mathtt{size(u)}$"></span> priorities in <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3126.png" alt="$ \mathtt{u}$"></span>'s subtree, and this case occurs with exactly
+the same probability.
+
+<p>
+Removing a value <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3127.png" alt="$ \mathtt{x}$"></span> from a randomized binary search tree is similar
+to the process of removing from a <tt>Treap</tt>.  We find the node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3128.png" alt="$ \mathtt{u}$"></span>,
+that contains <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3129.png" alt="$ \mathtt{x}$"></span> and then perform rotations that repeatedly increase
+the depth of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3130.png" alt="$ \mathtt{u}$"></span> until it becomes a leaf, at which point we can splice
+it from the tree.  The choice of whether to perform a left or right
+rotation at each step is randomized.
+
+</p><ol>
+<li>With probability <!-- MATH
+ $\mathtt{u.left.size/(u.size-1)}$
+ -->
+<span class="MATH"><img width="174" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3131.png" alt="$ \mathtt{u.left.size/(u.size-1)}$"></span>, we perform a right
+  rotation at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3132.png" alt="$ \mathtt{u}$"></span>, making <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3133.png" alt="$ \mathtt{u.left}$"></span> the root of the subtree that was
+  formerly rooted at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3134.png" alt="$ \mathtt{u}$"></span>.
+</li>
+<li>With probability <!-- MATH
+ $\mathtt{u.right.size/(u.size-1)}$
+ -->
+<span class="MATH"><img width="183" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3135.png" alt="$ \mathtt{u.right.size/(u.size-1)}$"></span>, we perform a left
+  rotation at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3136.png" alt="$ \mathtt{u}$"></span>, making <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3137.png" alt="$ \mathtt{u.right}$"></span> the root of the subtree that was
+  formerly rooted at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3138.png" alt="$ \mathtt{u}$"></span>.
+</li>
+</ol>
+Again, we can easily verify that these are exactly the same probabilities
+that the removal algorithm in a <tt>Treap</tt> will perform a left or right
+rotation of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3139.png" alt="$ \mathtt{u}$"></span>.
+
+<p>
+Randomized binary search trees have the disadvantage, compared to treaps,
+that when adding and removing elements they make many random choices, and
+they must maintain the sizes of subtrees.  One advantage of randomized
+binary search trees over treaps is that subtree sizes can serve another
+useful purpose, namely to provide access by rank in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3140.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> expected
+time (see Exercise&nbsp;<a href="http://opendatastructures.org/ods-java/7_3_Discussion_Exercises.html#exc:treap-get">7.10</a>).  In comparison, the random priorities
+stored in treap nodes have no use other than keeping the treap balanced.
+
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">7</span>..<span class="arabic">1</span></b> &nbsp; 
+Illustrate the addition of 4.5 (with priority 7) and then 7.5 (with
+  priority 20) on the <tt>Treap</tt> in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#fig:treap">7.5</a>.</div><p></p>
+
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">7</span>..<span class="arabic">2</span></b> &nbsp; 
+Illustrate the removal of 5 and then 7 on the <tt>Treap</tt> in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#fig:treap">7.5</a>.</div><p></p>
+
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">7</span>..<span class="arabic">3</span></b> &nbsp; 
+Prove the assertion that there are <!-- MATH
+ $21,964,800$
+ -->
+<span class="MATH"><img width="85" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3141.png" alt="$ 21,964,800$"></span> sequences that generate
+  the tree on the right hand side of Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_1_Random_Binary_Search_Tr.html#fig:rbs-lvc">7.1</a>.  (Hint: Give a
+  recursive formula for the number of sequences that generate a complete
+  binary tree of height <span class="MATH"><img width="13" height="30" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3142.png" alt="$ h$"></span> and evaluate this formula for <span class="MATH"><img width="39" height="30" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3143.png" alt="$ h=3$"></span>.)</div><p></p>
+
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">7</span>..<span class="arabic">4</span></b> &nbsp; 
+Design and implement the <!-- MATH
+ $\mathtt{permute(a)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3144.png" alt="$ \mathtt{permute(a)}$"></span> method that takes as input an
+  array, <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3145.png" alt="$ \mathtt{a}$"></span>, that contains <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3146.png" alt="$ \mathtt{n}$"></span> distinct values and randomly permutes <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3147.png" alt="$ \mathtt{a}$"></span>.
+  The method should run in <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3148.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span> time and you should prove that each
+  of the <!-- MATH
+ $\ensuremath{\mathtt{n}}!$
+ -->
+<span class="MATH"><img width="17" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3149.png" alt="$ \ensuremath{\mathtt{n}}!$"></span> possible permutations of <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3150.png" alt="$ \mathtt{a}$"></span> is equally probable. </div><p></p>
+
+<p>
+</p><p>
+</p><div><a name="exc:treap-rotates"><b>Exercise  <span class="arabic">7</span>..<span class="arabic">5</span></b></a> &nbsp; 
+Use both parts of Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#lem:rbs-treap">7.2</a> to prove that the expected number
+  of rotations performed by an <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3151.png" alt="$ \mathtt{add(x)}$"></span> operation (and hence also a
+  <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3152.png" alt="$ \mathtt{remove(x)}$"></span> operation) is <span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3153.png" alt="$ O(1)$"></span>.</div><p></p>
+
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">7</span>..<span class="arabic">6</span></b> &nbsp; 
+Modify the <tt>Treap</tt> implementation given here so that it does not
+  explicitly store priorities.  Instead, it should simulate them by
+  hashing the <!-- MATH
+ $\mathtt{hashCode()}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3154.png" alt="$ \mathtt{hashCode()}$"></span> of each node.</div><p></p>
+
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">7</span>..<span class="arabic">7</span></b> &nbsp; 
+Suppose that a binary search tree stores, at each node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3155.png" alt="$ \mathtt{u}$"></span>, the height,
+  <!-- MATH
+ $\mathtt{u.height}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3156.png" alt="$ \mathtt{u.height}$"></span>, of the subtree rooted at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3157.png" alt="$ \mathtt{u}$"></span>, and the size, <!-- MATH
+ $\mathtt{u.size}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3158.png" alt="$ \mathtt{u.size}$"></span> of
+  the subtree rooted at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3159.png" alt="$ \mathtt{u}$"></span>. 
+  
+<ol>
+<li>Show how, if we perform a left or right
+      rotation at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3160.png" alt="$ \mathtt{u}$"></span>, then these two quantities can be updated, in
+      constant time, for all nodes affected by the rotation.
+</li>
+<li>Explain why the same result is not possible if we try to
+      also store the depth, <!-- MATH
+ $\mathtt{u.depth}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3161.png" alt="$ \mathtt{u.depth}$"></span>, of each node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3162.png" alt="$ \mathtt{u}$"></span>.
+  
+</li>
+</ol></div><p></p>
+
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">7</span>..<span class="arabic">8</span></b> &nbsp; 
+Design and implement an algorithm that constructs a <tt>Treap</tt> from a
+  sorted array, <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3163.png" alt="$ \mathtt{a}$"></span>, of <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3164.png" alt="$ \mathtt{n}$"></span> elements.  This method should run in <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3165.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span>
+  worst-case time and should construct a <tt>Treap</tt> that is indistinguishable
+  from one in which the elements of <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3166.png" alt="$ \mathtt{a}$"></span> were added one at a time using
+  the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3167.png" alt="$ \mathtt{add(x)}$"></span> method.</div><p></p>
+
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">7</span>..<span class="arabic">9</span></b> &nbsp; 
+<a name="21716"></a><a name="21717"></a>This exercise works out the details of how one can efficiently search
+  a <tt>Treap</tt> given a pointer that is close to the node we are searching for.
+  
+<ol>
+<li>Design and implement a <tt>Treap</tt> implementation in which each
+      node keeps track of the minimum and maximum values in its subtree.
+</li>
+<li>Using this extra information, add a <!-- MATH
+ $\mathtt{fingerFind(x,u)}$
+ -->
+<span class="MATH"><img width="122" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3168.png" alt="$ \mathtt{fingerFind(x,u)}$"></span> method
+      that executes the <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3169.png" alt="$ \mathtt{find(x)}$"></span> operation with the help of a pointer
+      to the node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3170.png" alt="$ \mathtt{u}$"></span> (which is hopefully not far from the node that
+      contains <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3171.png" alt="$ \mathtt{x}$"></span>).  This operation should start at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3172.png" alt="$ \mathtt{u}$"></span> and walk upwards
+      until it reaches a node <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3173.png" alt="$ \mathtt{w}$"></span> such that <!-- MATH
+ $\ensuremath{\mathtt{w.min}}\le \ensuremath{\mathtt{x}}\le \ensuremath{\mathtt{w.max}}$
+ -->
+<span class="MATH"><img width="123" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3174.png" alt="$ \ensuremath{\mathtt{w.min}}\le \ensuremath{\mathtt{x}}\le \ensuremath{\mathtt{w.max}}$"></span>.
+      From that point onwards, it should perform a standard search
+      for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3175.png" alt="$ \mathtt{x}$"></span> starting from <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3176.png" alt="$ \mathtt{w}$"></span>.  (One can show that <!-- MATH
+ $\mathtt{fingerFind(x,u)}$
+ -->
+<span class="MATH"><img width="122" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3177.png" alt="$ \mathtt{fingerFind(x,u)}$"></span>
+      takes <!-- MATH
+ $O(1+\log r)$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3178.png" alt="$ O(1+\log r)$"></span> time, where <span class="MATH"><img width="11" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3179.png" alt="$ r$"></span> is the number of elements in
+      the treap whose value is between <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3180.png" alt="$ \mathtt{x}$"></span> and <!-- MATH
+ $\mathtt{u.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3181.png" alt="$ \mathtt{u.x}$"></span>.)
+</li>
+<li>Extend your implementation into a version of a treap that
+      starts all its <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3182.png" alt="$ \mathtt{find(x)}$"></span> operations from the node most recently
+      found by <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3183.png" alt="$ \mathtt{find(x)}$"></span>.
+  
+</li>
+</ol></div><p></p>
+
+<p>
+</p><p>
+</p><div><a name="exc:treap-get"><b>Exercise  <span class="arabic">7</span>..<span class="arabic">10</span></b></a> &nbsp; 
+Design and implement a version of a <tt>Treap</tt> that includes a <!-- MATH
+ $\mathtt{get(i)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3184.png" alt="$ \mathtt{get(i)}$"></span>
+  operation that returns the key with rank <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3185.png" alt="$ \mathtt{i}$"></span> in the <tt>Treap</tt>.  (Hint:
+  Have each node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3186.png" alt="$ \mathtt{u}$"></span>, keep track of the size of the subtree rooted
+  at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3187.png" alt="$ \mathtt{u}$"></span>.)</div><p></p>
+
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">7</span>..<span class="arabic">11</span></b> &nbsp; 
+<a name="22112"></a>Implement a <tt>TreapList</tt>, an implementation of the <tt>List</tt> interface
+  as a treap.  Each node in the treap should store a list item, and an
+  in-order traversal of the treap finds the items in the same order that
+  they occur in the list.  All the <tt>List</tt> operations <!-- MATH
+ $\mathtt{get(i)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3188.png" alt="$ \mathtt{get(i)}$"></span>, <!-- MATH
+ $\mathtt{set(i,x)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3189.png" alt="$ \mathtt{set(i,x)}$"></span>,
+  <!-- MATH
+ $\mathtt{add(i,x)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3190.png" alt="$ \mathtt{add(i,x)}$"></span> and <!-- MATH
+ $\mathtt{remove(i)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3191.png" alt="$ \mathtt{remove(i)}$"></span> should run in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3192.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> expected time.</div><p></p>
+
+<p>
+</p><p>
+</p><div><a name="exc:treap-split"><b>Exercise  <span class="arabic">7</span>..<span class="arabic">12</span></b></a> &nbsp; 
+Design and implement a version of a <tt>Treap</tt> that supports the <!-- MATH
+ $\mathtt{split(x)}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3193.png" alt="$ \mathtt{split(x)}$"></span>
+  operation.  This operation removes all values from the <tt>Treap</tt> that
+  are greater than <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3194.png" alt="$ \mathtt{x}$"></span> and returns a second <tt>Treap</tt> that contains all
+  the removed values.
+
+<p>
+Example: the code <!-- MATH
+ $\mathtt{t2 = t.split(x)}$
+ -->
+<span class="MATH"><img width="112" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3195.png" alt="$ \mathtt{t2 = t.split(x)}$"></span> removes from <!-- MATH
+ $\mathtt{t}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3196.png" alt="$ \mathtt{t}$"></span> all values
+  greater than <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.3 Discussion and Exercises_files/img3197.png" alt="$ \mathtt{x}$"></span> and returns a new <tt>Treap</tt> <!-- MATH
+ $\mathtt{t2}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3198.png" alt="$ \mathtt{t2}$"></span> containing all
+  these values. The <!-- MATH
+ $\mathtt{split(x)}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3199.png" alt="$ \mathtt{split(x)}$"></span> operation should run in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3200.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>
+  expected time.
+
+</p><p>
+Warning: For this modification to work properly and still allow the
+  <!-- MATH
+ $\mathtt{size()}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3201.png" alt="$ \mathtt{size()}$"></span> method to run in constant time, it is necessary to implement
+  the modifications in Exercise&nbsp;<a href="http://opendatastructures.org/ods-java/7_3_Discussion_Exercises.html#exc:treap-get">7.10</a>.</p></div><p></p>
+
+<p>
+</p><p>
+</p><div><a name="exc:treap-join"><b>Exercise  <span class="arabic">7</span>..<span class="arabic">13</span></b></a> &nbsp; 
+Design and implement a version of a <tt>Treap</tt> that supports the
+  <!-- MATH
+ $\mathtt{absorb(t2)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3202.png" alt="$ \mathtt{absorb(t2)}$"></span> operation, which can be thought of as the inverse of
+  the <!-- MATH
+ $\mathtt{split(x)}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3203.png" alt="$ \mathtt{split(x)}$"></span> operation.  This operation removes all values from the
+  <tt>Treap</tt> <!-- MATH
+ $\mathtt{t2}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3204.png" alt="$ \mathtt{t2}$"></span> and adds them to the receiver.  This operation presupposes
+  that the smallest value in <!-- MATH
+ $\mathtt{t2}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3205.png" alt="$ \mathtt{t2}$"></span> is greater than the largest value in
+  the receiver.  The <!-- MATH
+ $\mathtt{absorb(t2)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3206.png" alt="$ \mathtt{absorb(t2)}$"></span> operation should run in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/7.3 Discussion and Exercises_files/img3207.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>
+  expected time.</div><p></p>
+
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">7</span>..<span class="arabic">14</span></b> &nbsp; 
+Implement Martinez's randomized binary search trees, as discussed in
+  this section.  Compare the performance of your implementation with
+  that of the <tt>Treap</tt> implementation.</div><p></p>
+
+
+<div class="navigation"><hr>
+
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/7.3 Discussion and Exercises_files/ga.js"></script><script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+</address>
+
+
+</body></html>

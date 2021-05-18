@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0055)http://opendatastructures.org/ods-python/12_Graphs.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>12. Graphs</title>
+<meta content="12. Graphs" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/12. Graphs_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/13_Data_Structures_Integers.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/11_Sorting_Algorithms.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/ods-python-html.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/12_1_AdjacencyMatrix_Repres.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION001500000000000000000"></a>
+<a name="chap:graphs"></a>
+<br/>
+<span class="arabic">12</span>. Graphs
+</h1>
+<p>
+In this chapter, we study two representations of graphs and basic
+algorithms that use these representations.  
+</p><p>
+Mathematically, a <span class="textit">(directed) graph</span>
+<a name="54946"></a><a name="54947"></a>is a pair <span class="MATH"><img align="MIDDLE" alt="$ G=(V,E)$" border="0" height="31" src="static/12. Graphs_files/img4512.png" width="73"/></span> where
+<span class="MATH"><img align="MIDDLE" alt="$ V$" border="0" height="29" src="static/12. Graphs_files/img4513.png" width="17"/></span> is a set of <span class="textit">vertices</span>
+<a name="54949"></a>and <span class="MATH"><img align="MIDDLE" alt="$ E$" border="0" height="29" src="static/12. Graphs_files/img4514.png" width="15"/></span> is a set of ordered pairs
+of vertices called <span class="textit">edges</span>.
+<a name="54951"></a>An edge <!-- MATH
+ $\ensuremath{(\ensuremath{\mathit{i}},\ensuremath{\mathit{j}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{(\ensuremath{\mathit{i}},\ensuremath{\mathit{j}})}$" border="0" height="31" src="static/12. Graphs_files/img4515.png" width="30"/></span> is <span class="textit">directed</span>
+<a name="54955"></a>from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/12. Graphs_files/img4516.png" width="9"/></span> to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{j}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{j}}}$" border="0" height="30" src="static/12. Graphs_files/img4517.png" width="9"/></span>;  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/12. Graphs_files/img4518.png" width="9"/></span> is called the <span class="textit">source</span>
+<a name="54960"></a> of the edge and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{j}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{j}}}$" border="0" height="30" src="static/12. Graphs_files/img4519.png" width="9"/></span>
+is called the <span class="textit">target</span>.
+<a name="54963"></a>  A <span class="textit">path</span><a name="54965"></a> in <span class="MATH"><img align="MIDDLE" alt="$ G$" border="0" height="29" src="static/12. Graphs_files/img4520.png" width="16"/></span> is a sequence of
+vertices <!-- MATH
+ $v_0,\ldots,v_k$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ v_0,\ldots,v_k$" border="0" height="29" src="static/12. Graphs_files/img4521.png" width="63"/></span> such that, for every <!-- MATH
+ $i\in\{1,\ldots,k\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ i\in\{1,\ldots,k\}$" border="0" height="31" src="static/12. Graphs_files/img4522.png" width="82"/></span>,
+the edge <!-- MATH
+ $(v_{i-1},v_{i})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (v_{i-1},v_{i})$" border="0" height="31" src="static/12. Graphs_files/img4523.png" width="61"/></span> is in <span class="MATH"><img align="MIDDLE" alt="$ E$" border="0" height="29" src="static/12. Graphs_files/img4524.png" width="15"/></span>.  A path <!-- MATH
+ $v_0,\ldots,v_k$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ v_0,\ldots,v_k$" border="0" height="29" src="static/12. Graphs_files/img4525.png" width="63"/></span> is a
+<span class="textit">cycle</span>
+<a name="54969"></a>if, additionally, the edge <span class="MATH"><img align="MIDDLE" alt="$ (v_k,v_0)$" border="0" height="31" src="static/12. Graphs_files/img4526.png" width="51"/></span> is in <span class="MATH"><img align="MIDDLE" alt="$ E$" border="0" height="29" src="static/12. Graphs_files/img4527.png" width="15"/></span>.  A path (or
+cycle) is <span class="textit">simple</span>
+<a name="54971"></a>if all of its vertices are unique.  If there
+is a path from some vertex <span class="MATH"><img align="MIDDLE" alt="$ v_i$" border="0" height="29" src="static/12. Graphs_files/img4528.png" width="17"/></span> to some vertex <span class="MATH"><img align="MIDDLE" alt="$ v_j$" border="0" height="29" src="static/12. Graphs_files/img4529.png" width="18"/></span> then we say that
+<span class="MATH"><img align="MIDDLE" alt="$ v_j$" border="0" height="29" src="static/12. Graphs_files/img4530.png" width="18"/></span> is <span class="textit">reachable</span>
+<a name="54973"></a> from <span class="MATH"><img align="MIDDLE" alt="$ v_i$" border="0" height="29" src="static/12. Graphs_files/img4531.png" width="17"/></span>.  An example of a graph is shown
+in Figure <a href="http://opendatastructures.org/ods-python/12_Graphs.html#fig:graph">12.1</a>.
+</p><p>
+</p><div align="CENTER"><a name="fig:graph"></a><a name="54979"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 12.1:</strong>
+A graph with twelve vertices.  Vertices are drawn as numbered
+    circles and edges are drawn as pointed curves pointing from source
+    to target.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/graph}" border="0" height="215" src="static/12. Graphs_files/img4532.png" width="308"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Due to their ability to model so many phenomena, graphs have an enormous
+number of applications. There are many obvious examples. Computer
+networks can be modelled as graphs, with vertices corresponding to
+computers and edges corresponding to (directed) communication links
+between those computers.  City streets can be modelled as graphs,
+with vertices representing intersections and edges representing streets
+joining consecutive intersections.
+</p><p>
+Less obvious examples occur as soon as we realize that graphs can model
+any pairwise relationships within a set. For example, in a university
+setting we might have a timetable <span class="textit">conflict graph</span>
+<a name="54983"></a>whose vertices represent
+courses offered in the university and in which the edge <!-- MATH
+ $\ensuremath{(\ensuremath{\mathit{i}},\ensuremath{\mathit{j}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{(\ensuremath{\mathit{i}},\ensuremath{\mathit{j}})}$" border="0" height="31" src="static/12. Graphs_files/img4533.png" width="30"/></span> is present
+if and only if there is at least one student that is taking both class
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/12. Graphs_files/img4534.png" width="9"/></span> and class <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{j}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{j}}}$" border="0" height="30" src="static/12. Graphs_files/img4535.png" width="9"/></span>.  Thus, an edge indicates that the exam for class <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/12. Graphs_files/img4536.png" width="9"/></span>
+should not be scheduled at the same time as the exam for class <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{j}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{j}}}$" border="0" height="30" src="static/12. Graphs_files/img4537.png" width="9"/></span>.
+</p><p>
+Throughout this section, we will use <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/12. Graphs_files/img4538.png" width="13"/></span> to denote the number of vertices
+of <span class="MATH"><img align="MIDDLE" alt="$ G$" border="0" height="29" src="static/12. Graphs_files/img4539.png" width="16"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{m}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{m}}}$" border="0" height="29" src="static/12. Graphs_files/img4540.png" width="17"/></span> to denote the number of edges of <span class="MATH"><img align="MIDDLE" alt="$ G$" border="0" height="29" src="static/12. Graphs_files/img4541.png" width="16"/></span>.  That is, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=|V|$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=\vert V\vert$" border="0" height="31" src="static/12. Graphs_files/img4542.png" width="50"/></span>
+and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{m}}}}=|E|$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{m}}}}=\vert E\vert$" border="0" height="31" src="static/12. Graphs_files/img4543.png" width="52"/></span>. Furthermore, we will assume that <!-- MATH
+ $V=\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ V=\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$" border="0" height="31" src="static/12. Graphs_files/img4544.png" width="115"/></span>.
+Any other data that we would like to associate with the elements of <span class="MATH"><img align="MIDDLE" alt="$ V$" border="0" height="29" src="static/12. Graphs_files/img4545.png" width="17"/></span>
+can be stored in an array of length <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/12. Graphs_files/img4546.png" width="13"/></span>.
+</p><p>
+Some typical operations performed on graphs are:
+</p><ul>
+<li><!-- MATH
+ $\ensuremath{\mathrm{add\_edge}(\ensuremath{\mathit{i}},\ensuremath{\mathit{j}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_edge}(\ensuremath{\mathit{i}},\ensuremath{\mathit{j}})}$" border="0" height="31" src="static/12. Graphs_files/img4547.png" width="95"/></span>: Add the edge <!-- MATH
+ $(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}})$" border="0" height="31" src="static/12. Graphs_files/img4548.png" width="30"/></span> to <span class="MATH"><img align="MIDDLE" alt="$ E$" border="0" height="29" src="static/12. Graphs_files/img4549.png" width="15"/></span>.
+</li>
+<li><!-- MATH
+ $\ensuremath{\mathrm{remove\_edge}(\ensuremath{\mathit{i}},\ensuremath{\mathit{j}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_edge}(\ensuremath{\mathit{i}},\ensuremath{\mathit{j}})}$" border="0" height="31" src="static/12. Graphs_files/img4550.png" width="120"/></span>: Remove the edge <!-- MATH
+ $(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}})$" border="0" height="31" src="static/12. Graphs_files/img4551.png" width="30"/></span> from <span class="MATH"><img align="MIDDLE" alt="$ E$" border="0" height="29" src="static/12. Graphs_files/img4552.png" width="15"/></span>.
+</li>
+<li><!-- MATH
+ $\ensuremath{\mathrm{has\_edge}(\ensuremath{\mathit{i}},\ensuremath{\mathit{j}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{has\_edge}(\ensuremath{\mathit{i}},\ensuremath{\mathit{j}})}$" border="0" height="31" src="static/12. Graphs_files/img4553.png" width="92"/></span>: Check if the edge <!-- MATH
+ $(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}})\in E$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}})\in E$" border="0" height="31" src="static/12. Graphs_files/img4554.png" width="56"/></span>
+</li>
+<li><!-- MATH
+ $\ensuremath{\mathrm{out\_edges}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{out\_edges}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/12. Graphs_files/img4555.png" width="88"/></span>: Return a List of all integers <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{j}}}}$" border="0" height="30" src="static/12. Graphs_files/img4556.png" width="9"/></span> such that
+  <!-- MATH
+ $(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}})\in E$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}})\in E$" border="0" height="31" src="static/12. Graphs_files/img4557.png" width="56"/></span>
+</li>
+<li><!-- MATH
+ $\ensuremath{\mathrm{in\_edges}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{in\_edges}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/12. Graphs_files/img4558.png" width="79"/></span>: Return a List of all integers <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{j}}}}$" border="0" height="30" src="static/12. Graphs_files/img4559.png" width="9"/></span> such that
+  <!-- MATH
+ $(\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}})\in E$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (\ensuremath{\ensuremath{\ensuremath{\mathit{j}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}})\in E$" border="0" height="31" src="static/12. Graphs_files/img4560.png" width="56"/></span>
+</li>
+</ul>
+<p>
+Note that these operations are not terribly difficult to implement
+efficiently. For example, the first three operations can be implemented
+directly by using a USet, so they can be implemented in constant
+expected time using the hash tables discussed in Chapter <a href="http://opendatastructures.org/ods-python/5_Hash_Tables.html#chap:hashing">5</a>.
+The last two operations can be implemented in constant time by storing,
+for each vertex, a list of its adjacent vertices.
+</p><p>
+However, different applications of graphs have different performance
+requirements for these operations and, ideally, we can use the simplest
+implementation that satisfies all the application's requirements.
+For this reason, we discuss two broad categories of graph representations.
+</p><p>
+<br/></p><hr/>
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/12. Graphs_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

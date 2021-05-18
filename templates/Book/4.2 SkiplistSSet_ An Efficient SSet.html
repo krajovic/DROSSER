@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-java/4_2_SkiplistSSet_Efficient_.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>4.2 SkiplistSSet: An Efficient SSet</title>
+<meta name="description" content="4.2 SkiplistSSet: An Efficient SSet">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/4.2 SkiplistSSet_ An Efficient SSet_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/4_3_SkiplistList_Efficient_.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/4_1_Basic_Structure.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/4_Skiplists.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/4_3_SkiplistList_Efficient_.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<hr>
+<h1><a name="SECTION00720000000000000000"></a>
+<a name="sec:skiplistset"></a>
+<br>
+<span class="arabic">4</span>.<span class="arabic">2</span> <tt>SkiplistSSet</tt>: An Efficient <tt>SSet</tt>
+</h1>
+<p>
+<a name="12411"></a>A <tt>SkiplistSSet</tt> uses a skiplist structure to implement the <tt>SSet</tt>
+interface.   When used in this way, the list <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1658.png" alt="$ L_0$"></span> stores the elements of
+the <tt>SSet</tt> in sorted order.  The <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1659.png" alt="$ \mathtt{find(x)}$"></span> method works by following
+the search path for the smallest value <!-- MATH
+ $\mathtt{y}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1660.png" alt="$ \mathtt{y}$"></span> such that <!-- MATH
+ $\ensuremath{\mathtt{y}}\ge\ensuremath{\mathtt{x}}$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1661.png" alt="$ \ensuremath{\mathtt{y}}\ge\ensuremath{\mathtt{x}}$"></span>:
+</p><p>
+</p><pre>    Node&lt;T&gt; findPredNode(T x) {
+        Node&lt;T&gt; u = sentinel;
+        int r = h;
+        while (r &gt;= 0) {
+            while (u.next[r] != null &amp;&amp; compare(u.next[r].x,x) &lt; 0)
+                u = u.next[r];   // go right in list r
+            r--;               // go down into list r-1
+        }
+        return u;
+    }
+    T find(T x) {
+        Node&lt;T&gt; u = findPredNode(x);
+        return u.next[0] == null ? null : u.next[0].x;
+    }
+</pre>
+<p>
+Following the search path for <!-- MATH
+ $\mathtt{y}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1662.png" alt="$ \mathtt{y}$"></span> is easy:  when situated at
+some node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1663.png" alt="$ \mathtt{u}$"></span>, in  <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1664.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span>, we look right to <!-- MATH
+ $\mathtt{u.next[r].x}$
+ -->
+<span class="MATH"><img width="81" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1665.png" alt="$ \mathtt{u.next[r].x}$"></span>.
+If <!-- MATH
+ $\ensuremath{\mathtt{x}}>\ensuremath{\mathtt{u.next[r].x}}$
+ -->
+<span class="MATH"><img width="107" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1666.png" alt="$ \ensuremath{\mathtt{x}}&gt;\ensuremath{\mathtt{u.next[r].x}}$"></span>, then we take a step to the right in
+<!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1667.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span>; otherwise, we move down into <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}-1}$
+ -->
+<span class="MATH"><img width="34" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1668.png" alt="$ L_{\ensuremath{\mathtt{r}}-1}$"></span>.  Each step
+(right or down) in this search takes only constant time; thus, by
+Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/4_1_Basic_Structure.html#lem:skiplist-searchpath">4.1</a>, the expected running time of <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1669.png" alt="$ \mathtt{find(x)}$"></span>
+is <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1670.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>.
+</p><p>
+Before we can add an element to a <tt>SkipListSSet</tt>, we need a method to
+simulate tossing coins to determine the height, <!-- MATH
+ $\mathtt{k}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1671.png" alt="$ \mathtt{k}$"></span>, of a new node.
+We do so by picking a random integer, <!-- MATH
+ $\mathtt{z}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1672.png" alt="$ \mathtt{z}$"></span>, and counting the number of
+trailing <span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1673.png" alt="$ 1$"></span>s in the binary representation of <!-- MATH
+ $\mathtt{z}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1674.png" alt="$ \mathtt{z}$"></span>:<a name="tex2html33" href="http://opendatastructures.org/ods-java/4_2_SkiplistSSet_Efficient_.html#foot12698"><sup><span class="arabic">4</span>.<span class="arabic">1</span></sup></a>
+</p><p>
+</p><pre>    int pickHeight() {
+        int z = rand.nextInt();
+        int k = 0;
+        int m = 1;
+        while ((z &amp; m) != 0) {
+            k++;
+            m &lt;&lt;= 1;
+        }
+        return k;
+    }
+</pre>
+<p>
+To implement the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1678.png" alt="$ \mathtt{add(x)}$"></span> method in a <tt>SkiplistSSet</tt> we search for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1679.png" alt="$ \mathtt{x}$"></span>
+and then splice <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1680.png" alt="$ \mathtt{x}$"></span> into a few lists <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1681.png" alt="$ L_0$"></span>,...,<!-- MATH
+ $L_{\ensuremath{\mathtt{k}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1682.png" alt="$ L_{\ensuremath{\mathtt{k}}}$"></span>, where <!-- MATH
+ $\mathtt{k}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1683.png" alt="$ \mathtt{k}$"></span>
+is selected using the <!-- MATH
+ $\mathtt{pickHeight()}$
+ -->
+<span class="MATH"><img width="99" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1684.png" alt="$ \mathtt{pickHeight()}$"></span> method. The easiest way to do this
+is to use an array, <!-- MATH
+ $\mathtt{stack}$
+ -->
+<span class="MATH"><img width="46" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1685.png" alt="$ \mathtt{stack}$"></span>, that keeps track of the nodes at which
+the search path goes down from some list <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1686.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span> into <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}-1}$
+ -->
+<span class="MATH"><img width="34" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1687.png" alt="$ L_{\ensuremath{\mathtt{r}}-1}$"></span>.
+More precisely, <!-- MATH
+ $\mathtt{stack[r]}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1688.png" alt="$ \mathtt{stack[r]}$"></span> is the node in <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1689.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span> where the search path
+proceeded down into <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}-1}$
+ -->
+<span class="MATH"><img width="34" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1690.png" alt="$ L_{\ensuremath{\mathtt{r}}-1}$"></span>.  The nodes that we modify to insert <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1691.png" alt="$ \mathtt{x}$"></span>
+are precisely the nodes <!-- MATH
+ $\ensuremath{\mathtt{stack[0]}},\ldots,\ensuremath{\mathtt{stack[k]}}$
+ -->
+<span class="MATH"><img width="155" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1692.png" alt="$ \ensuremath{\mathtt{stack[0]}},\ldots,\ensuremath{\mathtt{stack[k]}}$"></span>.  The following
+code implements this algorithm for <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1693.png" alt="$ \mathtt{add(x)}$"></span>:
+<a name="pg:skiplist-add"></a></p><pre>    boolean add(T x) {
+        Node&lt;T&gt; u = sentinel;
+        int r = h;
+        int comp = 0;
+        while (r &gt;= 0) {
+            while (u.next[r] != null 
+                   &amp;&amp; (comp = compare(u.next[r].x,x)) &lt; 0)
+                u = u.next[r];
+            if (u.next[r] != null &amp;&amp; comp == 0) return false;
+            stack[r--] = u;          // going down, store u
+        }
+        Node&lt;T&gt; w = new Node&lt;T&gt;(x, pickHeight());
+        while (h &lt; w.height())
+            stack[++h] = sentinel;   // height increased
+        for (int i = 0; i &lt; w.next.length; i++) {
+            w.next[i] = stack[i].next[i];
+            stack[i].next[i] = w;
+        }
+        n++;
+        return true;
+    }
+</pre>
+<p>
+</p><div align="CENTER"><a name="fig:skiplist-add"></a><a name="12704"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 4.3:</strong>
+Adding the node containing <span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1695.png" alt="$ 3.5$"></span> to a skiplist.  The nodes stored in <!-- MATH
+ $\mathtt{stack}$
+ -->
+<span class="MATH"><img width="46" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1696.png" alt="$ \mathtt{stack}$"></span>
+  are highlighted.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="552" height="149" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1694.png" alt="\includegraphics[width=\textwidth ]{figs/skiplist-add}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Removing an element, <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1697.png" alt="$ \mathtt{x}$"></span>, is done in a similar way, except that there
+is no need for <!-- MATH
+ $\mathtt{stack}$
+ -->
+<span class="MATH"><img width="46" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1698.png" alt="$ \mathtt{stack}$"></span> to keep track of the search path.  The removal
+can be done as we are following the search path.  We search for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1699.png" alt="$ \mathtt{x}$"></span>
+and each time the search moves downward from a node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1700.png" alt="$ \mathtt{u}$"></span>, we check if
+<!-- MATH
+ $\ensuremath{\mathtt{u.next.x}}=\ensuremath{\mathtt{x}}$
+ -->
+<span class="MATH"><img width="88" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1701.png" alt="$ \ensuremath{\mathtt{u.next.x}}=\ensuremath{\mathtt{x}}$"></span> and if so, we splice <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1702.png" alt="$ \mathtt{u}$"></span> out of the list:
+</p><pre>    boolean remove(T x) {
+        boolean removed = false;
+        Node&lt;T&gt; u = sentinel;
+        int r = h;
+        int comp = 0;
+        while (r &gt;= 0) {
+            while (u.next[r] != null 
+                   &amp;&amp; (comp = compare(u.next[r].x, x)) &lt; 0) {
+                u = u.next[r];
+            }
+            if (u.next[r] != null &amp;&amp; comp == 0) {
+                removed = true;
+                u.next[r] = u.next[r].next[r];
+                if (u == sentinel &amp;&amp; u.next[r] == null)
+                    h--;  // height has gone down
+            }
+            r--;
+        }
+        if (removed) n--;
+        return removed;
+    }
+</pre>
+<p>
+</p><div align="CENTER"><a name="fig:skiplist-remove"></a><a name="11916"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 4.4:</strong>
+Removing the node containing <span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1704.png" alt="$ 3$"></span> from a skiplist.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="551" height="168" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1703.png" alt="\includegraphics[width=\textwidth ]{figs/skiplist-remove}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><h2><a name="SECTION00721000000000000000">
+<span class="arabic">4</span>.<span class="arabic">2</span>.<span class="arabic">1</span> Summary</a>
+</h2>
+<p>
+The following theorem summarizes the performance of skiplists when used to
+implement sorted sets:
+</p><p>
+</p><p>
+</p><div><a name="thm:skiplist"><b>Theorem  <span class="arabic">4</span>..<span class="arabic">1</span></b></a> &nbsp; 
+<i><tt>SkiplistSSet</tt> implements the <tt>SSet</tt> interface. A <tt>SkiplistSSet</tt> supports
+the operations <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1706.png" alt="$ \mathtt{add(x)}$"></span>, <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1707.png" alt="$ \mathtt{remove(x)}$"></span>, and <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1708.png" alt="$ \mathtt{find(x)}$"></span> in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1709.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>
+expected time per operation.</i></div><p></p>
+<p>
+<br></p><hr><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot12698">...:</a><a href="http://opendatastructures.org/ods-java/4_2_SkiplistSSet_Efficient_.html#tex2html33"><sup><span class="arabic">4</span>.<span class="arabic">1</span></sup></a></dt>
+<dd>This method
+does not exactly replicate the coin-tossing experiment since the value of
+<!-- MATH
+ $\mathtt{k}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1675.png" alt="$ \mathtt{k}$"></span> will always be less than the number of bits in an <!-- MATH
+ $\mathtt{int}$
+ -->
+<span class="MATH"><img width="29" height="29" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1676.png" alt="$ \mathtt{int}$"></span>.  However,
+this will have negligible impact unless the number of elements in the
+structure is much greater than <!-- MATH
+ $2^{32}=4294967296$
+ -->
+<span class="MATH"><img width="131" height="35" align="MIDDLE" border="0" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/img1677.png" alt="$ 2^{32}=4294967296$"></span>.
+</dd>
+</dl>
+<div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/4.2 SkiplistSSet_ An Efficient SSet_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

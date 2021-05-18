@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/2_2_FastArrayStack_Optimize.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>2.2 FastArrayStack: An Optimized ArrayStack</title>
+<meta content="2.2 FastArrayStack: An Optimized ArrayStack" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/2.2 FastArrayStack_ An Optimized ArrayStack_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/2_3_ArrayQueue_Array_Based_.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/2_1_ArrayStack_Fast_Stack_O.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/2_Array_Based_Lists.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/2_3_ArrayQueue_Array_Based_.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION00520000000000000000"></a>
+<a name="sec:fastarraystack"></a>
+<br/>
+<span class="arabic">2</span>.<span class="arabic">2</span> FastArrayStack: An Optimized ArrayStack
+</h1>
+<p>
+<a name="4957"></a>Much of the work done by an ArrayStack involves shifting (by
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.2 FastArrayStack_ An Optimized ArrayStack_files/img631.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.2 FastArrayStack_ An Optimized ArrayStack_files/img632.png" width="72"/></span>) and copying (by <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/2.2 FastArrayStack_ An Optimized ArrayStack_files/img633.png" width="55"/></span>) of data.
+In a naive implementation, this would be done using <!-- MATH
+ ${\color{black} \textbf{for}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ {\color{black} \textbf{for}}$" border="0" height="30" src="static/2.2 FastArrayStack_ An Optimized ArrayStack_files/img634.png" width="26"/></span> loops.
+It
+turns out that many programming environments have specific functions
+that are very efficient at copying and moving blocks of data.  In the C
+programming language, there are the <!-- MATH
+ $\ensuremath{\mathrm{memcpy}(\ensuremath{\mathit{d}},\ensuremath{\mathit{s}},\ensuremath{\mathit{n}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{memcpy}(\ensuremath{\mathit{d}},\ensuremath{\mathit{s}},\ensuremath{\mathit{n}})}$" border="0" height="31" src="static/2.2 FastArrayStack_ An Optimized ArrayStack_files/img635.png" width="110"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{memmove}(\ensuremath{\mathit{d}},\ensuremath{\mathit{s}},\ensuremath{\mathit{n}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{memmove}(\ensuremath{\mathit{d}},\ensuremath{\mathit{s}},\ensuremath{\mathit{n}})}$" border="0" height="31" src="static/2.2 FastArrayStack_ An Optimized ArrayStack_files/img636.png" width="123"/></span>
+functions. In the C++ language there is the <!-- MATH
+ $\ensuremath{\mathrm{stdcopy}(\ensuremath{\mathit{a_0}},\ensuremath{\mathit{a_1}},\ensuremath{\mathit{b}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{stdcopy}(\ensuremath{\mathit{a_0}},\ensuremath{\mathit{a_1}},\ensuremath{\mathit{b}})}$" border="0" height="31" src="static/2.2 FastArrayStack_ An Optimized ArrayStack_files/img637.png" width="119"/></span> algorithm.
+In Java there is the <!-- MATH
+ $\ensuremath{\mathrm{System}.\mathrm{arraycopy}(\ensuremath{\mathit{s}},\ensuremath{\mathit{i}},\ensuremath{\mathit{d}},\ensuremath{\mathit{j}},\ensuremath{\mathit{n}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{System}.\mathrm{arraycopy}(\ensuremath{\mathit{s}},\ensure...
+...t{i}},\ensuremath{\mathit{d}},\ensuremath{\mathit{j}},\ensuremath{\mathit{n}})}$" border="0" height="31" src="static/2.2 FastArrayStack_ An Optimized ArrayStack_files/img638.png" width="194"/></span> method.
+<a name="10352"></a><a name="10353"></a><a name="10354"></a>
+</p><p>
+These functions are usually highly optimized and may even use special
+machine instructions that can do this copying much faster than we could by
+using a <!-- MATH
+ ${\color{black} \textbf{for}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ {\color{black} \textbf{for}}$" border="0" height="30" src="static/2.2 FastArrayStack_ An Optimized ArrayStack_files/img642.png" width="26"/></span> loop.  Although using these functions does not asymptotically
+decrease the running times, it can still be a worthwhile optimization.
+</p><p>
+In our C++ and Java implementations, the use of fast array
+copying functions
+resulted in speedups of a factor between 2 and 3, depending on the types of
+operations performed.  Your mileage may vary.
+</p><p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/2.2 FastArrayStack_ An Optimized ArrayStack_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

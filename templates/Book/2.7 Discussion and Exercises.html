@@ -1,0 +1,362 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0070)http://opendatastructures.org/ods-python/2_7_Discussion_Exercises.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>2.7 Discussion and Exercises</title>
+<meta content="2.7 Discussion and Exercises" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/2.7 Discussion and Exercises_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/2_6_RootishArrayStack_Space.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/2_Array_Based_Lists.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/3_Linked_Lists.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION00570000000000000000">
+<span class="arabic">2</span>.<span class="arabic">7</span> Discussion and Exercises</a>
+</h1>
+<p>
+Most of the data structures described in this chapter are folklore. They
+can be found in implementations dating back over 30 years.  For example,
+implementations of stacks, queues, and deques, which generalize easily
+to the ArrayStack, ArrayQueue and ArrayDeque structures described
+here, are discussed by Knuth [<a href="http://opendatastructures.org/ods-python/Bibliography.html#k97v1">46</a>, Section 2.2.2].
+</p><p>
+Brodnik <span class="textit">et al.</span> [<a href="http://opendatastructures.org/ods-python/Bibliography.html#bcdms99">13</a>] seem to have been the first to describe
+the RootishArrayStack and prove a <span class="MATH"><img align="MIDDLE" alt="$ \sqrt{n}$" border="0" height="35" src="static/2.7 Discussion and Exercises_files/img1059.png" width="25"/></span> lower-bound like that
+in Section <a href="http://opendatastructures.org/ods-python/2_6_RootishArrayStack_Space.html#sec:rootishspaceusage">2.6.2</a>.  They also present a different structure
+that uses a more sophisticated choice of block sizes in order to avoid
+computing square roots in the <!-- MATH
+ $\ensuremath{\mathrm{i2b}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{i2b}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1060.png" width="42"/></span> method.  Within their scheme,
+the block containing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/2.7 Discussion and Exercises_files/img1061.png" width="9"/></span> is block <!-- MATH
+ $\lfloor\log (\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1)\rfloor$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \lfloor\log (\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1)\rfloor$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1062.png" width="77"/></span>, which
+is simply the index of the leading 1 bit in the binary representation
+of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1$" border="0" height="30" src="static/2.7 Discussion and Exercises_files/img1063.png" width="33"/></span>.  Some computer architectures provide an instruction for
+computing the index of the leading 1-bit in an integer. 
+</p><p>
+A structure related to the RootishArrayStack is the two-level
+<span class="textit">tiered-vector</span> of Goodrich and Kloss [<a href="http://opendatastructures.org/ods-python/Bibliography.html#gk99">35</a>].
+<a name="6886"></a>This structure
+supports the <!-- MATH
+ $\ensuremath{\mathrm{get}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{get}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1064.png" width="54"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1065.png" width="53"/></span> operations in constant time and
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1066.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1067.png" width="72"/></span> in <!-- MATH
+ $O(\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}})$" border="0" height="35" src="static/2.7 Discussion and Exercises_files/img1068.png" width="48"/></span> time.  These running times
+are similar to what can be achieved with the more careful implementation
+of a RootishArrayStack discussed in Exercise <a href="http://opendatastructures.org/ods-python/2_7_Discussion_Exercises.html#exc:rootisharraystack-fast">2.10</a>.
+</p><p>
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">2</span>..<span class="arabic">1</span></b>   
+The List method <!-- MATH
+ $\ensuremath{\mathrm{add\_all}(\ensuremath{\mathit{i}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_all}(\ensuremath{\mathit{i}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1069.png" width="82"/></span> inserts all elements of the Collection
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{c}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{c}}}$" border="0" height="29" src="static/2.7 Discussion and Exercises_files/img1070.png" width="11"/></span> into the list at position <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/2.7 Discussion and Exercises_files/img1071.png" width="9"/></span>.  (The <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1072.png" width="60"/></span> method is a special
+  case where <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{c}}}}=\{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{c}}}}=\{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1073.png" width="47"/></span>.)  Explain why, for the data structures
+  in this chapter, it is not efficient to implement <!-- MATH
+ $\ensuremath{\mathrm{add\_all}(\ensuremath{\mathit{i}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_all}(\ensuremath{\mathit{i}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1074.png" width="82"/></span> by
+  repeated calls to <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1075.png" width="60"/></span>.  Design and implement a more efficient
+  implementation.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">2</span>..<span class="arabic">2</span></b>   
+Design and implement a <span class="textit">RandomQueue</span>.
+  <a name="6932"></a>This is an implementation
+  of the Queue interface in which the <!-- MATH
+ $\ensuremath{\mathrm{remove}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}()}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1076.png" width="67"/></span> operation removes
+  an element that is chosen uniformly at random among all the elements
+  currently in the queue.  (Think of a RandomQueue as a bag in which
+  we can add elements or reach in and blindly remove some random element.)
+  The <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1077.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}()}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1078.png" width="67"/></span> operations in a RandomQueue should run
+  in constant time per operation.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">2</span>..<span class="arabic">3</span></b>   
+Design and implement a Treque (triple-ended queue). 
+  <a name="6939"></a>This is a List
+  implementation in which <!-- MATH
+ $\ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1079.png" width="41"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1080.png" width="53"/></span> run in constant time
+  and <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1081.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1082.png" width="72"/></span> run in time
+  <p><!-- MATH
+ \begin{displaymath}
+O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}, \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}, |\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}|\}) \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}, \ens...
+...{n}}}}/2-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\vert\}) \enspace .
+$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1083.png" width="197"/>
+</div><p></p>
+In other words, modifications are fast if they are near either
+  end or near the middle of the list.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">2</span>..<span class="arabic">4</span></b>   
+Implement a method <!-- MATH
+ $\ensuremath{\mathrm{rotate}(\ensuremath{\mathit{a}},\ensuremath{\mathit{r}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rotate}(\ensuremath{\mathit{a}},\ensuremath{\mathit{r}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1084.png" width="76"/></span> that ``rotates'' the array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/2.7 Discussion and Exercises_files/img1085.png" width="12"/></span>
+  so that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1086.png" width="27"/></span> moves to <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}})\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[(\ensuremath{\ensuremath{\en...
+...r}}}})\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}]$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1087.png" width="163"/></span>, for all
+  <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\in\{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\in\{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}\}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1088.png" width="136"/></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">2</span>..<span class="arabic">5</span></b>   
+Implement a method <!-- MATH
+ $\ensuremath{\mathrm{rotate}(\ensuremath{\mathit{r}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rotate}(\ensuremath{\mathit{r}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1089.png" width="62"/></span> that ``rotates'' a List so that
+  list item <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/2.7 Discussion and Exercises_files/img1090.png" width="9"/></span> becomes list item <!-- MATH
+ $(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}})\bmod \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}})\bmod \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1091.png" width="91"/></span>.  When run on
+  an ArrayDeque, or a DualArrayDeque, <!-- MATH
+ $\ensuremath{\mathrm{rotate}(\ensuremath{\mathit{r}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rotate}(\ensuremath{\mathit{r}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1092.png" width="62"/></span> should run in
+  <!-- MATH
+ $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}\})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}},\ensuremath{\ensur...
+...{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}\})$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1093.png" width="133"/></span> time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">2</span>..<span class="arabic">6</span></b>   
+This exercise is left out of the pseudocode edition.
+  </div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">2</span>..<span class="arabic">7</span></b>   
+Modify the ArrayDeque implementation so that it does not use the
+  <span class="MATH"><img align="MIDDLE" alt="$ \bmod $" border="0" height="30" src="static/2.7 Discussion and Exercises_files/img1094.png" width="40"/></span> operator (which is expensive on some systems).  Instead, it
+  should make use of the fact that, if <!-- MATH
+ $\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1095.png" width="68"/></span> is a power of 2,
+  then 
+  <p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{k}}\bmod \mathrm{length}(\ensuremath{\mathit{a}})}}=\ensuremath{\ensuremath{\ensuremath{\mathit{k}} \wedge (\mathrm{length}(\ensuremath{\mathit{a}})-1)}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{k}}\bmod \mathrm{leng...
+...{\mathit{k}} \wedge (\mathrm{length}(\ensuremath{\mathit{a}})-1)}} \enspace .
+$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1096.png" width="267"/>
+</div><p></p>
+  (Here, <span class="MATH"><img align="MIDDLE" alt="$ \wedge $" border="0" height="29" src="static/2.7 Discussion and Exercises_files/img1097.png" width="15"/></span> is the bitwise-and operator.)</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">2</span>..<span class="arabic">8</span></b>   
+Design and implement a variant of ArrayDeque that does not do any
+  modular arithmetic at all.  Instead, all the data sits in a consecutive
+  block, in order, inside an array.  When the data overruns the beginning
+  or the end of this array, a modified <!-- MATH
+ $\ensuremath{\mathrm{rebuild}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}()}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1098.png" width="66"/></span> operation is performed.
+  The amortized cost of all operations should be the same as in an
+  ArrayDeque.
+<p>
+Hint: Getting this to work is really all about how you implement
+  the <!-- MATH
+ $\ensuremath{\mathrm{rebuild}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}()}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1099.png" width="66"/></span> operation.  You would like <!-- MATH
+ $\ensuremath{\mathrm{rebuild}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}()}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1100.png" width="66"/></span> to put the data
+  structure into a state where the data cannot run off either end until
+  at least <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$" border="0" height="29" src="static/2.7 Discussion and Exercises_files/img1101.png" width="28"/></span> operations have been performed.
+</p><p>
+Test the performance of your implementation against the ArrayDeque.
+  Optimize your implementation (by using <!-- MATH
+ $\ensuremath{\mathrm{System}.\mathrm{arraycopy}(\ensuremath{\mathit{a}},\ensuremath{\mathit{i}},\ensuremath{\mathit{b}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{System}.\mathrm{arraycopy}(\ensuremath{\mathit{a}},\ensure...
+...t{i}},\ensuremath{\mathit{b}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1102.png" width="196"/></span>)
+  and see if you can get it to outperform the ArrayDeque implementation.</p></div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">2</span>..<span class="arabic">9</span></b>   
+Design and implement a version of a RootishArrayStack that has
+  only <!-- MATH
+ $O(\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}})$" border="0" height="35" src="static/2.7 Discussion and Exercises_files/img1103.png" width="48"/></span> wasted space, but that can perform <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1104.png" width="60"/></span>
+  and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1105.png" width="85"/></span> operations in <!-- MATH
+ $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensur...
+...{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1106.png" width="129"/></span> time.</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:rootisharraystack-fast"><b>Exercise  <span class="arabic">2</span>..<span class="arabic">10</span></b></a>   
+Design and implement a version of a RootishArrayStack that has
+  only <!-- MATH
+ $O(\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}})$" border="0" height="35" src="static/2.7 Discussion and Exercises_files/img1107.png" width="48"/></span> wasted space, but that can perform <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1108.png" width="60"/></span>
+  and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1109.png" width="85"/></span> operations in <!-- MATH
+ $O(1+\min\{\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}},\ensuremath...
+...{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$" border="0" height="35" src="static/2.7 Discussion and Exercises_files/img1110.png" width="145"/></span>
+  time. (For an idea on how to do this, see Section <a href="http://opendatastructures.org/ods-python/3_3_SEList_Space_Efficient_.html#sec:selist">3.3</a>.)</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">2</span>..<span class="arabic">11</span></b>   
+Design and implement a version of a RootishArrayStack that has
+  only <!-- MATH
+ $O(\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}})$" border="0" height="35" src="static/2.7 Discussion and Exercises_files/img1111.png" width="48"/></span> wasted space, but that can perform <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1112.png" width="60"/></span> and
+  <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1113.png" width="85"/></span> operations in <!-- MATH
+ $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\sqrt {\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\sqrt {\ensuremath...
+...{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$" border="0" height="35" src="static/2.7 Discussion and Exercises_files/img1114.png" width="156"/></span> time.
+  (See Section <a href="http://opendatastructures.org/ods-python/3_3_SEList_Space_Efficient_.html#sec:selist">3.3</a> for ideas on how to achieve this.)</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">2</span>..<span class="arabic">12</span></b>   
+Design and implement a CubishArrayStack.
+  <a name="7067"></a>This three level structure
+  implements the List interface using <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}^{2/3})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}^{2/3})$" border="0" height="36" src="static/2.7 Discussion and Exercises_files/img1115.png" width="55"/></span> wasted space.
+  In this structure, <!-- MATH
+ $\ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1116.png" width="41"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1117.png" width="53"/></span> take constant time; while
+  <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1118.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.7 Discussion and Exercises_files/img1119.png" width="72"/></span> take <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}^{1/3})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}^{1/3})$" border="0" height="36" src="static/2.7 Discussion and Exercises_files/img1120.png" width="55"/></span> amortized time.</div><p></p>
+<p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/2.7 Discussion and Exercises_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

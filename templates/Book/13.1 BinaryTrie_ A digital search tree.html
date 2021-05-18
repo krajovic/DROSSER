@@ -1,0 +1,527 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-java/13_1_BinaryTrie_digital_sea.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>13.1 BinaryTrie: A digital search tree</title>
+<meta name="description" content="13.1 BinaryTrie: A digital search tree">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/13.1 BinaryTrie_ A digital search tree_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/13_2_XFastTrie_Searching_in.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/13_Data_Structures_Integers.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/13_Data_Structures_Integers.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/13_2_XFastTrie_Searching_in.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<h1><a name="SECTION001610000000000000000"></a>
+<a name="sec:binarytrie"></a>
+<br>
+<span class="arabic">13</span>.<span class="arabic">1</span> <tt>BinaryTrie</tt>: A digital search tree
+</h1>
+<p>
+<a name="34388"></a>A <tt>BinaryTrie</tt> encodes a set of <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4868.png" alt="$ \mathtt{w}$"></span> bit integers in a binary tree.
+All leaves in the tree have depth <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4869.png" alt="$ \mathtt{w}$"></span> and each integer is encoded as a
+root-to-leaf path.  The path for the integer <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4870.png" alt="$ \mathtt{x}$"></span> turns left at level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4871.png" alt="$ \mathtt{i}$"></span>
+if the <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4872.png" alt="$ \mathtt{i}$"></span>th most significant bit of <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4873.png" alt="$ \mathtt{x}$"></span> is a 0 and turns right if it
+is a 1.  Figure&nbsp;<a href="http://opendatastructures.org/ods-java/13_1_BinaryTrie_digital_sea.html#fig:binarytrie-ex">13.1</a> shows an example for the case <!-- MATH
+ $\ensuremath{\mathtt{w}}=4$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4874.png" alt="$ \ensuremath{\mathtt{w}}=4$"></span>,
+in which the trie stores the integers 3(0011), 9(1001), 12(1100),
+and 13(1101).
+</p><div align="CENTER"><a name="fig:binarytrie-ex"></a><a name="33714"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 13.1:</strong>
+The integers stored in a binary trie are encoded as
+    root-to-leaf paths.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="404" height="228" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4875.png" alt="\includegraphics[width=\textwidth ]{figs/binarytrie-ex-1}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Because the search path
+<a name="34396"></a>for a value <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4876.png" alt="$ \mathtt{x}$"></span> depends on the bits of <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4877.png" alt="$ \mathtt{x}$"></span>, it will
+be helpful to name the children of a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4878.png" alt="$ \mathtt{u}$"></span>, <!-- MATH
+ $\mathtt{u.child[0]}$
+ -->
+<span class="MATH"><img width="77" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4879.png" alt="$ \mathtt{u.child[0]}$"></span> (<!-- MATH
+ $\mathtt{left}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4880.png" alt="$ \mathtt{left}$"></span>)
+and <!-- MATH
+ $\mathtt{u.child[1]}$
+ -->
+<span class="MATH"><img width="77" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4881.png" alt="$ \mathtt{u.child[1]}$"></span> (<!-- MATH
+ $\mathtt{right}$
+ -->
+<span class="MATH"><img width="46" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4882.png" alt="$ \mathtt{right}$"></span>).  These child pointers will actually serve
+double-duty.  Since the leaves in a binary trie have no children, the
+pointers are used to string the leaves together into a doubly-linked list.
+For a leaf in the binary trie <!-- MATH
+ $\mathtt{u.child[0]}$
+ -->
+<span class="MATH"><img width="77" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4883.png" alt="$ \mathtt{u.child[0]}$"></span> (<!-- MATH
+ $\mathtt{prev}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4884.png" alt="$ \mathtt{prev}$"></span>) is the node that
+comes before <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4885.png" alt="$ \mathtt{u}$"></span> in the list and <!-- MATH
+ $\mathtt{u.child[1]}$
+ -->
+<span class="MATH"><img width="77" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4886.png" alt="$ \mathtt{u.child[1]}$"></span> (<!-- MATH
+ $\mathtt{next}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4887.png" alt="$ \mathtt{next}$"></span>) is the node that
+follows <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4888.png" alt="$ \mathtt{u}$"></span> in the list.  A special node, <!-- MATH
+ $\mathtt{dummy}$
+ -->
+<span class="MATH"><img width="46" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4889.png" alt="$ \mathtt{dummy}$"></span>, is used both before
+the first node and after the last node in the list (see Section&nbsp;<a href="http://opendatastructures.org/ods-java/3_2_DLList_Doubly_Linked_Li.html#sec:dllist">3.2</a>).
+</p><p>
+Each node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4890.png" alt="$ \mathtt{u}$"></span>, also contains an additional pointer <!-- MATH
+ $\mathtt{u.jump}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4891.png" alt="$ \mathtt{u.jump}$"></span>.  If <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4892.png" alt="$ \mathtt{u}$"></span>'s
+left child is missing, then <!-- MATH
+ $\mathtt{u.jump}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4893.png" alt="$ \mathtt{u.jump}$"></span> points to the smallest leaf in
+<!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4894.png" alt="$ \mathtt{u}$"></span>'s subtree.  If <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4895.png" alt="$ \mathtt{u}$"></span>'s right child is missing, then <!-- MATH
+ $\mathtt{u.jump}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4896.png" alt="$ \mathtt{u.jump}$"></span> points
+to the largest leaf in <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4897.png" alt="$ \mathtt{u}$"></span>'s subtree.  An example of a <tt>BinaryTrie</tt>,
+showing <!-- MATH
+ $\mathtt{jump}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4898.png" alt="$ \mathtt{jump}$"></span> pointers and the doubly-linked list at the leaves, is
+shown in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/13_1_BinaryTrie_digital_sea.html#fig:binarytrie-ex2">13.2</a>.
+</p><p>
+</p><div align="CENTER"><a name="fig:binarytrie-ex2"></a><a name="34832"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 13.2:</strong>
+A <tt>BinaryTrie</tt> with <!-- MATH
+ $\mathtt{jump}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4900.png" alt="$ \mathtt{jump}$"></span> pointers shown as curved dashed
+  edges.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="404" height="245" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4899.png" alt="\includegraphics[width=\textwidth ]{figs/binarytrie-ex-2}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4901.png" alt="$ \mathtt{find(x)}$"></span> operation in a <tt>BinaryTrie</tt> is fairly straightforward.
+We try to follow the search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4902.png" alt="$ \mathtt{x}$"></span> in the trie.  If we reach a leaf,
+then we have found <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4903.png" alt="$ \mathtt{x}$"></span>.  If we reach a node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4904.png" alt="$ \mathtt{u}$"></span> where we cannot proceed
+(because <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4905.png" alt="$ \mathtt{u}$"></span> is missing a child), then we follow <!-- MATH
+ $\mathtt{u.jump}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4906.png" alt="$ \mathtt{u.jump}$"></span>, which takes us
+either to the smallest leaf larger than <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4907.png" alt="$ \mathtt{x}$"></span> or the largest leaf smaller than
+<!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4908.png" alt="$ \mathtt{x}$"></span>. Which of these two cases occurs depends on whether <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4909.png" alt="$ \mathtt{u}$"></span> is missing
+its left or right child, respectively.  In the former case (<!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4910.png" alt="$ \mathtt{u}$"></span> is missing
+its left child), we have found the node we want.  In the latter case (<!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4911.png" alt="$ \mathtt{u}$"></span>
+is missing its right child), we can use the linked list to reach the node
+we want. Each of these cases is illustrated in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/13_1_BinaryTrie_digital_sea.html#fig:binarytrie-find">13.3</a>.
+</p><pre>    T find(T x) {
+        int i, c = 0, ix = it.intValue(x);
+        Node u = r;
+        for (i = 0; i &lt; w; i++) {
+            c = (ix &gt;&gt;&gt; w-i-1) &amp; 1;
+            if (u.child[c] == null) break;
+            u = u.child[c];
+        }
+        if (i == w) return u.x;  // found it
+        u = (c == 0) ? u.jump : u.jump.child[next]; 
+        return u == dummy ? null : u.x;
+    }
+</pre>
+<div align="CENTER"><a name="fig:binarytrie-find"></a><a name="34833"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 13.3:</strong>
+The paths followed by <!-- MATH
+ $\mathtt{find(5)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4913.png" alt="$ \mathtt{find(5)}$"></span> and <!-- MATH
+ $\mathtt{find(8)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4914.png" alt="$ \mathtt{find(8)}$"></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="552" height="248" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4912.png" alt="\includegraphics[width=\textwidth ]{figs/binarytrie-ex-3}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+The running-time of the <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4915.png" alt="$ \mathtt{find(x)}$"></span> method is dominated by the time it
+takes to follow a root-to-leaf path, so it runs in <!-- MATH
+ $O(\ensuremath{\mathtt{w}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4916.png" alt="$ O(\ensuremath{\mathtt{w}})$"></span> time.
+<p>
+The <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4917.png" alt="$ \mathtt{add(x)}$"></span> operation in a <tt>BinaryTrie</tt> is also fairly straightforward,
+but has a lot of work to do:
+</p><ol>
+<li>It follows the search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4918.png" alt="$ \mathtt{x}$"></span> until reaching a node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4919.png" alt="$ \mathtt{u}$"></span>
+    where it can no longer proceed.
+</li>
+<li>It creates the remainder of the search path from <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4920.png" alt="$ \mathtt{u}$"></span> to a leaf
+    that contains <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4921.png" alt="$ \mathtt{x}$"></span>.
+</li>
+<li>It adds the node, <!-- MATH
+ $\mathtt{u'}$
+ -->
+<span class="MATH"><img width="17" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4922.png" alt="$ \mathtt{u&#39;}$"></span>, containing <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4923.png" alt="$ \mathtt{x}$"></span> to the linked list
+    of leaves (it has access to the predecessor, <!-- MATH
+ $\mathtt{pred}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4924.png" alt="$ \mathtt{pred}$"></span>, of <!-- MATH
+ $\mathtt{u'}$
+ -->
+<span class="MATH"><img width="17" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4925.png" alt="$ \mathtt{u&#39;}$"></span> in
+    the linked list from the <!-- MATH
+ $\mathtt{jump}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4926.png" alt="$ \mathtt{jump}$"></span> pointer of the last node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4927.png" alt="$ \mathtt{u}$"></span>,
+    encountered during step&nbsp;1.)
+</li>
+<li>It walks back up the search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4928.png" alt="$ \mathtt{x}$"></span> adjusting <!-- MATH
+ $\mathtt{jump}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4929.png" alt="$ \mathtt{jump}$"></span>
+    pointers at the nodes whose <!-- MATH
+ $\mathtt{jump}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4930.png" alt="$ \mathtt{jump}$"></span> pointer should now point to <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4931.png" alt="$ \mathtt{x}$"></span>.
+</li>
+</ol>
+An addition is illustrated in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/13_1_BinaryTrie_digital_sea.html#fig:binarytrie-add">13.4</a>.
+<div align="CENTER"><a name="fig:binarytrie-add"></a><a name="34458"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 13.4:</strong>
+Adding the values 2 and 15 to the <tt>BinaryTrie</tt> in
+  Figure&nbsp;<a href="http://opendatastructures.org/ods-java/13_1_BinaryTrie_digital_sea.html#fig:binarytrie-ex2">13.2</a>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="554" height="336" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4932.png" alt="\includegraphics[width=\textwidth ]{figs/binarytrie-add}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<pre>    boolean add(T x) {
+        int i, c = 0, ix = it.intValue(x);
+        Node u = r;
+        // 1 - search for ix until falling out of the trie
+        for (i = 0; i &lt; w; i++) {
+            c = (ix &gt;&gt;&gt; w-i-1) &amp; 1;
+            if (u.child[c] == null) break;
+            u = u.child[c];
+        }        
+        if (i == w) return false; // already contains x - abort
+        Node pred = (c == right) ? u.jump : u.jump.child[0];
+        u.jump = null;  // u will have two children shortly
+        // 2 - add path to ix
+        for (; i &lt; w; i++) {
+            c = (ix &gt;&gt;&gt; w-i-1) &amp; 1;
+            u.child[c] = newNode();
+            u.child[c].parent = u;
+            u = u.child[c];
+        }
+        u.x = x;
+        // 3 - add u to linked list
+        u.child[prev] = pred;
+        u.child[next] = pred.child[next];
+        u.child[prev].child[next] = u;
+        u.child[next].child[prev] = u;
+        // 4 - walk back up, updating jump pointers
+        Node v = u.parent;
+        while (v != null) {
+            if ((v.child[left] == null 
+                    &amp;&amp; (v.jump == null || it.intValue(v.jump.x) &gt; ix))
+            || (v.child[right] == null 
+                    &amp;&amp; (v.jump == null || it.intValue(v.jump.x) &lt; ix)))
+                v.jump = u;
+            v = v.parent;
+        }
+        n++;
+        return true;
+    }
+</pre>
+This method performs one walk down the search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4933.png" alt="$ \mathtt{x}$"></span> and one walk
+back up.  Each step of these walks takes constant time, so the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4934.png" alt="$ \mathtt{add(x)}$"></span>
+method runs in <!-- MATH
+ $O(\ensuremath{\mathtt{w}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4935.png" alt="$ O(\ensuremath{\mathtt{w}})$"></span> time.
+<p>
+The <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4936.png" alt="$ \mathtt{remove(x)}$"></span> operation undoes the work of <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4937.png" alt="$ \mathtt{add(x)}$"></span>.  Like <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4938.png" alt="$ \mathtt{add(x)}$"></span>,
+it has a lot of work to do:
+</p><ol>
+<li>It follows the search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4939.png" alt="$ \mathtt{x}$"></span> until reaching the leaf, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4940.png" alt="$ \mathtt{u}$"></span>,
+  containing <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4941.png" alt="$ \mathtt{x}$"></span>.
+</li>
+<li>It removes <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4942.png" alt="$ \mathtt{u}$"></span> from the doubly-linked list.
+</li>
+<li>It deletes <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4943.png" alt="$ \mathtt{u}$"></span> and then walks back up the search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4944.png" alt="$ \mathtt{x}$"></span>
+  deleting nodes until reaching a node <!-- MATH
+ $\mathtt{v}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4945.png" alt="$ \mathtt{v}$"></span> that has a child that is not
+  on the search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4946.png" alt="$ \mathtt{x}$"></span>.
+</li>
+<li>It walks upwards from <!-- MATH
+ $\mathtt{v}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4947.png" alt="$ \mathtt{v}$"></span> to the root updating any <!-- MATH
+ $\mathtt{jump}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4948.png" alt="$ \mathtt{jump}$"></span> pointers
+  that point to <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4949.png" alt="$ \mathtt{u}$"></span>.
+</li>
+</ol>
+A removal is illustrated in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/13_1_BinaryTrie_digital_sea.html#fig:binarytrie-remove">13.5</a>.
+<div align="CENTER"><a name="fig:binarytrie-remove"></a><a name="34476"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 13.5:</strong>
+Removing the value 9 from the <tt>BinaryTrie</tt> in
+  Figure&nbsp;<a href="http://opendatastructures.org/ods-java/13_1_BinaryTrie_digital_sea.html#fig:binarytrie-ex2">13.2</a>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="373" height="227" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4950.png" alt="\includegraphics[scale=0.90909]{figs/binarytrie-remove}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<pre>    boolean remove(T x) {
+        // 1 - find leaf, u, containing x
+        int i, c, ix = it.intValue(x);
+        Node u = r;
+        for (i = 0; i &lt; w; i++) {
+            c = (ix &gt;&gt;&gt; w-i-1) &amp; 1;
+            if (u.child[c] == null) return false;
+            u = u.child[c];
+        }
+        // 2 - remove u from linked list
+        u.child[prev].child[next] = u.child[next];
+        u.child[next].child[prev] = u.child[prev];
+        Node v = u;
+        // 3 - delete nodes on path to u
+        for (i = w-1; i &gt;= 0; i--) {
+            c = (ix &gt;&gt;&gt; w-i-1) &amp; 1;
+            v = v.parent;
+            v.child[c] = null;
+            if (v.child[1-c] != null) break;
+        }
+        // 4 - update jump pointers
+        c = (ix &gt;&gt;&gt; w-i-1) &amp; 1;
+        v.jump = u.child[1-c];
+        v = v.parent;
+        i--;
+        for (; i &gt;= 0; i--) {
+            c = (ix &gt;&gt;&gt; w-i-1) &amp; 1;
+            if (v.jump == u) 
+                v.jump = u.child[1-c];
+            v = v.parent;
+        }
+        n--;
+        return true;
+    }
+</pre>
+<p>
+</p><p>
+</p><div><b>Theorem  <span class="arabic">13</span>..<span class="arabic">1</span></b> &nbsp; 
+<i>A <tt>BinaryTrie</tt> implements the <tt>SSet</tt> interface for <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4951.png" alt="$ \mathtt{w}$"></span>-bit integers. A
+<tt>BinaryTrie</tt> supports the operations <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4952.png" alt="$ \mathtt{add(x)}$"></span>, <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4953.png" alt="$ \mathtt{remove(x)}$"></span>, and <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4954.png" alt="$ \mathtt{find(x)}$"></span>
+in <!-- MATH
+ $O(\ensuremath{\mathtt{w}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4955.png" alt="$ O(\ensuremath{\mathtt{w}})$"></span> time per operation.  The space used by a <tt>BinaryTrie</tt> that
+stores <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4956.png" alt="$ \mathtt{n}$"></span> values is <!-- MATH
+ $O(\ensuremath{\mathtt{n}}\cdot\ensuremath{\mathtt{w}})$
+ -->
+<span class="MATH"><img width="54" height="31" align="MIDDLE" border="0" src="static/13.1 BinaryTrie_ A digital search tree_files/img4957.png" alt="$ O(\ensuremath{\mathtt{n}}\cdot\ensuremath{\mathtt{w}})$"></span>.</i></div><p></p>
+<p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/13.1 BinaryTrie_ A digital search tree_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

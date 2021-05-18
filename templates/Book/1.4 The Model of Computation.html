@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0065)http://opendatastructures.org/ods-java/1_4_Model_Computation.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>1.4 The Model of Computation</title>
+<meta name="description" content="1.4 The Model of Computation">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/1.4 The Model of Computation_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/1_5_Correctness_Time_Comple.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/1_3_Mathematical_Background.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/1_Introduction.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/1_5_Correctness_Time_Comple.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<h1><a name="SECTION00440000000000000000"></a>
+<a name="sec:model"></a>
+<br>
+<span class="arabic">1</span>.<span class="arabic">4</span> The Model of Computation
+</h1>
+<p>
+In this book, we will analyze the theoretical running times of operations
+on the data structures we study.  To do this precisely, we need a
+mathematical model of computation.  For this, we use the <span class="textit"><!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img354.png" alt="$ \mathtt{w}$"></span>-bit
+word-RAM</span>
+<a name="2250"></a><a name="2251"></a>model.  RAM stands for Random Access Machine. In this model, we
+have access to a random access memory consisting of <span class="textit">cells</span>, each of
+which stores a <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img355.png" alt="$ \mathtt{w}$"></span>-bit <span class="textit">word</span>.
+<a name="2255"></a>This implies that a memory cell can
+represent, for example, any integer in the set <!-- MATH
+ $\{0,\ldots,2^{\ensuremath{\mathtt{w}}}-1\}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img356.png" alt="$ \{0,\ldots,2^{\ensuremath{\mathtt{w}}}-1\}$"></span>.
+</p><p>
+In the word-RAM model, basic operations on words take constant time.
+This includes arithmetic operations (<!-- MATH
+ $\mathtt{+}$
+ -->
+<span class="MATH"><img width="14" height="29" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img357.png" alt="$ \mathtt{+}$"></span>, <!-- MATH
+ $\mathtt{-}$
+ -->
+<span class="MATH"><img width="14" height="15" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img358.png" alt="$ \mathtt{-}$"></span>, <!-- MATH
+ $\mathtt{*}$
+ -->
+<span class="MATH"><img width="10" height="13" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img359.png" alt="$ \mathtt{*}$"></span>, <!-- MATH
+ $\mathtt{/}$
+ -->
+<span class="MATH"><img width="10" height="29" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img360.png" alt="$ \mathtt{/}$"></span>, <!-- MATH
+ $\mathtt{\text{\ttfamily\%}}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img361.png" alt="$ \mathtt{\text{\ttfamily\%}}$"></span>), comparisons
+(<span class="MATH"><img width="14" height="29" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img362.png" alt="$ &lt;$"></span>, <span class="MATH"><img width="14" height="29" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img363.png" alt="$ &gt;$"></span>, <span class="MATH"><img width="15" height="13" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img364.png" alt="$ =$"></span>, <span class="MATH"><img width="15" height="29" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img365.png" alt="$ \le$"></span>, <span class="MATH"><img width="15" height="29" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img366.png" alt="$ \ge$"></span>), and bitwise boolean operations (bitwise-AND,
+OR, and exclusive-OR).
+</p><p>
+Any cell can be read or written in constant time.  A computer's memory
+is managed by a memory management system from which we can allocate or
+deallocate a block of memory of any size we would like. Allocating a
+block of memory of size <span class="MATH"><img width="13" height="30" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img367.png" alt="$ k$"></span> takes <span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img368.png" alt="$ O(k)$"></span> time and returns a reference
+(a pointer) to the newly-allocated memory block.  This reference is
+small enough to be represented by a single word.
+</p><p>
+The word-size <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img369.png" alt="$ \mathtt{w}$"></span> is a very important parameter of this model.  The only
+assumption we will make about <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img370.png" alt="$ \mathtt{w}$"></span> is the lower-bound <!-- MATH
+ $\ensuremath{\mathtt{w}} \ge \log \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="62" height="30" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img371.png" alt="$ \ensuremath{\mathtt{w}} \ge \log \ensuremath{\mathtt{n}}$"></span>,
+where <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img372.png" alt="$ \mathtt{n}$"></span> is the number of elements stored in any of our data structures.
+This is a fairly modest assumption, since otherwise a word is not even
+big enough to count the number of elements stored in the data structure.
+</p><p>
+Space is measured in words, so that when we talk about the amount of
+space used by a data structure, we are referring to the number of words
+of memory used by the structure.  All of our data structures store values of
+a generic type <!-- MATH
+ $\mathtt{T}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img373.png" alt="$ \mathtt{T}$"></span>, and we assume an element of type <!-- MATH
+ $\mathtt{T}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img374.png" alt="$ \mathtt{T}$"></span> occupies one word
+of memory.  (In reality, we are storing references to objects
+of type <!-- MATH
+ $\mathtt{T}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img375.png" alt="$ \mathtt{T}$"></span>, and these references occupy only one word of memory.)
+</p><p>
+The <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/1.4 The Model of Computation_files/img376.png" alt="$ \mathtt{w}$"></span>-bit word-RAM model is a fairly close match for the
+(32-bit) Java Virtual Machine (JVM) when <!-- MATH
+ $\ensuremath{\mathtt{w}}=32$
+ -->
+<span class="MATH"><img width="47" height="29" align="MIDDLE" border="0" src="static/1.4 The Model of Computation_files/img377.png" alt="$ \ensuremath{\mathtt{w}}=32$"></span>. The data structures presented in this book don't
+use any special tricks that are not implementable on the JVM and most
+other architectures.
+</p><p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/1.4 The Model of Computation_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

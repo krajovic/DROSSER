@@ -1,0 +1,743 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>7.2 Treap: A Randomized Binary Search Tree</title>
+<meta name="description" content="7.2 Treap: A Randomized Binary Search Tree">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/7.2 Treap_ A Randomized Binary Search Tree_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/7_3_Discussion_Exercises.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/7_1_Random_Binary_Search_Tr.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/7_Random_Binary_Search_Tree.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/7_3_Discussion_Exercises.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<hr>
+<h1><a name="SECTION001020000000000000000"></a>
+<a name="sec:treap"></a>
+<br>
+<span class="arabic">7</span>.<span class="arabic">2</span> <tt>Treap</tt>: A Randomized Binary Search Tree
+</h1>
+<p>
+<a name="21905"></a>The problem with random binary search trees is, of course, that they are
+not dynamic.  They don't support the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2967.png" alt="$ \mathtt{add(x)}$"></span> or <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2968.png" alt="$ \mathtt{remove(x)}$"></span> operations
+needed to implement the <tt>SSet</tt> interface.  In this section we describe
+a data structure called a <tt>Treap</tt> that uses Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a> to implement
+the <tt>SSet</tt> interface.<a name="tex2html62" href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#foot21908"><sup><span class="arabic">7</span>.<span class="arabic">2</span></sup></a>
+</p><p>
+A node in a <tt>Treap</tt> is like a node in a <tt>BinarySearchTree</tt> in that it has
+a data value, <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2969.png" alt="$ \mathtt{x}$"></span>, but it also contains a unique numerical <span class="textit">priority</span>,
+<!-- MATH
+ $\mathtt{p}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2970.png" alt="$ \mathtt{p}$"></span>, that is assigned at random:
+</p><pre>    class Node&lt;T&gt; extends BinarySearchTree.BSTNode&lt;Node&lt;T&gt;,T&gt; {
+        int p;
+    }
+</pre>
+In addition to being a binary search tree, the nodes in a <tt>Treap</tt>
+also obey the <span class="textit">heap property</span>:
+<ul>
+<li>(Heap Property)  At every node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2971.png" alt="$ \mathtt{u}$"></span>, except the root, 
+      <!-- MATH
+ $\ensuremath{\mathtt{u.parent.p}} < \ensuremath{\mathtt{u.p}}$
+ -->
+<span class="MATH"><img width="117" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2972.png" alt="$ \ensuremath{\mathtt{u.parent.p}} &lt; \ensuremath{\mathtt{u.p}}$"></span>.
+      <a name="21363"></a></li>
+</ul>
+In other words, each node has a priority smaller than that of its two
+children.  An example is shown in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#fig:treap">7.5</a>.
+<p>
+</p><div align="CENTER"><a name="fig:treap"></a><a name="22161"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 7.5:</strong>
+An example of a <tt>Treap</tt> containing the integers
+  <!-- MATH
+ $0,\ldots,9$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2974.png" alt="$ 0,\ldots,9$"></span>. Each node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2975.png" alt="$ \mathtt{u}$"></span>, is illustrated as a box containing <!-- MATH
+ $\ensuremath{\mathtt{u.x}},\ensuremath{\mathtt{u.p}}$
+ -->
+<span class="MATH"><img width="51" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2976.png" alt="$ \ensuremath{\mathtt{u.x}},\ensuremath{\mathtt{u.p}}$"></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="547" height="247" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2973.png" alt="\includegraphics[width=\textwidth ]{figs/treap}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The heap and binary search tree conditions together ensure that, once
+the key (<!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2977.png" alt="$ \mathtt{x}$"></span>) and priority (<!-- MATH
+ $\mathtt{p}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2978.png" alt="$ \mathtt{p}$"></span>) for each node are defined, the
+shape of the <tt>Treap</tt> is completely determined. The heap property tells us that
+the node with minimum priority has to be the root, <!-- MATH
+ $\mathtt{r}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2979.png" alt="$ \mathtt{r}$"></span>, of the <tt>Treap</tt>.
+The binary search tree property tells us that all nodes with keys smaller
+than <!-- MATH
+ $\mathtt{r.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2980.png" alt="$ \mathtt{r.x}$"></span> are stored in the subtree rooted at <!-- MATH
+ $\mathtt{r.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2981.png" alt="$ \mathtt{r.left}$"></span> and all nodes
+with keys larger than <!-- MATH
+ $\mathtt{r.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2982.png" alt="$ \mathtt{r.x}$"></span> are stored in the subtree rooted at <!-- MATH
+ $\mathtt{r.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2983.png" alt="$ \mathtt{r.right}$"></span>.
+</p><p>
+The important point about the priority values in a <tt>Treap</tt> is that they
+are unique and assigned at random.  Because of this, there are
+two equivalent ways we can think about a <tt>Treap</tt>.  As defined above, a
+<tt>Treap</tt> obeys the heap and binary search tree properties.  Alternatively,
+we can think of a <tt>Treap</tt> as a <tt>BinarySearchTree</tt> whose nodes
+were added in increasing order of priority.  For example, the <tt>Treap</tt>
+in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#fig:treap">7.5</a> can be obtained by adding the sequence of <!-- MATH
+ $(\ensuremath{\mathtt{x}},\ensuremath{\mathtt{p}})$
+ -->
+<span class="MATH"><img width="37" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2984.png" alt="$ (\ensuremath{\mathtt{x}},\ensuremath{\mathtt{p}})$"></span>
+values 
+</p><p><!-- MATH
+ \begin{displaymath}
+\langle
+   (3,1), (1,6), (0,9), (5,11), (4,14), (9,17), (7,22), (6,42), (8,49), (2,99)
+  \rangle
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="464" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2985.png" alt="$\displaystyle \langle
+(3,1), (1,6), (0,9), (5,11), (4,14), (9,17), (7,22), (6,42), (8,49), (2,99)
+\rangle
+$">
+</div><p></p>
+into a <tt>BinarySearchTree</tt>.
+<p>
+Since the priorities are chosen randomly, this is equivalent to taking a
+random permutation of the keys--in this case the permutation is
+</p><p><!-- MATH
+ \begin{displaymath}
+\langle 3, 1, 0, 5, 9, 4, 7, 6, 8, 2 \rangle
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="154" height="30" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2986.png" alt="$\displaystyle \langle 3, 1, 0, 5, 9, 4, 7, 6, 8, 2 \rangle
+$">
+</div><p></p>
+--and adding these to a <tt>BinarySearchTree</tt>.  But this means that the
+shape of a treap is identical to that of a random binary search tree.
+In particular, if we replace each key <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2987.png" alt="$ \mathtt{x}$"></span> by its rank,<a name="tex2html64" href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#foot22162"><sup><span class="arabic">7</span>.<span class="arabic">3</span></sup></a> then Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a> applies.
+Restating Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a> in terms of <tt>Treap</tt>s, we have:
+<p>
+</p><div><a name="lem:rbs-treap"><b>Lemma  <span class="arabic">7</span>..<span class="arabic">2</span></b></a> &nbsp; 
+<i>In a <tt>Treap</tt> that stores a set <span class="MATH"><img width="14" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2992.png" alt="$ S$"></span> of <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2993.png" alt="$ \mathtt{n}$"></span> keys, the following statements hold:
+  </i>
+<ol>
+<li>For any <!-- MATH
+ $\ensuremath{\mathtt{x}}\in S$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2994.png" alt="$ \ensuremath{\mathtt{x}}\in S$"></span>, the expected length of
+    the search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2995.png" alt="$ \mathtt{x}$"></span> is <!-- MATH
+ $H_{r(\ensuremath{\mathtt{x}})+1} + H_{\ensuremath{\mathtt{n}}-r(\ensuremath{\mathtt{x}})} - O(1)$
+ -->
+<span class="MATH"><img width="160" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2996.png" alt="$ H_{r(\ensuremath{\mathtt{x}})+1} + H_{\ensuremath{\mathtt{n}}-r(\ensuremath{\mathtt{x}})} - O(1)$"></span>.
+</li>
+<li>For any <!-- MATH
+ $\ensuremath{\mathtt{x}}\not\in S$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2997.png" alt="$ \ensuremath{\mathtt{x}}\not\in S$"></span>, the expected length of the
+    search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2998.png" alt="$ \mathtt{x}$"></span> is <!-- MATH
+ $H_{r(\ensuremath{\mathtt{x}})} + H_{\ensuremath{\mathtt{n}}-r(\ensuremath{\mathtt{x}})}$
+ -->
+<span class="MATH"><img width="99" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2999.png" alt="$ H_{r(\ensuremath{\mathtt{x}})} + H_{\ensuremath{\mathtt{n}}-r(\ensuremath{\mathtt{x}})}$"></span>.
+  
+</li>
+</ol><i>
+  Here, <!-- MATH
+ $r(\ensuremath{\mathtt{x}})$
+ -->
+<span class="MATH"><img width="30" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3000.png" alt="$ r(\ensuremath{\mathtt{x}})$"></span> denotes the rank of <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3001.png" alt="$ \mathtt{x}$"></span> in the set <!-- MATH
+ $S\cup\{\ensuremath{\mathtt{x}}\}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3002.png" alt="$ S\cup\{\ensuremath{\mathtt{x}}\}$"></span>.</i></div><p></p>
+Again, we emphasize that the expectation in Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#lem:rbs-treap">7.2</a> is taken
+over the random choices of the priorities for each node.  It does not
+require any assumptions about the randomness in the keys.
+<p>
+Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#lem:rbs-treap">7.2</a> tells us that <tt>Treap</tt>s can implement the <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3003.png" alt="$ \mathtt{find(x)}$"></span>
+operation efficiently. However, the real benefit of a <tt>Treap</tt> is that
+it can support the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3004.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{delete(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3005.png" alt="$ \mathtt{delete(x)}$"></span> operations.  To
+do this, it needs to perform rotations in order to maintain the heap property.  Refer to Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#fig:rotations">7.6</a>.
+A <span class="textit">rotation</span>
+<a name="21431"></a>in a binary
+search tree is a local modification that takes a parent <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3006.png" alt="$ \mathtt{u}$"></span> of a node <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3007.png" alt="$ \mathtt{w}$"></span>
+and makes <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3008.png" alt="$ \mathtt{w}$"></span> the parent of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3009.png" alt="$ \mathtt{u}$"></span>, while preserving the binary search tree
+property. Rotations come in two flavours: <span class="textit">left</span> or <span class="textit">right</span>
+depending on whether <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3010.png" alt="$ \mathtt{w}$"></span> is a right or left child of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3011.png" alt="$ \mathtt{u}$"></span>, respectively.
+<a name="21440"></a><a name="21441"></a>
+</p><p>
+</p><div align="CENTER"><a name="fig:rotations"></a><a name="21446"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 7.6:</strong>
+Left and right rotations in a binary search tree.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="553" height="207" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3012.png" alt="\includegraphics[width=\textwidth ]{figs/rotation}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The code that implements this has to handle these two possibilities and
+be careful of a boundary case (when <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3013.png" alt="$ \mathtt{u}$"></span> is the root), so the actual code
+is a little longer than Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#fig:rotations">7.6</a> would lead a reader to believe:
+</p><pre>    void rotateLeft(Node u) {
+        Node w = u.right;
+        w.parent = u.parent;
+        if (w.parent != nil) {
+            if (w.parent.left == u) {
+                w.parent.left = w;
+            } else {
+                w.parent.right = w;
+            }
+        }
+        u.right = w.left;
+        if (u.right != nil) {
+            u.right.parent = u;
+        }
+        u.parent = w;
+        w.left = u;
+        if (u == r) { r = w; r.parent = nil; }
+    }    
+    void rotateRight(Node u) {
+        Node w = u.left;
+        w.parent = u.parent;
+        if (w.parent != nil) {
+            if (w.parent.left == u) {
+                w.parent.left = w;
+            } else {
+                w.parent.right = w;
+            }
+        }
+        u.left = w.right;
+        if (u.left != nil) {
+            u.left.parent = u;
+        }
+        u.parent = w;
+        w.right = u;
+        if (u == r) { r = w; r.parent = nil; }
+    }
+</pre>
+<a name="page:rotations"></a>In terms of the <tt>Treap</tt> data structure, the most important property of a
+rotation is that the depth of <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3014.png" alt="$ \mathtt{w}$"></span> decreases by one while the depth of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3015.png" alt="$ \mathtt{u}$"></span>
+increases by one.
+<p>
+Using rotations, we can implement the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3016.png" alt="$ \mathtt{add(x)}$"></span> operation as follows:
+We create a new node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3017.png" alt="$ \mathtt{u}$"></span>, assign <!-- MATH
+ $\mathtt{u.x=x}$
+ -->
+<span class="MATH"><img width="51" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3018.png" alt="$ \mathtt{u.x=x}$"></span>, and pick a random value
+for <!-- MATH
+ $\mathtt{u.p}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3019.png" alt="$ \mathtt{u.p}$"></span>.  Next we add <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3020.png" alt="$ \mathtt{u}$"></span> using the usual <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3021.png" alt="$ \mathtt{add(x)}$"></span> algorithm
+for a <tt>BinarySearchTree</tt>, so that <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3022.png" alt="$ \mathtt{u}$"></span> is now a leaf of the <tt>Treap</tt>.
+At this point, our <tt>Treap</tt> satisfies the binary search tree property,
+but not necessarily the heap property.  In particular, it may be the
+case that <!-- MATH
+ $\mathtt{u.parent.p > u.p}$
+ -->
+<span class="MATH"><img width="117" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3023.png" alt="$ \mathtt{u.parent.p &gt; u.p}$"></span>.  If this is the case, then we perform a
+rotation at node <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3024.png" alt="$ \mathtt{w}$"></span>=<!-- MATH
+ $\mathtt{u.parent}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3025.png" alt="$ \mathtt{u.parent}$"></span> so that <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3026.png" alt="$ \mathtt{u}$"></span> becomes the parent of <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3027.png" alt="$ \mathtt{w}$"></span>.
+If <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3028.png" alt="$ \mathtt{u}$"></span> continues to violate the heap property, we will have to repeat this, decreasing <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3029.png" alt="$ \mathtt{u}$"></span>'s depth by one every time, until
+<!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3030.png" alt="$ \mathtt{u}$"></span> either becomes the root or <!-- MATH
+ $\ensuremath{\mathtt{u.parent.p}} < \ensuremath{\mathtt{u.p}}$
+ -->
+<span class="MATH"><img width="117" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3031.png" alt="$ \ensuremath{\mathtt{u.parent.p}} &lt; \ensuremath{\mathtt{u.p}}$"></span>.
+</p><pre>    boolean add(T x) {
+        Node&lt;T&gt; u = newNode();
+        u.x = x;
+        u.p = rand.nextInt();
+        if (super.add(u)) {
+            bubbleUp(u);
+            return true;
+        }
+        return false;
+    }
+    void bubbleUp(Node&lt;T&gt; u) {
+        while (u.parent != nil &amp;&amp; u.parent.p &gt; u.p) {
+            if (u.parent.right == u) {
+                rotateLeft(u.parent);
+            } else {
+                rotateRight(u.parent);
+            }
+        }
+        if (u.parent == nil) {
+            r = u;
+        }
+    }
+</pre>
+An example of an <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3032.png" alt="$ \mathtt{add(x)}$"></span> operation is shown in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#fig:treap-add">7.7</a>.
+<p>
+</p><div align="CENTER"><a name="fig:treap-add"></a><a name="21973"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 7.7:</strong>
+Adding the value 1.5 into the <tt>Treap</tt> from Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#fig:treap">7.5</a>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="547" height="247" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3033.png" alt="\includegraphics[width=\textwidth ]{figs/treap-insert-a}"> 
+<br>  <img width="547" height="247" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3034.png" alt="\includegraphics[width=\textwidth ]{figs/treap-insert-b}"> 
+<br>  <img width="547" height="247" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3035.png" alt="\includegraphics[width=\textwidth ]{figs/treap-insert-c}"> 
+<br>  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The running time of the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3036.png" alt="$ \mathtt{add(x)}$"></span> operation is given by the time it
+takes to follow the search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3037.png" alt="$ \mathtt{x}$"></span> plus the number of rotations
+performed to move the newly-added node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3038.png" alt="$ \mathtt{u}$"></span>, up to its correct location
+in the <tt>Treap</tt>.  By Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#lem:rbs-treap">7.2</a>, the expected length of the
+search path is at most <!-- MATH
+ $2\ln \ensuremath{\mathtt{n}}+O(1)$
+ -->
+<span class="MATH"><img width="87" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3039.png" alt="$ 2\ln \ensuremath{\mathtt{n}}+O(1)$"></span>.  Furthermore, each rotation
+decreases the depth of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3040.png" alt="$ \mathtt{u}$"></span>.   This stops if <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3041.png" alt="$ \mathtt{u}$"></span> becomes the root, so
+the expected number of rotations cannot exceed the expected length of
+the search path.  Therefore, the expected running time of the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3042.png" alt="$ \mathtt{add(x)}$"></span>
+operation in a <tt>Treap</tt> is <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3043.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>.  (Exercise&nbsp;<a href="http://opendatastructures.org/ods-java/7_3_Discussion_Exercises.html#exc:treap-rotates">7.5</a>
+asks you to show that the expected number of rotations performed during
+an addition is actually only <span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3044.png" alt="$ O(1)$"></span>.)
+</p><p>
+The <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3045.png" alt="$ \mathtt{remove(x)}$"></span> operation in a <tt>Treap</tt> is the opposite of the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3046.png" alt="$ \mathtt{add(x)}$"></span>
+operation.  We search for the node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3047.png" alt="$ \mathtt{u}$"></span>, containing <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3048.png" alt="$ \mathtt{x}$"></span>, then perform
+rotations to move <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3049.png" alt="$ \mathtt{u}$"></span> downwards until it becomes a leaf, and then we
+splice <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3050.png" alt="$ \mathtt{u}$"></span> from the <tt>Treap</tt>.  Notice that, to move <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3051.png" alt="$ \mathtt{u}$"></span> downwards, we can
+perform either a left or right rotation at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3052.png" alt="$ \mathtt{u}$"></span>, which will replace <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3053.png" alt="$ \mathtt{u}$"></span>
+with <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3054.png" alt="$ \mathtt{u.right}$"></span> or <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3055.png" alt="$ \mathtt{u.left}$"></span>, respectively.
+The choice is made by the first of the following that apply:
+</p><ol>
+<li>If <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3056.png" alt="$ \mathtt{u.left}$"></span> and <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3057.png" alt="$ \mathtt{u.right}$"></span> are both <!-- MATH
+ $\mathtt{null}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3058.png" alt="$ \mathtt{null}$"></span>, then <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3059.png" alt="$ \mathtt{u}$"></span> is a leaf and no rotation is performed.
+</li>
+<li>If <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3060.png" alt="$ \mathtt{u.left}$"></span> (or <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3061.png" alt="$ \mathtt{u.right}$"></span>) is <!-- MATH
+ $\mathtt{null}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3062.png" alt="$ \mathtt{null}$"></span>, then perform a right (or left, respectively) rotation at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3063.png" alt="$ \mathtt{u}$"></span>.
+</li>
+<li>If <!-- MATH
+ $\ensuremath{\mathtt{u.left.p}} < \ensuremath{\mathtt{u.right.p}}$
+ -->
+<span class="MATH"><img width="146" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3064.png" alt="$ \ensuremath{\mathtt{u.left.p}} &lt; \ensuremath{\mathtt{u.right.p}}$"></span> (or <!-- MATH
+ $\ensuremath{\mathtt{u.left.p}} > \ensuremath{\mathtt{u.right.p}})$
+ -->
+<span class="MATH"><img width="151" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3065.png" alt="$ \ensuremath{\mathtt{u.left.p}} &gt; \ensuremath{\mathtt{u.right.p}})$"></span>, then perform a right rotation (or left rotation, respectively) at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3066.png" alt="$ \mathtt{u}$"></span>.
+</li>
+</ol>
+These three rules ensure that the <tt>Treap</tt> doesn't become disconnected and that the heap property is restored once <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3067.png" alt="$ \mathtt{u}$"></span> is removed.
+<pre>    boolean remove(T x) {
+        Node&lt;T&gt; u = findLast(x);
+        if (u != nil &amp;&amp; compare(u.x, x) == 0) {
+            trickleDown(u);
+            splice(u);
+            return true;
+        }
+        return false;
+    }
+    void trickleDown(Node&lt;T&gt; u) {
+        while (u.left != nil || u.right != nil) {
+            if (u.left == nil) {
+                rotateLeft(u);
+            } else if (u.right == nil) {
+                rotateRight(u);
+            } else if (u.left.p &lt; u.right.p) {
+                rotateRight(u);
+            } else {
+                rotateLeft(u);
+            }
+            if (r == u) {
+                r = u.parent;
+            }
+        }
+    }
+</pre>
+An example of the <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3068.png" alt="$ \mathtt{remove(x)}$"></span> operation is shown in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#fig:treap-remove">7.8</a>.
+<div align="CENTER"><a name="fig:treap-remove"></a><a name="22008"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 7.8:</strong>
+Removing the value 9 from the <tt>Treap</tt> in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#fig:treap">7.5</a>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="510" height="230" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3069.png" alt="\includegraphics[height=.25\textheight ]{figs/treap-delete-a}"> 
+<br>  <img width="510" height="230" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3070.png" alt="\includegraphics[height=.25\textheight ]{figs/treap-delete-b}"> 
+<br>  <img width="510" height="230" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3071.png" alt="\includegraphics[height=.25\textheight ]{figs/treap-delete-c}"> 
+<br>  <img width="465" height="182" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3072.png" alt="\includegraphics[height=.25\textheight ]{figs/treap-delete-d}"> 
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The trick to analyze the running time of the <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3073.png" alt="$ \mathtt{remove(x)}$"></span> operation is
+to notice that this operation reverses the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3074.png" alt="$ \mathtt{add(x)}$"></span> operation.
+In particular, if we were to reinsert <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3075.png" alt="$ \mathtt{x}$"></span>, using the same priority <!-- MATH
+ $\mathtt{u.p}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3076.png" alt="$ \mathtt{u.p}$"></span>,
+then the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3077.png" alt="$ \mathtt{add(x)}$"></span> operation would do exactly the same number of rotations
+and would restore the <tt>Treap</tt> to exactly the same state it was in before
+the <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3078.png" alt="$ \mathtt{remove(x)}$"></span> operation took place.  (Reading from bottom-to-top,
+Figure&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#fig:treap-remove">7.8</a> illustrates the addition of the value 9 into a
+<tt>Treap</tt>.) This means that the expected running time of the <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3079.png" alt="$ \mathtt{remove(x)}$"></span>
+on a <tt>Treap</tt> of size <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3080.png" alt="$ \mathtt{n}$"></span> is proportional to the expected running time
+of the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3081.png" alt="$ \mathtt{add(x)}$"></span> operation on a <tt>Treap</tt> of size <!-- MATH
+ $\ensuremath{\mathtt{n}}-1$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3082.png" alt="$ \ensuremath{\mathtt{n}}-1$"></span>.  We conclude
+that the expected running time of <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3083.png" alt="$ \mathtt{remove(x)}$"></span> is <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3084.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>.
+</p><p>
+</p><h2><a name="SECTION001021000000000000000">
+<span class="arabic">7</span>.<span class="arabic">2</span>.<span class="arabic">1</span> Summary</a>
+</h2>
+<p>
+The following theorem summarizes the performance of the <tt>Treap</tt> data
+structure:
+</p><p>
+</p><p>
+</p><div><b>Theorem  <span class="arabic">7</span>..<span class="arabic">2</span></b> &nbsp; 
+<i>A <tt>Treap</tt> implements the <tt>SSet</tt> interface. A <tt>Treap</tt> supports
+the operations <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3085.png" alt="$ \mathtt{add(x)}$"></span>, <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3086.png" alt="$ \mathtt{remove(x)}$"></span>, and <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3087.png" alt="$ \mathtt{find(x)}$"></span> in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3088.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>
+expected time per operation.</i></div><p></p>
+<p>
+It is worth comparing the <tt>Treap</tt> data structure to the <tt>SkiplistSSet</tt>
+data structure.  Both implement the <tt>SSet</tt> operations in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3089.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>
+expected time per operation.  In both data structures, <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3090.png" alt="$ \mathtt{add(x)}$"></span> and
+<!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3091.png" alt="$ \mathtt{remove(x)}$"></span> involve a search and then a constant number of pointer changes
+(see Exercise&nbsp;<a href="http://opendatastructures.org/ods-java/7_3_Discussion_Exercises.html#exc:treap-rotates">7.5</a> below).  Thus, for both these structures,
+the expected length of the search path is the critical value in assessing
+their performance.  In a <tt>SkiplistSSet</tt>, the expected length of a search
+path is
+</p><p><!-- MATH
+ \begin{displaymath}
+2\log \ensuremath{\mathtt{n}} + O(1) \enspace ,
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="106" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3092.png" alt="$\displaystyle 2\log \ensuremath{\mathtt{n}} + O(1) \enspace ,
+$">
+</div><p></p>
+In a <tt>Treap</tt>, the expected length of a search path is 
+<p><!-- MATH
+ \begin{displaymath}
+2\ln \ensuremath{\mathtt{n}} +O(1) \approx 1.386\log \ensuremath{\mathtt{n}}  + O(1) \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="236" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3093.png" alt="$\displaystyle 2\ln \ensuremath{\mathtt{n}} +O(1) \approx 1.386\log \ensuremath{\mathtt{n}} + O(1) \enspace .
+$">
+</div><p></p>
+Thus, the search paths in a <tt>Treap</tt> are considerably shorter and this
+translates into noticeably faster operations on <tt>Treap</tt>s than <tt>Skiplist</tt>s.
+Exercise&nbsp;<a href="http://opendatastructures.org/ods-java/4_5_Discussion_Exercises.html#exc:skiplist-opt">4.7</a> in Chapter&nbsp;<a href="http://opendatastructures.org/ods-java/4_Skiplists.html#chap:skiplists">4</a> shows how the
+expected length of the search path in a <tt>Skiplist</tt> can be reduced to
+<p><!-- MATH
+ \begin{displaymath}
+e\ln \ensuremath{\mathtt{n}} + O(1) \approx 1.884\log \ensuremath{\mathtt{n}} + O(1)
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="222" height="31" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img3094.png" alt="$\displaystyle e\ln \ensuremath{\mathtt{n}} + O(1) \approx 1.884\log \ensuremath{\mathtt{n}} + O(1)
+$">
+</div><p></p>
+by using biased coin tosses.  Even with this optimization, the expected
+length of search paths in a <tt>SkiplistSSet</tt> is noticeably longer than in
+a <tt>Treap</tt>.
+<p>
+<br></p><hr><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot21908">... interface.</a><a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#tex2html62"><sup><span class="arabic">7</span>.<span class="arabic">2</span></sup></a></dt>
+<dd>The names <tt>Treap</tt> comes from the fact
+that this data structure is simultaneously a binary search <span class="textbf">tr</span>ee
+(Section&nbsp;<a href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html#sec:binarysearchtree">6.2</a>) and a h<span class="textbf">eap</span> (Chapter&nbsp;<a href="http://opendatastructures.org/ods-java/10_Heaps.html#chap:heaps">10</a>).
+</dd>
+<dt><a name="foot22162">... rank,</a><a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#tex2html64"><sup><span class="arabic">7</span>.<span class="arabic">3</span></sup></a></dt>
+<dd>The
+rank of an element <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2988.png" alt="$ \mathtt{x}$"></span> in a set <span class="MATH"><img width="14" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2989.png" alt="$ S$"></span> of elements is the number of
+elements in <span class="MATH"><img width="14" height="29" align="MIDDLE" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2990.png" alt="$ S$"></span> that are less than <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/img2991.png" alt="$ \mathtt{x}$"></span>.
+</dd>
+</dl>
+<div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/7.2 Treap_ A Randomized Binary Search Tree_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

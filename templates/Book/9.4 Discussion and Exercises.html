@@ -1,0 +1,332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0068)http://opendatastructures.org/ods-java/9_4_Discussion_Exercises.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>9.4 Discussion and Exercises</title>
+<meta name="description" content="9.4 Discussion and Exercises">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/9.4 Discussion and Exercises_files/ods-book.css">
+<link rel="previous" href="http://opendatastructures.org/ods-java/9_3_Summary.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/9_Red_Black_Trees.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/10_Heaps.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<h1><a name="SECTION001240000000000000000">
+<span class="arabic">9</span>.<span class="arabic">4</span> Discussion and Exercises</a>
+</h1>
+<p>
+Red-black trees were first introduced by Guibas and Sedgewick [<a href="http://opendatastructures.org/ods-java/Bibliography.html#gs78">38</a>].
+Despite their high implementation complexity they are found in some of
+the most commonly used libraries and applications.  Most algorithms and
+data structures textbooks discuss some variant of red-black trees.
+</p><p>
+Andersson [<a href="http://opendatastructures.org/ods-java/Bibliography.html#a93">6</a>] describes a left-leaning version of balanced trees
+that is similar to red-black trees but has the additional constraint
+that any node has at most one red child.  This implies that these trees
+simulate 2-3 trees rather than 2-4 trees.  They are significantly simpler,
+though, than the <tt>RedBlackTree</tt> structure presented in this chapter.
+</p><p>
+Sedgewick [<a href="http://opendatastructures.org/ods-java/Bibliography.html#s08">66</a>] describes two versions of left-leaning red-black
+trees.  These use recursion along with a simulation of top-down splitting
+and merging in 2-4 trees. The combination of these two techniques makes
+for particularly short and elegant code.
+</p><p>
+A related, and older, data structure is the <span class="textit">AVL tree</span> [<a href="http://opendatastructures.org/ods-java/Bibliography.html#avl62">3</a>].
+<a name="25553"></a>AVL trees are <span class="textit">height-balanced</span>:
+<a name="25555"></a><a name="25556"></a>At each node <span class="MATH"><img width="14" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3766.png" alt="$ u$"></span>, the height
+of the subtree rooted at <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3767.png" alt="$ \mathtt{u.left}$"></span> and the subtree rooted at <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3768.png" alt="$ \mathtt{u.right}$"></span>
+differ by at most one.  It follows immediately that, if <span class="MATH"><img width="33" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3769.png" alt="$ F(h)$"></span> is the
+minimum number of leaves in a tree of height <span class="MATH"><img width="13" height="30" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3770.png" alt="$ h$"></span>, then <span class="MATH"><img width="33" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3771.png" alt="$ F(h)$"></span> obeys the
+Fibonacci recurrence
+</p><p><!-- MATH
+ \begin{displaymath}
+F(h) = F(h-1) + F(h-2)
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="171" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3772.png" alt="$\displaystyle F(h) = F(h-1) + F(h-2)
+$">
+</div><p></p>
+with base cases <span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3773.png" alt="$ F(0)=1$"></span> and <span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3774.png" alt="$ F(1)=1$"></span>.  This means <span class="MATH"><img width="33" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3775.png" alt="$ F(h)$"></span> is approximately
+<!-- MATH
+ $\varphi^h/\sqrt{5}$
+ -->
+<span class="MATH"><img width="50" height="38" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3776.png" alt="$ \varphi^h/\sqrt{5}$"></span>, where <!-- MATH
+ $\varphi=(1+\sqrt{5})/2\approx1.61803399$
+ -->
+<span class="MATH"><img width="203" height="38" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3777.png" alt="$ \varphi=(1+\sqrt{5})/2\approx1.61803399$"></span> is the
+<span class="textit">golden ratio</span>.  (More precisely, <!-- MATH
+ $|\varphi^h/\sqrt{5} - F(h)|\le 1/2$
+ -->
+<span class="MATH"><img width="142" height="38" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3778.png" alt="$ \vert\varphi^h/\sqrt{5} - F(h)\vert\le 1/2$"></span>.)
+Arguing as in the proof of Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/9_1_2_4_Trees.html#lem:twofour-height">9.1</a>, this implies
+<p><!-- MATH
+ \begin{displaymath}
+h \le \log_\varphi \ensuremath{\mathtt{n}} \approx 1.440420088\log \ensuremath{\mathtt{n}} \enspace ,
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="226" height="30" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3779.png" alt="$\displaystyle h \le \log_\varphi \ensuremath{\mathtt{n}} \approx 1.440420088\log \ensuremath{\mathtt{n}} \enspace ,
+$">
+</div><p></p>
+so AVL trees have smaller height than red-black trees.  The height
+balancing can be maintained during <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3780.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3781.png" alt="$ \mathtt{remove(x)}$"></span> operations
+by walking back up the path to the root and performing a rebalancing
+operation at each node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3782.png" alt="$ \mathtt{u}$"></span> where the height of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3783.png" alt="$ \mathtt{u}$"></span>'s left and right
+subtrees differ by two.  See Figure&nbsp;<a href="http://opendatastructures.org/ods-java/9_4_Discussion_Exercises.html#fig:avl-rebalance">9.10</a>.
+<p>
+</p><div align="CENTER"><a name="fig:avl-rebalance"></a><a name="25575"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 9.10:</strong>
+Rebalancing in an AVL tree.  At most two rotations are required
+  to convert a node whose subtrees have a height of <span class="MATH"><img width="13" height="30" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3785.png" alt="$ h$"></span> and <span class="MATH"><img width="37" height="30" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3786.png" alt="$ h+2$"></span> into a node
+  whose subtrees each have a height of at most <span class="MATH"><img width="37" height="30" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3787.png" alt="$ h+1$"></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="344" height="471" align="BOTTOM" border="0" src="static/9.4 Discussion and Exercises_files/img3784.png" alt="\includegraphics[scale=0.90909]{figs/avl-rebalance}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Andersson's variant of red-black trees, Sedgewick's variant of red-black
+trees, and AVL trees are all simpler to implement than the <tt>RedBlackTree</tt>
+structure defined here.  Unfortunately, none of them can guarantee that
+the amortized time spent rebalancing is <span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3791.png" alt="$ O(1)$"></span> per update.  In particular,
+there is no analogue of Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/9_3_Summary.html#thm:redblack-amortized">9.2</a> for those structures.
+</p><p>
+</p><div align="CENTER"><a name="fig:redblack-example2"></a><a name="25582"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 9.11:</strong>
+A red-black tree on which to practice.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><img width="286" height="165" align="BOTTOM" border="0" src="static/9.4 Discussion and Exercises_files/img3792.png" alt="\includegraphics[scale=0.90909]{figs/redblack-example}"></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">1</span></b> &nbsp; 
+Illustrate the 2-4 tree that corresponds to the <tt>RedBlackTree</tt> in
+  Figure&nbsp;<a href="http://opendatastructures.org/ods-java/9_4_Discussion_Exercises.html#fig:redblack-example2">9.11</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">2</span></b> &nbsp; 
+Illustrate the addition of 13, then 3.5, then 3.3 on the <tt>RedBlackTree</tt>
+  in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/9_4_Discussion_Exercises.html#fig:redblack-example2">9.11</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">3</span></b> &nbsp; 
+Illustrate the removal of 11, then 9, then 5 on the <tt>RedBlackTree</tt> in 
+  Figure&nbsp;<a href="http://opendatastructures.org/ods-java/9_4_Discussion_Exercises.html#fig:redblack-example2">9.11</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">4</span></b> &nbsp; 
+Show that, for arbitrarily large values of <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.4 Discussion and Exercises_files/img3793.png" alt="$ \mathtt{n}$"></span>, there are red-black
+  trees with <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.4 Discussion and Exercises_files/img3794.png" alt="$ \mathtt{n}$"></span> nodes that have height <!-- MATH
+ $2\log \ensuremath{\mathtt{n}}-O(1)$
+ -->
+<span class="MATH"><img width="94" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3795.png" alt="$ 2\log \ensuremath{\mathtt{n}}-O(1)$"></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">5</span></b> &nbsp; 
+Consider the operations <!-- MATH
+ $\mathtt{pushBlack(u)}$
+ -->
+<span class="MATH"><img width="99" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3796.png" alt="$ \mathtt{pushBlack(u)}$"></span> and <!-- MATH
+ $\mathtt{pullBlack(u)}$
+ -->
+<span class="MATH"><img width="99" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3797.png" alt="$ \mathtt{pullBlack(u)}$"></span>.  What do
+  these operations do to the underlying 2-4 tree that is being simulated
+  by the red-black tree?</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">6</span></b> &nbsp; 
+Show that, for arbitrarily large values of <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.4 Discussion and Exercises_files/img3798.png" alt="$ \mathtt{n}$"></span>, there exist sequences
+  of <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3799.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3800.png" alt="$ \mathtt{remove(x)}$"></span> operations that lead to red-black trees
+  with <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.4 Discussion and Exercises_files/img3801.png" alt="$ \mathtt{n}$"></span> nodes that have height <!-- MATH
+ $2\log \ensuremath{\mathtt{n}}-O(1)$
+ -->
+<span class="MATH"><img width="94" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3802.png" alt="$ 2\log \ensuremath{\mathtt{n}}-O(1)$"></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">7</span></b> &nbsp; 
+Why does the method <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3803.png" alt="$ \mathtt{remove(x)}$"></span> in the <tt>RedBlackTree</tt> implementation
+  perform the assignment <!-- MATH
+ $\mathtt{u.parent=w.parent}$
+ -->
+<span class="MATH"><img width="147" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3804.png" alt="$ \mathtt{u.parent=w.parent}$"></span>?  Shouldn't this already
+  be done by the call to <!-- MATH
+ $\mathtt{splice(w)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3805.png" alt="$ \mathtt{splice(w)}$"></span>?</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">8</span></b> &nbsp; 
+Suppose a 2-4 tree, <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3806.png" alt="$ T$"></span>, has <!-- MATH
+ $\ensuremath{\mathtt{n}}_\ell$
+ -->
+<span class="MATH"><img width="19" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3807.png" alt="$ \ensuremath{\mathtt{n}}_\ell$"></span> leaves and <!-- MATH
+ $\ensuremath{\mathtt{n}}_i$
+ -->
+<span class="MATH"><img width="18" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3808.png" alt="$ \ensuremath{\mathtt{n}}_i$"></span> internal nodes.
+  
+<ol>
+<li>What is the minimum value of <!-- MATH
+ $\ensuremath{\mathtt{n}}_i$
+ -->
+<span class="MATH"><img width="18" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3809.png" alt="$ \ensuremath{\mathtt{n}}_i$"></span>, as a function of <!-- MATH
+ $\ensuremath{\mathtt{n}}_\ell$
+ -->
+<span class="MATH"><img width="19" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3810.png" alt="$ \ensuremath{\mathtt{n}}_\ell$"></span>?
+</li>
+<li>What is the maximum value of <!-- MATH
+ $\ensuremath{\mathtt{n}}_i$
+ -->
+<span class="MATH"><img width="18" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3811.png" alt="$ \ensuremath{\mathtt{n}}_i$"></span>, as a function of <!-- MATH
+ $\ensuremath{\mathtt{n}}_\ell$
+ -->
+<span class="MATH"><img width="19" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3812.png" alt="$ \ensuremath{\mathtt{n}}_\ell$"></span>?
+</li>
+<li>If <span class="MATH"><img width="20" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3813.png" alt="$ T&#39;$"></span> is a red-black tree that represents <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3814.png" alt="$ T$"></span>, then how many red
+     nodes does <span class="MATH"><img width="20" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3815.png" alt="$ T&#39;$"></span> have?
+  
+</li>
+</ol></div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">9</span></b> &nbsp; 
+Suppose you are given a binary search tree with <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.4 Discussion and Exercises_files/img3816.png" alt="$ \mathtt{n}$"></span> nodes and a
+  height of at most <!-- MATH
+ $2\log \ensuremath{\mathtt{n}}-2$
+ -->
+<span class="MATH"><img width="70" height="30" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3817.png" alt="$ 2\log \ensuremath{\mathtt{n}}-2$"></span>.  Is it always possible to colour the
+  nodes red and black so that the tree satisfies the black-height and
+  no-red-edge properties?  If so, can it also be made to satisfy the
+  left-leaning property?</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:redblack-merge"><b>Exercise  <span class="arabic">9</span>..<span class="arabic">10</span></b></a> &nbsp; 
+Suppose you have two red-black trees <span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3818.png" alt="$ T_1$"></span> and <span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3819.png" alt="$ T_2$"></span> that have the
+  same black height, <span class="MATH"><img width="13" height="30" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3820.png" alt="$ h$"></span>, and such that the largest key in <span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3821.png" alt="$ T_1$"></span> is smaller
+  than the smallest key in <span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3822.png" alt="$ T_2$"></span>.  Show how to merge <span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3823.png" alt="$ T_1$"></span> and <span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3824.png" alt="$ T_2$"></span>
+  into a single red-black tree in <span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3825.png" alt="$ O(h)$"></span> time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">11</span></b> &nbsp; 
+Extend your solution to Exercise&nbsp;<a href="http://opendatastructures.org/ods-java/9_4_Discussion_Exercises.html#exc:redblack-merge">9.10</a> to the case where the
+  two trees <span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3826.png" alt="$ T_1$"></span> and <span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3827.png" alt="$ T_2$"></span> have different black heights, <!-- MATH
+ $h_1\neq h_2$
+ -->
+<span class="MATH"><img width="53" height="30" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3828.png" alt="$ h_1\neq h_2$"></span>.
+  The running-time should be <!-- MATH
+ $O(\max\{h_1,h_2\})$
+ -->
+<span class="MATH"><img width="106" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3829.png" alt="$ O(\max\{h_1,h_2\})$"></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">12</span></b> &nbsp; 
+Prove that, during an <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3830.png" alt="$ \mathtt{add(x)}$"></span> operation, an AVL tree must perform
+  at most one rebalancing operation (that involves at most two rotations;
+  see Figure&nbsp;<a href="http://opendatastructures.org/ods-java/9_4_Discussion_Exercises.html#fig:avl-rebalance">9.10</a>).  Give an example of an AVL tree and a
+  <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3831.png" alt="$ \mathtt{remove(x)}$"></span> operation on that tree that requires on the order of <!-- MATH
+ $\log
+  \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="36" height="30" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3832.png" alt="$ \log
+\ensuremath{\mathtt{n}}$"></span> rebalancing operations.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">13</span></b> &nbsp; 
+Implement an <tt>AVLTree</tt> class that implements AVL trees as described
+  above.  Compare its performance to that of the <tt>RedBlackTree</tt>
+  implementation.   Which implementation has a faster <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3833.png" alt="$ \mathtt{find(x)}$"></span> operation?</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">9</span>..<span class="arabic">14</span></b> &nbsp; 
+Design and implement a series of experiments that compare the relative
+  performance of <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3834.png" alt="$ \mathtt{find(x)}$"></span>, <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3835.png" alt="$ \mathtt{add(x)}$"></span>, and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/9.4 Discussion and Exercises_files/img3836.png" alt="$ \mathtt{remove(x)}$"></span> for the <tt>SSet</tt> implemeentations <tt>SkiplistSSet</tt>,
+  <tt>ScapegoatTree</tt>, <tt>Treap</tt>, and <tt>RedBlackTree</tt>.  Be sure to include
+  multiple test scenarios, including cases where the data is random,
+  already sorted, is removed in random order, is removed in sorted order,
+  and so on.</div><p></p>
+<div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/9.4 Discussion and Exercises_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

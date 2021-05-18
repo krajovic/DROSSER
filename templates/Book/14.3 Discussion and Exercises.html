@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-python/14_3_Discussion_Exercises.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>14.3 Discussion and Exercises</title>
+<meta content="14.3 Discussion and Exercises" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/14.3 Discussion and Exercises_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/14_2_B_Trees.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/14_External_Memory_Searchin.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/Bibliography.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION001730000000000000000">
+<span class="arabic">14</span>.<span class="arabic">3</span> Discussion and Exercises</a>
+</h1>
+<p>
+The external memory model of computation was introduced by Aggarwal and
+Vitter [<a href="http://opendatastructures.org/ods-python/Bibliography.html#av88">4</a>].  It is sometimes also called the <span class="textit">I/O model</span>
+<a name="65134"></a>or the <span class="textit">disk access model</span>. 
+<a name="65136"></a>
+</p><p>
+<span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5829.png" width="14"/></span>-Trees are to external memory searching what binary search trees
+are to internal memory searching.  <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5830.png" width="14"/></span>-trees were introduced by Bayer
+and McCreight [<a href="http://opendatastructures.org/ods-python/Bibliography.html#bm70">9</a>] in 1970 and, less than ten years later, the
+title of Comer's ACM Computing Surveys article referred to
+them as ubiquitous [<a href="http://opendatastructures.org/ods-python/Bibliography.html#c79">15</a>].
+</p><p>
+Like binary search trees, there are many variants of <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5831.png" width="14"/></span>-Trees, including
+<span class="MATH"><img align="MIDDLE" alt="$ B^+$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5832.png" width="22"/></span>-trees,
+<a name="65139"></a><span class="MATH"><img align="MIDDLE" alt="$ B^*$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5834.png" width="20"/></span>-trees,
+<a name="65140"></a>and counted <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5836.png" width="14"/></span>-trees.
+<a name="65141"></a><span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5838.png" width="14"/></span>-trees are indeed
+ubiquitous and are the primary data structure in many file systems,
+including Apple's HFS+,
+<a name="65142"></a>Microsoft's NTFS, 
+<a name="65143"></a>and Linux's Ext4;
+<a name="65144"></a>every
+major database system; and key-value stores used in cloud computing.
+Graefe's recent survey [<a href="http://opendatastructures.org/ods-python/Bibliography.html#g10">36</a>] provides a 200+ page overview of the
+many modern applications, variants, and optimizations of <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5839.png" width="14"/></span>-trees.
+</p><p>
+<span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5840.png" width="14"/></span>-trees implement the SSet interface.  If only the USet interface
+is needed, then external memory hashing
+<a name="65146"></a>could be used as an alternative
+to <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5841.png" width="14"/></span>-trees.  External memory hashing schemes do exist; see, for example,
+Jensen and Pagh [<a href="http://opendatastructures.org/ods-python/Bibliography.html#jp08">43</a>].  These schemes implement the USet operations
+in <span class="MATH"><img align="MIDDLE" alt="$ O(1)$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5842.png" width="36"/></span> expected time in the external memory model. However, for a
+variety of reasons, many applications still use <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5843.png" width="14"/></span>-trees even though
+they only require USet operations.
+</p><p>
+One reason <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5844.png" width="14"/></span>-trees are such a popular choice is that they often perform
+better than their <!-- MATH
+ $O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5845.png" width="68"/></span> running time bounds suggest. The
+reason for this is that, in external memory settings, the value of <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5846.png" width="14"/></span>
+is typically quite large--in the hundreds or even thousands.  This means
+that 99% or even 99.9% of the data in a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5847.png" width="14"/></span>-tree is stored in the
+leaves.  In a database system with a large memory, it may be possible
+to cache all the internal nodes of a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5848.png" width="14"/></span>-tree in RAM, since they only
+represent 1% or 0.1% of the total data set.  When this happens,
+this means that a search in a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5849.png" width="14"/></span>-tree involves a very fast search in
+RAM, through the internal nodes, followed by a single external memory
+access to retrieve a leaf.
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">14</span>..<span class="arabic">1</span></b>   
+Show what happens when the keys 1.5 and then 7.5 are added to the
+  <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5850.png" width="14"/></span>-tree in Figure <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree">14.2</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">14</span>..<span class="arabic">2</span></b>   
+Show what happens when the keys 3 and then 4 are removed from the
+  <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5851.png" width="14"/></span>-tree in Figure <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree">14.2</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">14</span>..<span class="arabic">3</span></b>   
+What is the maximum number of internal nodes in a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5852.png" width="14"/></span>-tree that stores
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5853.png" width="13"/></span> keys (as a function of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5854.png" width="13"/></span> and <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5855.png" width="14"/></span>)?</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">14</span>..<span class="arabic">4</span></b>   
+The introduction to this chapter claims that <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5856.png" width="14"/></span>-trees only need an
+  internal memory of size <!-- MATH
+ $O(B+\log_B\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(B+\log_B\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5857.png" width="94"/></span>.  However, the implementation
+  given here actually requires more memory.
+  
+<ol>
+<li>Show that the implementation of the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5858.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5859.png" width="75"/></span>
+      methods given in this chapter use an internal memory
+      proportional to <!-- MATH
+ $B\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ B\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/14.3 Discussion and Exercises_files/img5860.png" width="57"/></span>.
+</li>
+<li>Describe how these methods could be modified in order to reduce their memory
+      consumption to <!-- MATH
+ $O(B + \log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(B + \log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5861.png" width="94"/></span>.
+  
+</li>
+</ol></div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">14</span>..<span class="arabic">5</span></b>   
+Draw the credits used in the proof of Lemma <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#lem:btree-split">14.1</a> on the trees
+  in Figures <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-add">14.6</a> and <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-remove-full">14.7</a>.  Verify
+  that (with three additional credits) it is possible to pay for the splits, 
+  merges, and borrows and maintain the credit invariant.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">14</span>..<span class="arabic">6</span></b>   
+Design a modified version of a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5862.png" width="14"/></span>-tree in which nodes can have anywhere
+  from <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5863.png" width="14"/></span> up to <span class="MATH"><img align="MIDDLE" alt="$ 3B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5864.png" width="23"/></span> children (and hence <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5865.png" width="38"/></span> up to <span class="MATH"><img align="MIDDLE" alt="$ 3B-1$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5866.png" width="46"/></span> keys).
+  Show that this new version of <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5867.png" width="14"/></span>-trees performs only <span class="MATH"><img align="MIDDLE" alt="$ O(m/B)$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5868.png" width="56"/></span> splits,
+  merges, and borrows during a sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5869.png" width="17"/></span> operations.  (Hint:
+  For this to work, you will have to be more agressive with merging,
+  sometimes merging two nodes before it is strictly necessary.)</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">14</span>..<span class="arabic">7</span></b>   
+In this exercise, you will design a modified method of splitting and
+  merging in <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5870.png" width="14"/></span>-trees that asymptotically reduces the number of splits,
+  borrows and merges by considering up to three nodes at a time.
+  
+<ol>
+<li>Let <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5871.png" width="13"/></span> be an overfull node and let <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5872.png" width="12"/></span> be a sibling immediately
+    to the right of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5873.png" width="13"/></span>.  There are two ways to fix the overflow at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5874.png" width="13"/></span>:
+    
+<ol>
+<li><!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5875.png" width="13"/></span> can give some of its keys to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5876.png" width="12"/></span>; or
+</li>
+<li><!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5877.png" width="13"/></span> can be split and the keys of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5878.png" width="13"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5879.png" width="12"/></span> can be evenly
+        distributed among <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5880.png" width="13"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5881.png" width="12"/></span>, and the newly created node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5882.png" width="16"/></span>.
+    
+</li>
+</ol>
+    Show that this can always be done in such a way that, after the
+    operation, each of the (at most 3) affected nodes has at least
+    <!-- MATH
+ $B+\alpha B$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ B+\alpha B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5883.png" width="50"/></span> keys and at most <!-- MATH
+ $2B-\alpha B$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2B-\alpha B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5884.png" width="59"/></span> keys, for some constant
+    <!-- MATH
+ $\alpha > 0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \alpha &gt; 0$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5885.png" width="40"/></span>.
+</li>
+<li>Let <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5886.png" width="13"/></span> be an underfull node and let <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5887.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5888.png" width="16"/></span> be siblings of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5889.png" width="13"/></span>
+    There are two ways to fix the underflow at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5890.png" width="13"/></span>:
+    
+<ol>
+<li>keys can be redistributed among <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5891.png" width="13"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5892.png" width="12"/></span>, and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5893.png" width="16"/></span>; or
+</li>
+<li><!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5894.png" width="13"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5895.png" width="12"/></span>, and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5896.png" width="16"/></span> can be merged into two nodes and the keys
+        of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5897.png" width="13"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5898.png" width="12"/></span>, and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5899.png" width="16"/></span> can be redistributed amongst these nodes.
+    
+</li>
+</ol>
+    Show that this can always be done in such a way that, after the
+    operation, each of the (at most 3) affected nodes has at least
+    <!-- MATH
+ $B+\alpha B$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ B+\alpha B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5900.png" width="50"/></span> keys and at most <!-- MATH
+ $2B-\alpha B$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2B-\alpha B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5901.png" width="59"/></span> keys, for some constant
+    <!-- MATH
+ $\alpha > 0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \alpha &gt; 0$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5902.png" width="40"/></span>.
+</li>
+<li>Show that, with these modifications, the number of 
+      merges, borrows, and splits that occur during <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5903.png" width="17"/></span> operations is <span class="MATH"><img align="MIDDLE" alt="$ O(m/B)$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5904.png" width="56"/></span>.
+  
+</li>
+</ol></div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">14</span>..<span class="arabic">8</span></b>   
+A <span class="MATH"><img align="MIDDLE" alt="$ B^+$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5905.png" width="22"/></span>-tree, illustrated in Figure <a href="http://opendatastructures.org/ods-python/14_3_Discussion_Exercises.html#fig:bplustree">14.11</a> stores every key in a
+  leaf and keeps its leaves stored as a doubly-linked list.  As usual,
+  each leaf stores between <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5906.png" width="38"/></span> and <span class="MATH"><img align="MIDDLE" alt="$ 2B-1$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5907.png" width="46"/></span> keys.  Above this list is
+  a standard <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5908.png" width="14"/></span>-tree that stores the largest value from each leaf but
+  the last.
+  
+<ol>
+<li>Describe fast implementations of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5909.png" width="50"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5910.png" width="75"/></span>,
+      and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5911.png" width="52"/></span> in a <span class="MATH"><img align="MIDDLE" alt="$ B^+$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5912.png" width="22"/></span>-tree.
+</li>
+<li>Explain how to efficiently implement the <!-- MATH
+ $\ensuremath{\mathrm{find\_range}(\ensuremath{\mathit{x}},\ensuremath{\mathit{y}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find\_range}(\ensuremath{\mathit{x}},\ensuremath{\mathit{y}})}$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5913.png" width="110"/></span> method,
+      that reports all values
+      greater than <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5914.png" width="12"/></span> and less than or equal to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{y}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{y}}}$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5915.png" width="12"/></span>, in
+      a <span class="MATH"><img align="MIDDLE" alt="$ B^+$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5916.png" width="22"/></span>-tree.
+</li>
+<li>Implement a class, BPlusTree, that implements <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5917.png" width="52"/></span>,
+      <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5918.png" width="50"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5919.png" width="75"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{find\_range}(\ensuremath{\mathit{x}},\ensuremath{\mathit{y}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find\_range}(\ensuremath{\mathit{x}},\ensuremath{\mathit{y}})}$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5920.png" width="110"/></span>.
+      <a name="65234"></a></li>
+<li><span class="MATH"><img align="MIDDLE" alt="$ B^+$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5921.png" width="22"/></span>-trees duplicate some of the keys because they are stored
+      both in the <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5922.png" width="14"/></span>-tree and in the list.  Explain why this duplication
+      does not add up to much for large values of <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5923.png" width="14"/></span>.
+  
+</li>
+</ol></div><p></p>
+<p>
+</p><div align="CENTER"><a name="fig:bplustree"></a><a name="65239"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 14.11:</strong>
+A <span class="MATH"><img align="MIDDLE" alt="$ B^+$" border="0" height="31" src="static/14.3 Discussion and Exercises_files/img5925.png" width="22"/></span>-tree is a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.3 Discussion and Exercises_files/img5926.png" width="14"/></span>-tree on top of a doubly-linked list of blocks.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/bplustree}" border="0" height="160" src="static/14.3 Discussion and Exercises_files/img5924.png" width="553"/></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><p>
+</p><p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/14.3 Discussion and Exercises_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

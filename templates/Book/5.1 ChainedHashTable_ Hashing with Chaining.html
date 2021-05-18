@@ -1,0 +1,941 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>5.1 ChainedHashTable: Hashing with Chaining</title>
+<meta content="5.1 ChainedHashTable: Hashing with Chaining" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/5.1 ChainedHashTable_ Hashing with Chaining_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/5_Hash_Tables.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/5_Hash_Tables.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<hr/>
+<h1><a name="SECTION00810000000000000000"></a>
+<a name="sec:hashtable"></a>
+<br/>
+<span class="arabic">5</span>.<span class="arabic">1</span> ChainedHashTable: Hashing with Chaining
+</h1>
+<p>
+<a name="23199"></a><a name="23200"></a><a name="23201"></a>A ChainedHashTable data structure uses <span class="textit">hashing with chaining</span> to store
+data as an array, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1901.png" width="10"/></span>, of lists.  An integer, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1902.png" width="13"/></span>, keeps track of the
+total number of items in all lists (see Figure <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#fig:chainedhashtable">5.1</a>):
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{initialize}(...
+...th{\ensuremath{\mathit{n}} \gets \ensuremath{0}}\\
+\end{flushleft}\end{leftbar}" border="0" height="120" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1903.png" width="214"/>
+<br/>
+</p><div align="CENTER"><a name="fig:chainedhashtable"></a><a name="28824"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 5.1:</strong>
+An example of a ChainedHashTable with <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=14$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=14$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1905.png" width="48"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}=16$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}=16$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1906.png" width="100"/></span>.  In this example <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}=6$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}=6$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1907.png" width="82"/></span></caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/chainedhashtable}" border="0" height="140" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1904.png" width="554"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<a name="23240"></a><a name="28825"></a>The <span class="textit">hash value</span> of a data item <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1909.png" width="12"/></span>, denoted <!-- MATH
+ $\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1910.png" width="56"/></span> is a value
+in the range <!-- MATH
+ $\{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1911.png" width="137"/></span>.  All items with hash value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1912.png" width="9"/></span>
+are stored in the list at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1913.png" width="25"/></span>.  To ensure that lists don't get too
+long, we maintain the invariant
+<p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \le \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \le \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}
+$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1914.png" width="92"/>
+</div><p></p>
+so that the average number of elements stored in one of these lists is 
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}} \le 1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}} \le 1$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1915.png" width="107"/></span>.
+<p>
+To add an element, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1916.png" width="12"/></span>, to the hash table, we first check if
+the length of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1917.png" width="10"/></span> needs to be increased and, if so, we grow <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1918.png" width="10"/></span>.
+With this out of the way we hash <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1919.png" width="12"/></span> to get an integer, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1920.png" width="9"/></span>, in the
+range <!-- MATH
+ $\{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1921.png" width="137"/></span>, and we append <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1922.png" width="12"/></span> to the list
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1923.png" width="25"/></span>:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{add}(\ensure...
+...return}} \ensuremath{\ensuremath{\mathit{true}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="140" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1924.png" width="283"/>
+<br/>
+Growing the table,
+if necessary, involves doubling the length of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1925.png" width="10"/></span> and reinserting
+all elements into the new table.  This strategy is exactly the same
+as the one used in the implementation of ArrayStack and the same
+result applies: The cost of growing is only constant when amortized
+over a sequence of insertions (see Lemma <a href="http://opendatastructures.org/ods-python/2_1_ArrayStack_Fast_Stack_O.html#lem:arraystack-amortized">2.1</a> on
+page <a href="http://opendatastructures.org/ods-python/2_1_ArrayStack_Fast_Stack_O.html#lem:arraystack-amortized"><img align="BOTTOM" alt="[*]" border="1" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/crossref.png"/></a>).
+</p><p>
+Besides growing, the only other work done when adding a new value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1926.png" width="12"/></span> to a
+ChainedHashTable involves appending <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1927.png" width="12"/></span> to the list <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1928.png" width="72"/></span>.  For
+any of the list implementations described in Chapters <a href="http://opendatastructures.org/ods-python/2_Array_Based_Lists.html#chap:arrays">2</a>
+or <a href="http://opendatastructures.org/ods-python/3_Linked_Lists.html#chap:linkedlists">3</a>, this takes only constant time.
+</p><p>
+To remove an element, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1929.png" width="12"/></span>, from the hash table, we iterate over the list
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1930.png" width="72"/></span> until we find <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1931.png" width="12"/></span> so that we can remove it:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove}(\ens...
+...\color{black} \textbf{return}} \ensuremath{nil} \\
+\end{flushleft}\end{leftbar}" border="0" height="197" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1932.png" width="313"/>
+<br/>
+This takes <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}})$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1933.png" width="77"/></span> time, where <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1934.png" width="18"/></span> denotes the length
+of the list stored at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1935.png" width="25"/></span>.
+</p><p>
+Searching for the element <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1936.png" width="12"/></span> in a hash table is similar.  We perform
+a linear search on the list <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1937.png" width="72"/></span>:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{find}(\ensur...
+...{return}} \ensuremath{\ensuremath{\mathit{nil}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="121" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1938.png" width="207"/>
+<br/>
+Again, this takes time proportional to the length of the list <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1939.png" width="72"/></span>.
+</p><p>
+The performance of a hash table depends critically on the choice of the
+hash function.  A good hash function will spread the elements evenly
+among the <!-- MATH
+ $\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1940.png" width="65"/></span> lists, so that the expected size of the list
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1941.png" width="72"/></span> is <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})})} = O(1)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})})} = O(1)$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1942.png" width="153"/></span>.  On the other hand, a bad
+hash function will hash all values (including <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1943.png" width="12"/></span>) to the same table
+location, in which case the size of the list <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1944.png" width="72"/></span> will be <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1945.png" width="13"/></span>.
+In the next section we describe a good hash function.
+</p><p>
+</p><h2><a name="SECTION00811000000000000000"></a>
+<a name="sec:multihash"></a>
+<br/>
+<span class="arabic">5</span>.<span class="arabic">1</span>.<span class="arabic">1</span> Multiplicative Hashing
+</h2>
+<p>
+<a name="23463"></a><a name="23464"></a>Multiplicative hashing is an efficient method of generating hash
+values based on modular arithmetic (discussed in Section <a href="http://opendatastructures.org/ods-python/2_3_ArrayQueue_Array_Based_.html#sec:arrayqueue">2.3</a>)
+and integer division.  It uses the <span class="MATH"><img align="MIDDLE" alt="$ \ddiv $" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1946.png" width="27"/></span> operator, which calculates
+the integral part of a quotient, while discarding the remainder.
+Formally, for any integers <span class="MATH"><img align="MIDDLE" alt="$ a\ge 0$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1947.png" width="38"/></span> and <span class="MATH"><img align="MIDDLE" alt="$ b\ge 1$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1948.png" width="39"/></span>, <!-- MATH
+ $a\ddiv b = \lfloor
+a/b\rfloor$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ a\ddiv b = \lfloor
+a/b\rfloor$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1949.png" width="95"/></span>.
+</p><p>
+In multiplicative hashing, we use a hash table of size <!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1950.png" width="20"/></span> for some
+integer <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{d}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{d}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1951.png" width="13"/></span> (called the <span class="textit">dimension</span>).  The formula for hashing an
+integer <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1952.png" width="118"/></span> is
+</p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}} = ((\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}\cdot\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}) \bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}) \ddiv 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}} ...
+...th{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}} \enspace .
+$" border="0" height="38" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1953.png" width="244"/>
+</div><p></p>
+Here, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{z}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{z}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1954.png" width="11"/></span> is a randomly chosen <span class="textit">odd</span> integer in
+<!-- MATH
+ $\{1,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{1,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1955.png" width="94"/></span>.  This hash function can be realized very
+efficiently by observing that, by default, operations on integers
+are already done modulo <!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1956.png" width="22"/></span> where <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1957.png" width="16"/></span> is the number of bits
+in an integer.<a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#foot28834" name="tex2html43"><sup><span class="arabic">5</span>.<span class="arabic">1</span></sup></a>  (See
+Figure <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#fig:multihashing">5.2</a>.) Furthermore, integer division by <!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1959.png" width="36"/></span>
+is equivalent to dropping the rightmost <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1960.png" width="39"/></span> bits in a binary
+representation (which is implemented by shifting the bits right by
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1961.png" width="39"/></span> using the <!-- MATH
+ $\ensuremath{\gg}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\gg}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1962.png" width="20"/></span>
+operator).  
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{hash}(\ensur...
+...ensuremath{\mathit{w}}-\ensuremath{\mathit{d}})}\\
+\end{flushleft}\end{leftbar}" border="0" height="67" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1963.png" width="328"/>
+<br/>
+<p>
+</p><div align="CENTER"><a name="fig:multihashing"></a><a name="28839"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 5.2:</strong>
+The operation of the multiplicative hash function with <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}=32$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}=32$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1964.png" width="51"/></span>
+    and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}=8$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}=8$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1965.png" width="39"/></span>.</caption>
+<tbody><tr><td><img alt="\begin{figure}\begin{center}
+\resizebox{.98\textwidth}{!}{
+\setlength{\arrayru...
+... \end{tabular}}
+\setlength{\arrayrulewidth}{.4pt}
+\end{center}
+\end{figure}" border="0" height="121" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1968.png" width="531"/></td></tr>
+</tbody></table>
+</div>
+<p>
+The following lemma, whose proof is deferred until later in this section,
+shows that multiplicative hashing does a good job of avoiding collisions:
+</p><p>
+</p><p>
+</p><div><a name="lem:universal-hashing"><b>Lemma  <span class="arabic">5</span>..<span class="arabic">1</span></b></a>   
+<i>Let <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1969.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{y}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{y}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1970.png" width="12"/></span> be any two values in <!-- MATH
+ $\{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1971.png" width="94"/></span> with
+  <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\neq \ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\neq \ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1972.png" width="37"/></span>. Then <!-- MATH
+ $\Pr\{\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}=\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{y}})}}\} \le 2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Pr\{\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}=\ensurem...
+...th{\mathit{y}})}}\} \le 2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1973.png" width="200"/></span>.</i></div><p></p>
+<p>
+With Lemma <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#lem:universal-hashing">5.1</a>, the performance of <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1974.png" width="75"/></span>, and
+<!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1975.png" width="52"/></span> are easy to analyze:
+</p><p>
+</p><p>
+</p><div><b>Lemma  <span class="arabic">5</span>..<span class="arabic">2</span></b>   
+<i>For any data value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1976.png" width="12"/></span>, the expected length of the list <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1977.png" width="72"/></span>
+  is at most <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} + 2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} + 2$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1978.png" width="44"/></span>, where <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1979.png" width="20"/></span> is the number of
+  occurrences of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1980.png" width="12"/></span> in the hash table.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  Let <span class="MATH"><img align="MIDDLE" alt="$ S$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1982.png" width="14"/></span> be the (multi-)set of elements stored in the hash table that
+  are not equal to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1983.png" width="12"/></span>.  For an element <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}\in S$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}\in S$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1984.png" width="38"/></span>, define the indicator
+  variable
+    <p><!-- MATH
+ \begin{displaymath}
+I_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}} = \left\{\begin{array}{ll}
+       1 & \mbox{if $\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}=\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{y}})}}$} \\
+       0 & \mbox{otherwise}
+       \end{array}\right.
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle I_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}} = \left\{\b...
+...h}(\ensuremath{\mathit{y}})}}$} \\
+0 &amp; \mbox{otherwise}
+\end{array}\right.
+$" border="0" height="56" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1985.png" width="221"/>
+</div><p></p>
+and notice that, by Lemma <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#lem:universal-hashing">5.1</a>, <!-- MATH
+ $\mathrm{E}[I_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}}] \le
+  2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}=2/\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathrm{E}[I_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}}] \le
+2/2^{\e...
+...hit{d}}}}}=2/\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}$" border="0" height="36" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1986.png" width="179"/></span>.  The expected length of the list <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})]}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1987.png" width="72"/></span>
+  is given by
+  <br/>
+<div align="CENTER" class="mathdisplay">
+<!-- MATH
+ \begin{eqnarray*}
+\mathrm{E}\left[\ensuremath{\ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})].\mathrm{size}()}}\right] &=& \mathrm{E}\left[\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} + \sum_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}\in S} I_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}}\right] \\
+    &=& \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} + \sum_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}\in S} \mathrm{E}[I_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}} ] \\
+    &\le& \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} + \sum_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}\in S} 2/\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}} \\
+    &\le& \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} + \sum_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}\in S} 2/\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \\
+    &\le& \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} + (\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}})2/\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \\
+    &\le& \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} + 2 \enspace ,
+\end{eqnarray*}
+ -->
+<table align="CENTER" cellpadding="0" width="100%">
+<tbody><tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \mathrm{E}\left[\ensuremath{\ensuremath{\ensuremath{\mathit{t}}[\mathrm{hash}(\ensuremath{\mathit{x}})].\mathrm{size}()}}\right]$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1988.png" width="134"/></td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle =$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1989.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \mathrm{E}\left[\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}...
+...mathit{y}}}}\in S} I_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}}\right]$" border="0" height="69" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1990.png" width="97"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle =$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1991.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\e...
+...{y}}}}\in S} \mathrm{E}[I_{\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}} ]$" border="0" height="57" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1992.png" width="92"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle \le$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1993.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\e...
+...}}}}\in S} 2/\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}$" border="0" height="57" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1994.png" width="136"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle \le$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1995.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\e...
+...uremath{\mathit{y}}}}\in S} 2/\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="57" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1996.png" width="84"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle \le$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1997.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\e...
+...{\ensuremath{\mathit{x}}}}})2/\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1998.png" width="110"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle \le$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1999.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} + 2 \enspace ,$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2000.png" width="56"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+</tbody></table></div>
+<br clear="ALL"/>
+  as required.
+ <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1981.png" width="17"/>
+</div><p></p>
+<p>
+Now, we want to prove Lemma <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#lem:universal-hashing">5.1</a>, but first we need a
+result from number theory.  In the following proof, we use the notation
+<!-- MATH
+ $(b_r,\ldots,b_0)_2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (b_r,\ldots,b_0)_2$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2001.png" width="80"/></span> to denote <!-- MATH
+ $\sum_{i=0}^r b_i2^i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \sum_{i=0}^r b_i2^i$" border="0" height="36" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2002.png" width="67"/></span>, where each <span class="MATH"><img align="MIDDLE" alt="$ b_i$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2003.png" width="17"/></span>
+is a bit, either 0 or 1.  In other words, <!-- MATH
+ $(b_r,\ldots,b_0)_2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (b_r,\ldots,b_0)_2$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2004.png" width="80"/></span> is
+the integer whose binary representation is given by <!-- MATH
+ $b_r,\ldots,b_0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ b_r,\ldots,b_0$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2005.png" width="62"/></span>.
+We use <span class="MATH"><img align="MIDDLE" alt="$ \star$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2006.png" width="13"/></span> to denote a bit of unknown value.
+</p><p>
+</p><p>
+</p><div><a name="lem:hashing-mapping"><b>Lemma  <span class="arabic">5</span>..<span class="arabic">3</span></b></a>   
+<i>Let <span class="MATH"><img align="MIDDLE" alt="$ S$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2007.png" width="14"/></span> be the set of odd integers in <!-- MATH
+ $\{1,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{1,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2008.png" width="94"/></span>; let <span class="MATH"><img align="MIDDLE" alt="$ q$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2009.png" width="12"/></span>
+  and <span class="MATH"><img align="MIDDLE" alt="$ i$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2010.png" width="10"/></span> be any two elements in <span class="MATH"><img align="MIDDLE" alt="$ S$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2011.png" width="14"/></span>.  Then there is exactly one value
+  <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}\in S$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}\in S$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2012.png" width="37"/></span> such that <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} = i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} = i$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2013.png" width="102"/></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  Since the number of choices for <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2015.png" width="11"/></span> and <span class="MATH"><img align="MIDDLE" alt="$ i$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2016.png" width="10"/></span> is the same, it is
+  sufficient to prove that there is <span class="textit">at most</span> one value <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}\in S$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}\in S$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2017.png" width="37"/></span> that
+  satisfies <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} = i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} = i$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2018.png" width="102"/></span>.
+<p>
+Suppose, for the sake of contradiction, that there are two such values
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{z}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{z}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2019.png" width="11"/></span> and <!-- MATH
+ $\ensuremath{z}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{z}'$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2020.png" width="16"/></span>, with <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}>\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}&gt;\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}'$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2021.png" width="40"/></span>.  Then
+  </p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} = \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}'q \bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} = i
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q\bmod 2^{\ensur...
+...athit{z}}}}'q \bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} = i
+$" border="0" height="33" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2022.png" width="198"/>
+</div><p></p>
+So
+  <p><!-- MATH
+ \begin{displaymath}
+(\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}')q\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} = 0
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle (\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\e...
+...thit{z}}}}')q\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} = 0
+$" border="0" height="33" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2023.png" width="142"/>
+</div><p></p>
+But this means that 
+  <p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:factors"></a><!-- MATH
+ \begin{equation}
+(\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}')q = k 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}
+\end{equation}
+ -->
+<table align="CENTER" cellpadding="0" class="equation" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="CENTER" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle (\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\e...
+...math{\mathit{z}}}}')q = k 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="33" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2024.png" width="101"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+(<span class="arabic">5</span>.<span class="arabic">1</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+for some integer <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2025.png" width="13"/></span>.  Thinking in terms of binary numbers, we have 
+  <p><!-- MATH
+ \begin{displaymath}
+(\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}')q = k\cdot(1,\underbrace{0,\ldots,0}_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}})_2 \enspace ,
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle (\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\e...
+...0,\ldots,0}_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}})_2 \enspace ,
+$" border="0" height="70" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2026.png" width="182"/>
+</div><p></p>
+so that the <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2027.png" width="16"/></span> trailing bits in the binary representation of
+  <!-- MATH
+ $(\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}')q$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}')q$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2028.png" width="57"/></span> are all 0's.
+<p>
+Furthermore <span class="MATH"><img align="MIDDLE" alt="$ k\neq 0$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2029.png" width="38"/></span>, since <span class="MATH"><img align="MIDDLE" alt="$ q\neq 0$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2030.png" width="38"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}'\neq 0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}'\neq 0$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2031.png" width="64"/></span>.  Since <span class="MATH"><img align="MIDDLE" alt="$ q$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2032.png" width="12"/></span>
+  is odd, it has no trailing 0's in its binary representation:
+  </p><p><!-- MATH
+ \begin{displaymath}
+q = (\star,\ldots,\star,1)_2 \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle q = (\star,\ldots,\star,1)_2 \enspace .
+$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2033.png" width="121"/>
+</div><p></p>
+Since <!-- MATH
+ $|\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}'| < 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \vert\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath...
+...ath{\mathit{z}}}}'\vert &lt; 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2034.png" width="80"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}'$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2035.png" width="38"/></span> has fewer than <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2036.png" width="16"/></span> trailing
+  0's in its binary representation:
+  <p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}' = (\star,\ldots,\star,1,\underbrace{0,\ldots,0}_{<\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}})_2
+      \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\en...
+...\ldots,0}_{&lt;\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}})_2
+\enspace .
+$" border="0" height="70" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2037.png" width="198"/>
+</div><p></p>
+Therefore, the product <!-- MATH
+ $(\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}')q$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}')q$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2038.png" width="57"/></span> has fewer than <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2039.png" width="16"/></span> trailing 0's in
+  its binary representation:
+  <p><!-- MATH
+ \begin{displaymath}
+(\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}')q = (\star,\cdots,\star,1,\underbrace{0,\ldots,0}_{<\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}})_2
+    \enspace .
+  
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle (\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\e...
+...ldots,0}_{&lt;\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}})_2
+\enspace .
+$" border="0" height="70" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2040.png" width="219"/>
+</div><p></p>
+Therefore <!-- MATH
+ $(\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}')q$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}')q$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2041.png" width="57"/></span> cannot satisfy (<a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#eq:factors">5.1</a>), yielding a
+  contradiction and completing the proof.
+ <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2014.png" width="17"/>
+</div><p></p>
+<p>
+The utility of Lemma <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#lem:hashing-mapping">5.3</a> comes from the following
+observation:  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{z}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{z}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2042.png" width="11"/></span> is chosen uniformly at random from <span class="MATH"><img align="MIDDLE" alt="$ S$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2043.png" width="14"/></span>, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{zt}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{zt}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2044.png" width="17"/></span>
+is uniformly distributed over <span class="MATH"><img align="MIDDLE" alt="$ S$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2045.png" width="14"/></span>.  In the following proof, it helps
+to think of the binary representation of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{z}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{z}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2046.png" width="11"/></span>, which consists of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2047.png" width="40"/></span>
+random bits followed by a 1.
+</p><p>
+</p><p></p>
+<div><i>Proof</i>.
+[Proof of Lemma <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#lem:universal-hashing">5.1</a>]
+  First we note that the condition <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}=\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{y}})}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}=\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{y}})}}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2049.png" width="125"/></span> is equivalent to
+  the statement ``the highest-order <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{d}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{d}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2050.png" width="13"/></span> bits of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}} \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\bmod2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}} \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\bmod2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2051.png" width="78"/></span>
+  and the highest-order <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{d}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{d}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2052.png" width="13"/></span> bits of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}} \ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}} \ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2053.png" width="78"/></span> are the same.''
+  A necessary condition of that statement is that the highest-order
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{d}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{d}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2054.png" width="13"/></span> bits in the binary representation of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ens...
+...emath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2055.png" width="112"/></span>
+  are either all 0's or all 1's.  That is,
+  <p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:all-zeros"></a><!-- MATH
+ \begin{equation}
+\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} =
+      (\underbrace{0,\ldots,0}_{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}},\underbrace{\star,\ldots,\star}_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}})_2 
+  
+\end{equation}
+ -->
+<table align="CENTER" cellpadding="0" class="equation" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="CENTER" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\en...
+...\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}})_2$" border="0" height="74" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2056.png" width="245"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+(<span class="arabic">5</span>.<span class="arabic">2</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+when <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{zx}}}}\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} > \ensuremath{\ensuremath{\ensuremath{\mathit{zy}}}}\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{zx}}}}\bmod 2^{\ensuremath{\ensure...
+...emath{\mathit{zy}}}}\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2057.png" width="169"/></span> or
+  <p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:all-ones"></a><!-- MATH
+ \begin{equation}
+\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} =
+      (\underbrace{1,\ldots,1}_{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}},\underbrace{\star,\ldots,\star}_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}})_2 
+       \enspace .
+  
+\end{equation}
+ -->
+<table align="CENTER" cellpadding="0" class="equation" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="CENTER" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\en...
+...{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}})_2 \enspace .$" border="0" height="74" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2058.png" width="257"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+(<span class="arabic">5</span>.<span class="arabic">3</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+when <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{zx}}}}\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} < \ensuremath{\ensuremath{\ensuremath{\mathit{zy}}}}\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{zx}}}}\bmod 2^{\ensuremath{\ensure...
+...emath{\mathit{zy}}}}\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2059.png" width="169"/></span>.
+  Therefore, we only have to bound the probability that 
+  <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ens...
+...emath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2060.png" width="112"/></span> looks like (<a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#eq:all-zeros">5.2</a>) or (<a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#eq:all-ones">5.3</a>).
+<p>
+Let <span class="MATH"><img align="MIDDLE" alt="$ q$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2061.png" width="12"/></span> be the unique odd integer such that <!-- MATH
+ $(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}})\bmod
+  2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}=q2^r$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-\ensuremath{\ensuremath{\en...
+...\mathit{y}}}})\bmod
+2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}=q2^r$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2062.png" width="145"/></span> for some integer <span class="MATH"><img align="MIDDLE" alt="$ r\ge 0$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2063.png" width="38"/></span>. By
+  Lemma <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#lem:hashing-mapping">5.3</a>, the binary representation of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q\bmod
+  2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q\bmod
+2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2064.png" width="78"/></span> has <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2065.png" width="40"/></span> random bits, followed by a 1:
+  </p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}  = (\underbrace{b_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1},\ldots,b_{1}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1},1)_2
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q\bmod 2^{\ensur...
+...}-1},\ldots,b_{1}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1},1)_2
+$" border="0" height="75" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2066.png" width="203"/>
+</div><p></p>
+Therefore, the binary representation of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q2^r\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ens...
+...th{\mathit{z}}}}q2^r\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2067.png" width="218"/></span> has
+  <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-r-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-r-1$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2068.png" width="62"/></span> random bits, followed by a 1, followed by <span class="MATH"><img align="MIDDLE" alt="$ r$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2069.png" width="11"/></span> 0's:
+  <p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}  =
+  \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}q2^{r}\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}} =
+      (\underbrace{b_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-r-1},\ldots,b_{1}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-r-1},1,\underbrace{0,0,\ldots,0}_{r})_2
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\en...
+...\ensuremath{\ensuremath{\mathit{w}}}}-r-1},1,\underbrace{0,0,\ldots,0}_{r})_2
+$" border="0" height="75" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2070.png" width="422"/>
+</div><p></p>
+We can now finish the proof:  If <!-- MATH
+ $r > \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ r &gt; \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2071.png" width="63"/></span>, then the <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{d}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{d}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2072.png" width="13"/></span>
+  higher order bits of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ens...
+...emath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2073.png" width="112"/></span> contain both 0's
+  and 1's, so the probability that <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}(\ensuremath{\ensuremath{\ens...
+...emath{\mathit{y}}}})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2074.png" width="112"/></span> looks
+  like (<a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#eq:all-zeros">5.2</a>) or (<a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#eq:all-ones">5.3</a>) is 0.  If <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2075.png" width="63"/></span>,
+  then the probability of looking like (<a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#eq:all-zeros">5.2</a>) is 0, but the
+  probability of looking like (<a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#eq:all-ones">5.3</a>) is <!-- MATH
+ $1/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}-1}=2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}-1}=2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2076.png" width="97"/></span>
+  (since we must have <!-- MATH
+ $b_1,\ldots,b_{d-1}=1,\ldots,1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ b_1,\ldots,b_{d-1}=1,\ldots,1$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2077.png" width="141"/></span>).  If <!-- MATH
+ $r < \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ r &lt; \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2078.png" width="63"/></span>,
+  then we must have <!-- MATH
+ $b_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-r-1},\ldots,b_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-r-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}=0,\ldots,0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ b_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-r-1},\ldots,b_{\ensuremat...
+...h{\mathit{w}}}}-r-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}=0,\ldots,0$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2079.png" width="184"/></span> or
+  <!-- MATH
+ $b_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-r-1},\ldots,b_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-r-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}=1,\ldots,1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ b_{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-r-1},\ldots,b_{\ensuremat...
+...h{\mathit{w}}}}-r-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}=1,\ldots,1$" border="0" height="30" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2080.png" width="184"/></span>.  The probability of each
+  of these cases is <!-- MATH
+ $1/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2081.png" width="35"/></span> and they are mutually exclusive, so the
+  probability of either of these cases is <!-- MATH
+ $2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2082.png" width="35"/></span>.  This completes
+  the proof.
+ <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2048.png" width="17"/>
+</div><p></p>
+<p>
+</p><h2><a name="SECTION00812000000000000000">
+<span class="arabic">5</span>.<span class="arabic">1</span>.<span class="arabic">2</span> Summary</a>
+</h2>
+<p>
+The following theorem summarizes the performance of a ChainedHashTable
+data structure:
+</p><p>
+</p><p>
+</p><div><a name="thm:hashtable"><b>Theorem  <span class="arabic">5</span>..<span class="arabic">1</span></b></a>   
+<i>A ChainedHashTable implements the USet interface.  Ignoring the cost of
+  calls to <!-- MATH
+ $\ensuremath{\mathrm{grow}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{grow}()}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2083.png" width="50"/></span>, a ChainedHashTable supports the operations <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2084.png" width="50"/></span>,
+  <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2085.png" width="75"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2086.png" width="52"/></span> in <span class="MATH"><img align="MIDDLE" alt="$ O(1)$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2087.png" width="36"/></span> expected time per operation.
+</i>
+<p>
+<i>Furthermore, beginning with an empty ChainedHashTable, any sequence of
+  <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2088.png" width="17"/></span> <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2089.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2090.png" width="75"/></span> operations results in a total of <span class="MATH"><img align="MIDDLE" alt="$ O(m)$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2091.png" width="40"/></span>
+  time spent during all calls to <!-- MATH
+ $\ensuremath{\mathrm{grow}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{grow}()}$" border="0" height="31" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img2092.png" width="50"/></span>.</i></p></div><p></p>
+<p>
+<br/></p><hr/><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot28834">... integer.</a><a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#tex2html43"><sup><span class="arabic">5</span>.<span class="arabic">1</span></sup></a></dt>
+<dd>This is true for most programming languages
+including C, C#, C++, and Java. Notable exceptions are Python and
+Ruby, in which the result of a fixed-length <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/img1958.png" width="16"/></span>-bit integer operation
+that overflows is upgraded to a variable-length representation.
+</dd>
+</dl>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/5.1 ChainedHashTable_ Hashing with Chaining_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

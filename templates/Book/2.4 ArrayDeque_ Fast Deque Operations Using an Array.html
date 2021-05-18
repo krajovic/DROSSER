@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/2_4_ArrayDeque_Fast_Deque_O.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>2.4 ArrayDeque: Fast Deque Operations Using an Array</title>
+<meta content="2.4 ArrayDeque: Fast Deque Operations Using an Array" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/2_5_DualArrayDeque_Building.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/2_3_ArrayQueue_Array_Based_.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/2_Array_Based_Lists.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/2_5_DualArrayDeque_Building.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<hr/>
+<h1><a name="SECTION00540000000000000000"></a>
+<a name="sec:arraydeque"></a>
+<br/>
+<span class="arabic">2</span>.<span class="arabic">4</span> ArrayDeque: Fast Deque Operations Using an Array
+</h1>
+<p>
+<a name="5287"></a>The ArrayQueue from the previous section is a data structure for
+representing a sequence that allows us to efficiently add to one
+end of the sequence and remove from the other end.  The ArrayDeque
+data structure allows for efficient addition and removal at both ends.
+This structure implements the List interface by using the same circular
+array technique used to represent an ArrayQueue.
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{initialize}(...
+...th{\ensuremath{\mathit{n}} \gets \ensuremath{0}}\\
+\end{flushleft}\end{leftbar}" border="0" height="101" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img721.png" width="181"/>
+<br/>
+</p><p>
+The <!-- MATH
+ $\ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img722.png" width="41"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img723.png" width="53"/></span> operations on an ArrayDeque are
+straightforward.  They get or set the array element <!-- MATH
+ $\ensuremath{\ensuremath{a}[}{\ensuremath{\ensuremath{(\ensuremath{\mathit{j}}+\ensuremath{\mathit{i}})}}\bmod
+\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}}\ensuremath{]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{a}[}{\ensuremath{\ensuremath{(\ensuremath{\mathit{j}}+...
+...nsuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}}\ensuremath{]}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img724.png" width="162"/></span>.
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{get}(\ensure...
+...bf{return}} \ensuremath{\ensuremath{\mathit{y}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="163" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img725.png" width="268"/>
+<br/>
+</p><p>
+The implementation of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img726.png" width="60"/></span> is a little more interesting.  As
+usual, we first check if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img727.png" width="12"/></span> is full and, if necessary, call
+<!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img728.png" width="55"/></span> to resize <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img729.png" width="12"/></span>.  Remember that we want this operation to be
+fast when <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img730.png" width="9"/></span> is small (close to 0) or when <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img731.png" width="9"/></span> is large (close to
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img732.png" width="13"/></span>).  Therefore, we check if <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}<\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}&lt;\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$" border="0" height="30" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img733.png" width="50"/></span>.  If so, we shift the
+elements <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}-1]}}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img734.png" width="106"/></span> left by one position.  Otherwise
+(<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\ge\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\ge\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$" border="0" height="30" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img735.png" width="50"/></span>), we shift the elements <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img736.png" width="106"/></span> right
+by one position.  See Figure <a href="http://opendatastructures.org/ods-python/2_4_ArrayDeque_Fast_Deque_O.html#fig:arraydeque">2.3</a> for an illustration of
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img737.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img738.png" width="75"/></span> operations on an ArrayDeque.
+</p><p>
+</p><div align="CENTER"><a name="fig:arraydeque"></a><a name="10359"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 2.3:</strong>
+A sequence of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img740.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img741.png" width="72"/></span> operations on an
+  ArrayDeque.  Arrows denote elements being copied.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/arraydeque}" border="0" height="229" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img739.png" width="448"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{add}(\ensure...
+... \gets \ensuremath{\ensuremath{\mathit{n}} + 1}}\\
+\end{flushleft}\end{leftbar}" border="0" height="235" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img742.png" width="467"/>
+<br/>
+</p><p>
+By doing the shifting in this way, we guarantee that <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img743.png" width="60"/></span> never
+has to shift more than <!-- MATH
+ $\min\{ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}, \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}} \}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \min\{ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}, \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}} \}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img744.png" width="82"/></span> elements.  Thus, the running
+time of the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img745.png" width="60"/></span> operation (ignoring the cost of a <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img746.png" width="55"/></span>
+operation) is <!-- MATH
+ $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensur...
+...{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img747.png" width="129"/></span>.
+</p><p>
+The implementation of the <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img748.png" width="72"/></span> operation is similar.  It either
+shifts elements <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}-1]}}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img749.png" width="106"/></span> right by one position or shifts
+the elements <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}+1]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}+1]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img750.png" width="130"/></span> left by one position depending
+on whether <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}<\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}&lt;\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$" border="0" height="30" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img751.png" width="50"/></span>.  Again, this means that <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img752.png" width="72"/></span> never spends
+more than <!-- MATH
+ $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensur...
+...{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img753.png" width="129"/></span> time to shift elements.
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove}(\ens...
+...bf{return}} \ensuremath{\ensuremath{\mathit{x}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="254" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img754.png" width="467"/>
+<br/>
+</p><p>
+</p><h2><a name="SECTION00541000000000000000">
+<span class="arabic">2</span>.<span class="arabic">4</span>.<span class="arabic">1</span> Summary</a>
+</h2>
+<p>
+The following theorem summarizes the performance of the ArrayDeque
+data structure:
+</p><p>
+</p><div><a name="thm:arraydeque"><b>Theorem  <span class="arabic">2</span>..<span class="arabic">3</span></b></a>   
+<i>An ArrayDeque implements the List interface.  Ignoring the cost of
+  calls to <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img755.png" width="55"/></span>, an ArrayDeque supports the operations
+  </i>
+<ul>
+<li><!-- MATH
+ $\ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img756.png" width="41"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img757.png" width="53"/></span> in <span class="MATH"><img align="MIDDLE" alt="$ O(1)$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img758.png" width="36"/></span> time per operation; and
+</li>
+<li><!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img759.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img760.png" width="72"/></span> in <!-- MATH
+ $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensur...
+...{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img761.png" width="129"/></span> time
+          per operation.
+  
+</li>
+</ul><i>
+  Furthermore, beginning with an empty ArrayDeque, performing any
+  sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img762.png" width="17"/></span> <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img763.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img764.png" width="72"/></span> operations results in a
+  total of <span class="MATH"><img align="MIDDLE" alt="$ O(m)$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img765.png" width="40"/></span> time spent during all calls to <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/img766.png" width="55"/></span>.</i></div><p></p>
+<p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/2.4 ArrayDeque_ Fast Deque Operations Using an Array_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

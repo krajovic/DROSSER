@@ -1,0 +1,491 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0068)http://opendatastructures.org/ods-java/6_3_Discussion_Exercises.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>6.3 Discussion and Exercises</title>
+<meta name="description" content="6.3 Discussion and Exercises">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/6.3 Discussion and Exercises_files/ods-book.css">
+<link rel="previous" href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/6_Binary_Trees.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/7_Random_Binary_Search_Tree.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<h1><a name="SECTION00930000000000000000">
+<span class="arabic">6</span>.<span class="arabic">3</span> Discussion and Exercises</a>
+</h1>
+<p>
+Binary trees have been used to model relationships for thousands
+of years.  One reason for this is that binary trees naturally model
+(pedigree) family trees.
+<a name="19930"></a><a name="19931"></a>These are the family trees in which the root is
+a person, the left and right children are the person's parents, and so
+on, recursively.  In more recent centuries binary trees have also been
+used to model species trees
+<a name="19932"></a> in biology, where the leaves of the tree
+represent extant species and the internal nodes of the tree represent
+<span class="textit">speciation events</span>
+<a name="19934"></a> in which two populations of a single species
+evolve into two separate species.
+</p><p>
+Binary search trees appear to have been discovered independently by
+several groups in the 1950s [<a href="http://opendatastructures.org/ods-java/Bibliography.html#k97v3">48</a>, Section&nbsp;6.2.2].  Further
+references to specific kinds of binary search trees are provided in
+subsequent chapters.
+</p><p>
+When implementing a binary tree from scratch, there are several design
+decisions to be made.  One of these is the question of whether or not
+each node stores a pointer to its parent.  If most of the operations
+simply follow a root-to-leaf path, then parent pointers are unnecessary,
+waste space, and are a potential source of coding errors.  On the other
+hand, the lack of parent pointers means that tree traversals must be done
+recursively or with the use of an explicit stack.  Some other methods
+(like inserting or deleting into some kinds of balanced binary search
+trees) are also complicated by the lack of parent pointers.
+</p><p>
+Another design decision is concerned with how to store the parent, left
+child, and right child pointers at a node.  In the implementation given
+here, these pointers are stored as separate variables.   Another option
+is to store them in an array, <!-- MATH
+ $\mathtt{p}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2748.png" alt="$ \mathtt{p}$"></span>, of length 3, so that <!-- MATH
+ $\mathtt{u.p[0]}$
+ -->
+<span class="MATH"><img width="44" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2749.png" alt="$ \mathtt{u.p[0]}$"></span> is the
+left child of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2750.png" alt="$ \mathtt{u}$"></span>, <!-- MATH
+ $\mathtt{u.p[1]}$
+ -->
+<span class="MATH"><img width="44" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2751.png" alt="$ \mathtt{u.p[1]}$"></span> is the right child of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2752.png" alt="$ \mathtt{u}$"></span>, and <!-- MATH
+ $\mathtt{u.p[2]}$
+ -->
+<span class="MATH"><img width="44" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2753.png" alt="$ \mathtt{u.p[2]}$"></span> is
+the parent of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2754.png" alt="$ \mathtt{u}$"></span>.  Using an array this way means that some sequences
+of <!-- MATH
+ $\mathtt{if}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2755.png" alt="$ \mathtt{if}$"></span> statements can be simplified into algebraic expressions.
+</p><p>
+An example of such a simplification occurs during tree traversal. If
+a traversal arrives at a node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2756.png" alt="$ \mathtt{u}$"></span> from <!-- MATH
+ $\mathtt{u.p[i]}$
+ -->
+<span class="MATH"><img width="44" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2757.png" alt="$ \mathtt{u.p[i]}$"></span>, then the next node in
+the traversal is <!-- MATH
+ $\ensuremath{\mathtt{u.p}}[(\ensuremath{\mathtt{i}}+1)\bmod 3]$
+ -->
+<span class="MATH"><img width="128" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2758.png" alt="$ \ensuremath{\mathtt{u.p}}[(\ensuremath{\mathtt{i}}+1)\bmod 3]$"></span>.  Similar examples occur when
+there is left-right symmetry.  For example, the sibling of <!-- MATH
+ $\mathtt{u.p[i]}$
+ -->
+<span class="MATH"><img width="44" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2759.png" alt="$ \mathtt{u.p[i]}$"></span> is
+<!-- MATH
+ $\ensuremath{\mathtt{u.p}}[(\ensuremath{\mathtt{i}}+1)\bmod 2]$
+ -->
+<span class="MATH"><img width="128" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2760.png" alt="$ \ensuremath{\mathtt{u.p}}[(\ensuremath{\mathtt{i}}+1)\bmod 2]$"></span>.  This trick works whether <!-- MATH
+ $\mathtt{u.p[i]}$
+ -->
+<span class="MATH"><img width="44" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2761.png" alt="$ \mathtt{u.p[i]}$"></span> is a left
+child (<!-- MATH
+ $\ensuremath{\mathtt{i}}=0$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2762.png" alt="$ \ensuremath{\mathtt{i}}=0$"></span>) or a right child (<!-- MATH
+ $\ensuremath{\mathtt{i}}=1$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2763.png" alt="$ \ensuremath{\mathtt{i}}=1$"></span>) of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2764.png" alt="$ \mathtt{u}$"></span>.  In some cases this
+means that some complicated code that would otherwise need to have both a
+left version and right version can be written only once. See the methods
+<!-- MATH
+ $\mathtt{rotateLeft(u)}$
+ -->
+<span class="MATH"><img width="108" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2765.png" alt="$ \mathtt{rotateLeft(u)}$"></span> and <!-- MATH
+ $\mathtt{rotateRight(u)}$
+ -->
+<span class="MATH"><img width="116" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2766.png" alt="$ \mathtt{rotateRight(u)}$"></span> on page&nbsp;<a href="http://opendatastructures.org/ods-java/7_2_Treap_Randomized_Binary.html#page:rotations"><img align="BOTTOM" border="1" alt="[*]" src="static/6.3 Discussion and Exercises_files/crossref.png"></a>
+for an example.
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">1</span></b> &nbsp; 
+Prove that a binary tree having <!-- MATH
+ $\ensuremath{\mathtt{n}}\ge 1$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2767.png" alt="$ \ensuremath{\mathtt{n}}\ge 1$"></span> nodes has <!-- MATH
+ $\ensuremath{\mathtt{n}}-1$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2768.png" alt="$ \ensuremath{\mathtt{n}}-1$"></span> edges.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">2</span></b> &nbsp; 
+Prove that a binary tree having <!-- MATH
+ $\ensuremath{\mathtt{n}}\ge 1$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2769.png" alt="$ \ensuremath{\mathtt{n}}\ge 1$"></span> real nodes has <!-- MATH
+ $\ensuremath{\mathtt{n}}+1$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2770.png" alt="$ \ensuremath{\mathtt{n}}+1$"></span>
+  external nodes.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">3</span></b> &nbsp; 
+Prove that, if a binary tree, <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2771.png" alt="$ T$"></span>, has at least one leaf, then either
+  (a)&nbsp;<span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2772.png" alt="$ T$"></span>'s root has at most one child or (b)&nbsp;<span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2773.png" alt="$ T$"></span> has more than
+  one leaf.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">4</span></b> &nbsp; 
+Implement a non-recursive method, <!-- MATH
+ $\mathtt{size2(u)}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2774.png" alt="$ \mathtt{size2(u)}$"></span>, that computes the size
+  of the subtree rooted at node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2775.png" alt="$ \mathtt{u}$"></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">5</span></b> &nbsp; 
+Write a non-recursive method, <!-- MATH
+ $\mathtt{height2(u)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2776.png" alt="$ \mathtt{height2(u)}$"></span>, that computes the height
+  of node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2777.png" alt="$ \mathtt{u}$"></span> in a <tt>BinaryTree</tt>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">6</span></b> &nbsp; 
+A binary tree is <span class="textit">size-balanced</span>
+  <a name="19979"></a><a name="19980"></a>if, for every node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2778.png" alt="$ \mathtt{u}$"></span>, the size of
+  the subtrees rooted at <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2779.png" alt="$ \mathtt{u.left}$"></span> and <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2780.png" alt="$ \mathtt{u.right}$"></span> differ by at most one.
+  Write a recursive method, <!-- MATH
+ $\mathtt{isBalanced()}$
+ -->
+<span class="MATH"><img width="99" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2781.png" alt="$ \mathtt{isBalanced()}$"></span>, that tests if a binary tree
+  is balanced.  Your method should run in <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2782.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span> time.  (Be sure to
+  test your code on some large trees with different shapes; it is easy
+  to write a method that takes much longer than <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2783.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span> time.)</div><p></p>
+<p>
+<a name="19988"></a><a name="19989"></a><a name="19990"></a><a name="19991"></a><a name="19992"></a><a name="19993"></a>A <span class="textit">pre-order</span> traversal of a binary tree is a traversal that visits
+each node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2784.png" alt="$ \mathtt{u}$"></span>, before any of its children.  An <span class="textit">in-order</span> traversal
+visits <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2785.png" alt="$ \mathtt{u}$"></span> after visiting all the nodes in <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2786.png" alt="$ \mathtt{u}$"></span>'s left subtree but before
+visiting any of the nodes in <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2787.png" alt="$ \mathtt{u}$"></span>'s right subtree.  A <span class="textit">post-order</span>
+traversal visits <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2788.png" alt="$ \mathtt{u}$"></span> only after visiting all other nodes in <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2789.png" alt="$ \mathtt{u}$"></span>'s subtree.
+The pre/in/post-order numbering of a tree labels the nodes of a tree with
+the integers <!-- MATH
+ $0,\ldots,\ensuremath{\mathtt{n}}-1$
+ -->
+<span class="MATH"><img width="73" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2790.png" alt="$ 0,\ldots,\ensuremath{\mathtt{n}}-1$"></span> in the order that they are encountered
+by a pre/in/post-order traversal.  See Figure&nbsp;<a href="http://opendatastructures.org/ods-java/6_3_Discussion_Exercises.html#fig:binarytree-numbering">6.10</a>
+for an example.
+</p><p>
+</p><div align="CENTER"><a name="fig:binarytree-numbering"></a><a name="20011"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 6.10:</strong>
+Pre-order, post-order, and in-order numberings of a binary tree.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="279" height="140" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2791.png" alt="\includegraphics[scale=0.90909]{figs/binarytree-numbering-1}">
+    <img width="279" height="140" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2792.png" alt="\includegraphics[scale=0.90909]{figs/binarytree-numbering-2}"> <br>
+<br>
+<br>    <img width="279" height="140" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2793.png" alt="\includegraphics[scale=0.90909]{figs/binarytree-numbering-3}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">7</span></b> &nbsp; 
+<a name="20015"></a><a name="20016"></a><a name="20017"></a><a name="20018"></a><a name="20019"></a><a name="20020"></a>Create a subclass of <tt>BinaryTree</tt> whose nodes have fields for storing
+  pre-order, post-order, and in-order numbers.  Write recursive methods
+  <!-- MATH
+ $\mathtt{preOrderNumber()}$
+ -->
+<span class="MATH"><img width="133" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2794.png" alt="$ \mathtt{preOrderNumber()}$"></span>, <!-- MATH
+ $\mathtt{inOrderNumber()}$
+ -->
+<span class="MATH"><img width="124" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2795.png" alt="$ \mathtt{inOrderNumber()}$"></span>, and <!-- MATH
+ $\mathtt{postOrderNumbers()}$
+ -->
+<span class="MATH"><img width="150" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2796.png" alt="$ \mathtt{postOrderNumbers()}$"></span> that
+  assign these numbers correctly. These methods should each run in
+  <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2797.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span> time.</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:tree-traversal"><b>Exercise  <span class="arabic">6</span>..<span class="arabic">8</span></b></a> &nbsp; 
+Implement the non-recursive functions <!-- MATH
+ $\mathtt{nextPreOrder(u)}$
+ -->
+<span class="MATH"><img width="124" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2798.png" alt="$ \mathtt{nextPreOrder(u)}$"></span>, <!-- MATH
+ $\mathtt{nextInOrder(u)}$
+ -->
+<span class="MATH"><img width="116" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2799.png" alt="$ \mathtt{nextInOrder(u)}$"></span>, and
+  <!-- MATH
+ $\mathtt{nextPostOrder(u)}$
+ -->
+<span class="MATH"><img width="133" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2800.png" alt="$ \mathtt{nextPostOrder(u)}$"></span> that return the node that follows <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2801.png" alt="$ \mathtt{u}$"></span> in a pre-order,
+  in-order, or post-order traversal, respectively.   These functions
+  should take amortized constant time; if we start at any node
+  <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2802.png" alt="$ \mathtt{u}$"></span> and repeatedly call one of these functions and assign the return
+  value to <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2803.png" alt="$ \mathtt{u}$"></span> until <!-- MATH
+ $\ensuremath{\mathtt{u}}=\ensuremath{\mathtt{null}}$
+ -->
+<span class="MATH"><img width="64" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2804.png" alt="$ \ensuremath{\mathtt{u}}=\ensuremath{\mathtt{null}}$"></span>, then the cost of all these calls should
+  be <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2805.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">9</span></b> &nbsp; 
+Suppose we are given a binary tree with pre-, post-, and in-order numbers
+  assigned to the nodes.  Show how these numbers can be used to answer
+  each of the following questions in constant time:
+  
+<ol>
+<li>Given a node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2806.png" alt="$ \mathtt{u}$"></span>, determine the size of the subtree rooted at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2807.png" alt="$ \mathtt{u}$"></span>.
+</li>
+<li>Given a node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2808.png" alt="$ \mathtt{u}$"></span>, determine the depth of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2809.png" alt="$ \mathtt{u}$"></span>.
+</li>
+<li>Given two nodes <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2810.png" alt="$ \mathtt{u}$"></span> and <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2811.png" alt="$ \mathtt{w}$"></span>, determine if <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2812.png" alt="$ \mathtt{u}$"></span> is an ancestor of <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2813.png" alt="$ \mathtt{w}$"></span>
+</li>
+</ol></div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">10</span></b> &nbsp; 
+Suppose you are given a list of nodes with pre-order and in-order
+  numbers assigned.  Prove that there is at most one possible tree with
+  this pre-order/in-order numbering and show how to construct it.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">11</span></b> &nbsp; 
+Show that the shape of any binary tree on <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2814.png" alt="$ \mathtt{n}$"></span> nodes can be represented
+  using at most <!-- MATH
+ $2(\ensuremath{\mathtt{n}}-1)$
+ -->
+<span class="MATH"><img width="56" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2815.png" alt="$ 2(\ensuremath{\mathtt{n}}-1)$"></span> bits.  (Hint: think about recording what
+  happens during a traversal and then playing back that recording to
+  reconstruct the tree.)</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">12</span></b> &nbsp; 
+Illustrate what happens when we add the values <span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2816.png" alt="$ 3.5$"></span> and then 4.5 to
+  the binary search tree in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html#fig:bst">6.5</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">13</span></b> &nbsp; 
+Illustrate what happens when we remove the values <span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2817.png" alt="$ 3$"></span> and then 5 from
+  the binary search tree in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html#fig:bst">6.5</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">14</span></b> &nbsp; 
+Implement a <tt>BinarySearchTree</tt> method, <!-- MATH
+ $\mathtt{getLE(x)}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2818.png" alt="$ \mathtt{getLE(x)}$"></span>,
+  that returns a list of all items in the tree that are less than or
+  equal to <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2819.png" alt="$ \mathtt{x}$"></span>.  The running time of your method should be <!-- MATH
+ $O(\ensuremath{\mathtt{n}}'+\ensuremath{\mathtt{h}})$
+ -->
+<span class="MATH"><img width="64" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2820.png" alt="$ O(\ensuremath{\mathtt{n}}&#39;+\ensuremath{\mathtt{h}})$"></span>
+  where <!-- MATH
+ $\ensuremath{\mathtt{n}}'$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2821.png" alt="$ \ensuremath{\mathtt{n}}&#39;$"></span> is the number of items less than or equal to <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2822.png" alt="$ \mathtt{x}$"></span> and <!-- MATH
+ $\mathtt{h}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2823.png" alt="$ \mathtt{h}$"></span>
+  is the height of the tree.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">15</span></b> &nbsp; 
+Describe how to add the elements <!-- MATH
+ $\{1,\ldots,\ensuremath{\mathtt{n}}\}$
+ -->
+<span class="MATH"><img width="60" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2824.png" alt="$ \{1,\ldots,\ensuremath{\mathtt{n}}\}$"></span> to an initially
+  empty <tt>BinarySearchTree</tt> in such a way that the resulting tree has
+  height <!-- MATH
+ $\ensuremath{\mathtt{n}}-1$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2825.png" alt="$ \ensuremath{\mathtt{n}}-1$"></span>.  How many ways are there to do this?</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">16</span></b> &nbsp; 
+If we have some <tt>BinarySearchTree</tt> and perform the operations <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2826.png" alt="$ \mathtt{add(x)}$"></span>
+  followed by <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2827.png" alt="$ \mathtt{remove(x)}$"></span> (with the same value of <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.3 Discussion and Exercises_files/img2828.png" alt="$ \mathtt{x}$"></span>) do we necessarily
+  return to the original tree?</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">17</span></b> &nbsp; 
+Can a <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2829.png" alt="$ \mathtt{remove(x)}$"></span> operation increase the height of any node in a
+  <tt>BinarySearchTree</tt>?  If so, by how much?</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">18</span></b> &nbsp; 
+Can an <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2830.png" alt="$ \mathtt{add(x)}$"></span> operation increase the height of any node in a
+  <tt>BinarySearchTree</tt>?  Can it increase the height of the tree?  If so,
+  by how much?</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">6</span>..<span class="arabic">19</span></b> &nbsp; 
+Design and implement a version of <tt>BinarySearchTree</tt> in which each node,
+  <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2831.png" alt="$ \mathtt{u}$"></span>, maintains values <!-- MATH
+ $\mathtt{u.size}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2832.png" alt="$ \mathtt{u.size}$"></span> (the size of the subtree rooted at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2833.png" alt="$ \mathtt{u}$"></span>),
+  <!-- MATH
+ $\mathtt{u.depth}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2834.png" alt="$ \mathtt{u.depth}$"></span> (the depth of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2835.png" alt="$ \mathtt{u}$"></span>), and <!-- MATH
+ $\mathtt{u.height}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2836.png" alt="$ \mathtt{u.height}$"></span> (the height of the subtree
+  rooted at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2837.png" alt="$ \mathtt{u}$"></span>).  
+<p>
+These values should be maintained, even during calls to the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2838.png" alt="$ \mathtt{add(x)}$"></span>
+  and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/6.3 Discussion and Exercises_files/img2839.png" alt="$ \mathtt{remove(x)}$"></span> operations, but this should not increase the cost of
+  these operations by more than a constant factor.</p></div><p></p>
+<div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/6.3 Discussion and Exercises_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

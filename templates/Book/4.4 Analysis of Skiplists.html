@@ -1,0 +1,459 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0066)http://opendatastructures.org/ods-java/4_4_Analysis_Skiplists.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>4.4 Analysis of Skiplists</title>
+<meta name="description" content="4.4 Analysis of Skiplists">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/4.4 Analysis of Skiplists_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/4_5_Discussion_Exercises.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/4_3_SkiplistList_Efficient_.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/4_Skiplists.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/4_5_Discussion_Exercises.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<h1><a name="SECTION00740000000000000000"></a>
+<a name="sec:skiplist-analysis"></a>
+<br>
+<span class="arabic">4</span>.<span class="arabic">4</span> Analysis of Skiplists
+</h1>
+<p>
+In this section, we analyze the expected height, size, and length of
+the search path in a skiplist.  This section requires a background in
+basic probability.  Several proofs are based on the following basic
+observation about coin tosses.
+</p><p>
+</p><p>
+</p><div><a name="lem:coin-tosses"><b>Lemma  <span class="arabic">4</span>..<span class="arabic">2</span></b></a> &nbsp; 
+<i><a name="12061"></a>Let <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1786.png" alt="$ T$"></span> be the number of times a fair coin is tossed up to and including
+  the first time the coin comes up heads.  Then <!-- MATH
+ $\mathrm{E}[T]=2$
+ -->
+<span class="MATH"><img width="62" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1787.png" alt="$ \mathrm{E}[T]=2$"></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  Suppose we stop tossing the coin the first time it comes up
+  heads. Define the indicator variable
+  <p><!-- MATH
+ \begin{displaymath}
+I_{i} = \left\{\begin{array}{ll}
+     0 & \mbox{if the coin is tossed less than $i$\  times} \\
+     1 & \mbox{if the coin is tossed $i$\  or more times}
+     \end{array}\right.
+  
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="338" height="56" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1789.png" alt="$\displaystyle I_{i} = \left\{\begin{array}{ll}
+0 &amp; \mbox{if the coin is tossed...
+...\\
+1 &amp; \mbox{if the coin is tossed $i$\ or more times}
+\end{array}\right.
+$">
+</div><p></p>
+Note that <span class="MATH"><img width="41" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1790.png" alt="$ I_i=1$"></span> if and only if the first <span class="MATH"><img width="34" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1791.png" alt="$ i-1$"></span> coin tosses are tails,
+  so <!-- MATH
+ $\mathrm{E}[I_i]=\Pr\{I_i=1\}=1/2^{i-1}$
+ -->
+<span class="MATH"><img width="177" height="36" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1792.png" alt="$ \mathrm{E}[I_i]=\Pr\{I_i=1\}=1/2^{i-1}$"></span>.  Observe that <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1793.png" alt="$ T$"></span>, the total
+  number of coin tosses, can be written as <!-- MATH
+ $T=\sum_{i=1}^{\infty} I_i$
+ -->
+<span class="MATH"><img width="80" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1794.png" alt="$ T=\sum_{i=1}^{\infty} I_i$"></span>.
+  Therefore,
+  <p></p>
+<div align="CENTER" class="mathdisplay"><table cellpadding="0" width="100%" align="CENTER">
+<tbody><tr valign="MIDDLE">
+<td nowrap="" align="RIGHT"><span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1795.png" alt="$\displaystyle \mathrm{E}[T]$"></span></td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="78" height="64" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1796.png" alt="$\displaystyle = \mathrm{E}\left[\sum_{i=1}^\infty I_i\right]$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="75" height="61" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1797.png" alt="$\displaystyle = \sum_{i=1}^\infty \mathrm{E}\left[I_i\right]$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="85" height="61" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1798.png" alt="$\displaystyle = \sum_{i=1}^\infty 1/2^{i-1}$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="176" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1799.png" alt="$\displaystyle = 1 + 1/2 + 1/4 + 1/8 + \cdots$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1800.png" alt="$\displaystyle = 2 \enspace . \qedhere$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+</tbody></table></div>
+<br clear="ALL"><p></p> <img width="17" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1788.png" alt="$ \qedsymbol$">
+</div><p></p>
+<p>
+The next two lemmata tell us that skiplists have linear size:
+</p><p>
+</p><p>
+</p><div><a name="lem:skiplist-size1"><b>Lemma  <span class="arabic">4</span>..<span class="arabic">3</span></b></a> &nbsp; 
+<i>The expected number of nodes in a skiplist containing <!-- MATH
+ $\ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1801.png" alt="$ \ensuremath{\mathtt{n}}$"></span> elements,
+  not including occurrences of the sentinel, is <!-- MATH
+ $2\ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1802.png" alt="$ 2\ensuremath{\mathtt{n}}$"></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  The probability that any particular element, <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1804.png" alt="$ \mathtt{x}$"></span>, is included in list
+  <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1805.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span> is <!-- MATH
+ $1/2^{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="35" height="30" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1806.png" alt="$ 1/2^{\ensuremath{\mathtt{r}}}$"></span>, so the expected number of nodes in <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1807.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span>
+  is <!-- MATH
+ $\ensuremath{\mathtt{n}}/2^{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="35" height="30" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1808.png" alt="$ \ensuremath{\mathtt{n}}/2^{\ensuremath{\mathtt{r}}}$"></span>.<a name="tex2html40" href="http://opendatastructures.org/ods-java/4_4_Analysis_Skiplists.html#foot12534"><sup><span class="arabic">4</span>.<span class="arabic">2</span></sup></a>  Therefore, the total expected number of nodes in all lists is
+  <p><!-- MATH
+ \begin{displaymath}
+\sum_{\ensuremath{\mathtt{r}}=0}^\infty \ensuremath{\mathtt{n}}/2^{\ensuremath{\mathtt{r}}} = \ensuremath{\mathtt{n}}(1+1/2+1/4+1/8+\cdots) = 2\ensuremath{\mathtt{n}} \enspace . \qedhere
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="300" height="61" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1809.png" alt="$\displaystyle \sum_{\ensuremath{\mathtt{r}}=0}^\infty \ensuremath{\mathtt{n}}/2...
+...athtt{n}}(1+1/2+1/4+1/8+\cdots) = 2\ensuremath{\mathtt{n}} \enspace . \qedhere $">
+</div><p></p> <img width="17" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1803.png" alt="$ \qedsymbol$">
+</div><p></p>
+<p>
+</p><p>
+</p><div><a name="lem:skiplist-height"><b>Lemma  <span class="arabic">4</span>..<span class="arabic">4</span></b></a> &nbsp; 
+<i>The expected height of a skiplist containing <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1810.png" alt="$ \mathtt{n}$"></span> elements is at most
+  <!-- MATH
+ $\log \ensuremath{\mathtt{n}} + 2$
+ -->
+<span class="MATH"><img width="60" height="30" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1811.png" alt="$ \log \ensuremath{\mathtt{n}} + 2$"></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  For each <!-- MATH
+ $\ensuremath{\mathtt{r}}\in\{1,2,3,\ldots,\infty\}$
+ -->
+<span class="MATH"><img width="119" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1813.png" alt="$ \ensuremath{\mathtt{r}}\in\{1,2,3,\ldots,\infty\}$"></span>, 
+  define the indicator random variable
+  <p><!-- MATH
+ \begin{displaymath}
+I_{\ensuremath{\mathtt{r}}} = \left\{\begin{array}{ll}
+     0 & \mbox{if $L_{\ensuremath{\mathtt{r}}}$\  is empty} \\
+     1 & \mbox{if $L_{\ensuremath{\mathtt{r}}}$\  is non-empty}
+     \end{array}\right.
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="215" height="56" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1814.png" alt="$\displaystyle I_{\ensuremath{\mathtt{r}}} = \left\{\begin{array}{ll}
+0 &amp; \mbox...
+...1 &amp; \mbox{if $L_{\ensuremath{\mathtt{r}}}$\ is non-empty}
+\end{array}\right.
+$">
+</div><p></p>
+The height, <!-- MATH
+ $\mathtt{h}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1815.png" alt="$ \mathtt{h}$"></span>, of the skiplist is then given by
+  <p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\mathtt{h}} = \sum_{i=1}^\infty I_{\ensuremath{\mathtt{r}}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="79" height="61" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1816.png" alt="$\displaystyle \ensuremath{\mathtt{h}} = \sum_{i=1}^\infty I_{\ensuremath{\mathtt{r}}} \enspace .
+$">
+</div><p></p>
+Note that <!-- MATH
+ $I_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="17" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1817.png" alt="$ I_{\ensuremath{\mathtt{r}}}$"></span> is never more than the length, <!-- MATH
+ $|L_{\ensuremath{\mathtt{r}}}|$
+ -->
+<span class="MATH"><img width="27" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1818.png" alt="$ \vert L_{\ensuremath{\mathtt{r}}}\vert$"></span>, of <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1819.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span>, so 
+  <p><!-- MATH
+ \begin{displaymath}
+\mathrm{E}[I_{\ensuremath{\mathtt{r}}}] \le \mathrm{E}[|L_{\ensuremath{\mathtt{r}}}|] = \ensuremath{\mathtt{n}}/2^{\ensuremath{\mathtt{r}}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="158" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1820.png" alt="$\displaystyle \mathrm{E}[I_{\ensuremath{\mathtt{r}}}] \le \mathrm{E}[\vert L_{\...
+...t{r}}}\vert] = \ensuremath{\mathtt{n}}/2^{\ensuremath{\mathtt{r}}} \enspace .
+$">
+</div><p></p>
+Therefore, we have
+  <p></p>
+<div align="CENTER" class="mathdisplay"><table cellpadding="0" width="100%" align="CENTER">
+<tbody><tr valign="MIDDLE">
+<td nowrap="" align="RIGHT"><span class="MATH"><img width="33" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1821.png" alt="$\displaystyle \mathrm{E}[\ensuremath{\mathtt{h}}]$"></span></td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="80" height="64" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1822.png" alt="$\displaystyle = \mathrm{E}\left[\sum_{r=1}^\infty I_{\ensuremath{\mathtt{r}}}\right]$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="77" height="61" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1823.png" alt="$\displaystyle = \sum_{\ensuremath{\mathtt{r}}=1}^{\infty} E[I_{\ensuremath{\mathtt{r}}}]$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="199" height="71" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1824.png" alt="$\displaystyle = \sum_{\ensuremath{\mathtt{r}}=1}^{\lfloor\log \ensuremath{\math...
+...r\log \ensuremath{\mathtt{n}}\rfloor+1}^{\infty} E[I_{\ensuremath{\mathtt{r}}}]$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="171" height="71" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1825.png" alt="$\displaystyle \le \sum_{\ensuremath{\mathtt{r}}=1}^{\lfloor\log \ensuremath{\ma...
+...thtt{n}}\rfloor+1}^{\infty} \ensuremath{\mathtt{n}}/2^{\ensuremath{\mathtt{r}}}$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="121" height="61" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1826.png" alt="$\displaystyle \le \log \ensuremath{\mathtt{n}} + \sum_{\ensuremath{\mathtt{r}}=0}^\infty 1/2^{\ensuremath{\mathtt{r}}}$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="86" height="30" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1827.png" alt="$\displaystyle = \log \ensuremath{\mathtt{n}} + 2 \enspace . \qedhere$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+</tbody></table></div>
+<br clear="ALL"><p></p> <img width="17" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1812.png" alt="$ \qedsymbol$">
+</div><p></p>
+<p>
+</p><p>
+</p><div><a name="lem:skiplist-size2"><b>Lemma  <span class="arabic">4</span>..<span class="arabic">5</span></b></a> &nbsp; 
+<i>The expected number of nodes in a skiplist containing <!-- MATH
+ $\ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1828.png" alt="$ \ensuremath{\mathtt{n}}$"></span> elements,
+  including all occurrences of the sentinel, is <!-- MATH
+ $2\ensuremath{\mathtt{n}}+O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="92" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1829.png" alt="$ 2\ensuremath{\mathtt{n}}+O(\log \ensuremath{\mathtt{n}})$"></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  By Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/4_4_Analysis_Skiplists.html#lem:skiplist-size1">4.3</a>, the expected number of nodes, not
+  including the sentinel, is <!-- MATH
+ $2\ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1831.png" alt="$ 2\ensuremath{\mathtt{n}}$"></span>.  The number of occurrences of
+  the sentinel is equal to the height, <!-- MATH
+ $\ensuremath{\mathtt{h}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1832.png" alt="$ \ensuremath{\mathtt{h}}$"></span>, of the skiplist so, by
+  Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/4_4_Analysis_Skiplists.html#lem:skiplist-height">4.4</a> the expected number of occurrences of the
+  sentinel is at most <!-- MATH
+ $\log \ensuremath{\mathtt{n}}+2 = O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="133" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1833.png" alt="$ \log \ensuremath{\mathtt{n}}+2 = O(\log \ensuremath{\mathtt{n}})$"></span>.
+ <img width="17" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1830.png" alt="$ \qedsymbol$">
+</div><p></p>
+<p>
+</p><p>
+</p><div><b>Lemma  <span class="arabic">4</span>..<span class="arabic">6</span></b> &nbsp; 
+<i>The expected length of a search path in a skiplist is at most <!-- MATH
+ $2\log \ensuremath{\mathtt{n}} + O(1)$
+ -->
+<span class="MATH"><img width="94" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1834.png" alt="$ 2\log \ensuremath{\mathtt{n}} + O(1)$"></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  The easiest way to see this is to consider the <span class="textit">reverse search
+  path</span> for a node, <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1836.png" alt="$ \mathtt{x}$"></span>.  This path starts at the predecessor of <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1837.png" alt="$ \mathtt{x}$"></span>
+  in <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1838.png" alt="$ L_0$"></span>.  At any point in time, if the path can go up a level, then
+  it does.  If it cannot go up a level then it goes left.  Thinking about
+  this for a few moments will convince us that the reverse search path for
+  <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1839.png" alt="$ \mathtt{x}$"></span> is identical to the search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1840.png" alt="$ \mathtt{x}$"></span>, except that it is reversed.
+<p>
+The number of nodes that the reverse search path visits at a particular
+  level, <!-- MATH
+ $\mathtt{r}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1841.png" alt="$ \mathtt{r}$"></span>, is related to the following experiment:  Toss a coin.
+  If the coin comes up as heads, then move up and stop. Otherwise, move
+  left and repeat the experiment.  The number of coin tosses before
+  the heads represents the number of steps to the left that a reverse
+  search path takes at a particular level.<a name="tex2html41" href="http://opendatastructures.org/ods-java/4_4_Analysis_Skiplists.html#foot12172"><sup><span class="arabic">4</span>.<span class="arabic">3</span></sup></a> Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/4_4_Analysis_Skiplists.html#lem:coin-tosses">4.2</a> tells us
+  that the expected number of coin tosses before the first heads is 1.
+</p><p>
+Let <!-- MATH
+ $S_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1842.png" alt="$ S_{\ensuremath{\mathtt{r}}}$"></span> denote the number of steps the forward search path takes at level
+  <!-- MATH
+ $\ensuremath{\mathtt{r}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1843.png" alt="$ \ensuremath{\mathtt{r}}$"></span> that go to the right.   We have just argued that <!-- MATH
+ $\mathrm{E}[S_{\ensuremath{\mathtt{r}}}]\le
+  1$
+ -->
+<span class="MATH"><img width="67" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1844.png" alt="$ \mathrm{E}[S_{\ensuremath{\mathtt{r}}}]\le
+1$"></span>.  Furthermore, <!-- MATH
+ $S_{\ensuremath{\mathtt{r}}}\le |L_{\ensuremath{\mathtt{r}}}|$
+ -->
+<span class="MATH"><img width="61" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1845.png" alt="$ S_{\ensuremath{\mathtt{r}}}\le \vert L_{\ensuremath{\mathtt{r}}}\vert$"></span>, since we can't take more steps
+  in <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1846.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span> than the length of <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1847.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span>, so
+  </p><p><!-- MATH
+ \begin{displaymath}
+\mathrm{E}[S_{\ensuremath{\mathtt{r}}}] \le \mathrm{E}[|L_{\ensuremath{\mathtt{r}}}|] = \ensuremath{\mathtt{n}}/2^{\ensuremath{\mathtt{r}}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="161" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1848.png" alt="$\displaystyle \mathrm{E}[S_{\ensuremath{\mathtt{r}}}] \le \mathrm{E}[\vert L_{\...
+...t{r}}}\vert] = \ensuremath{\mathtt{n}}/2^{\ensuremath{\mathtt{r}}} \enspace .
+$">
+</div><p></p>
+We can now finish as in the proof of Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/4_4_Analysis_Skiplists.html#lem:skiplist-height">4.4</a>.
+  Let <span class="MATH"><img width="14" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1849.png" alt="$ S$"></span> be  the length of the search path for some node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1850.png" alt="$ \mathtt{u}$"></span>, in a
+  skiplist, and let <!-- MATH
+ $\ensuremath{\mathtt{h}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1851.png" alt="$ \ensuremath{\mathtt{h}}$"></span> be the height of the skiplist.  Then
+  <p></p>
+<div align="CENTER" class="mathdisplay"><table cellpadding="0" width="100%" align="CENTER">
+<tbody><tr valign="MIDDLE">
+<td nowrap="" align="RIGHT"><span class="MATH"><img width="34" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1852.png" alt="$\displaystyle \mathrm{E}[S]$"></span></td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="106" height="64" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1853.png" alt="$\displaystyle = \mathrm{E}\left[ \ensuremath{\mathtt{h}} + \sum_{\ensuremath{\mathtt{r}}=0}^\infty S_{\ensuremath{\mathtt{r}}} \right]$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="122" height="61" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1854.png" alt="$\displaystyle = \mathrm{E}[\ensuremath{\mathtt{h}}] + \sum_{\ensuremath{\mathtt{r}}=0}^\infty \mathrm{E}[S_{\ensuremath{\mathtt{r}}}]$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="248" height="71" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1855.png" alt="$\displaystyle = \mathrm{E}[\ensuremath{\mathtt{h}}] + \sum_{\ensuremath{\mathtt...
+...ensuremath{\mathtt{n}}\rfloor+1}^\infty \mathrm{E}[S_{\ensuremath{\mathtt{r}}}]$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="215" height="71" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1856.png" alt="$\displaystyle \le \mathrm{E}[\ensuremath{\mathtt{h}}] + \sum_{\ensuremath{\math...
+...mathtt{n}}\rfloor+1}^\infty \ensuremath{\mathtt{n}}/2^{\ensuremath{\mathtt{r}}}$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="177" height="71" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1857.png" alt="$\displaystyle \le \mathrm{E}[\ensuremath{\mathtt{h}}] + \sum_{\ensuremath{\math...
+...or} 1 + \sum_{\ensuremath{\mathtt{r}}=0}^{\infty} 1/2^{\ensuremath{\mathtt{r}}}$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="177" height="71" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1858.png" alt="$\displaystyle \le \mathrm{E}[\ensuremath{\mathtt{h}}] + \sum_{\ensuremath{\math...
+...or} 1 + \sum_{\ensuremath{\mathtt{r}}=0}^{\infty} 1/2^{\ensuremath{\mathtt{r}}}$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="118" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1859.png" alt="$\displaystyle \le \mathrm{E}[\ensuremath{\mathtt{h}}] + \log \ensuremath{\mathtt{n}} + 3$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="96" height="30" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1860.png" alt="$\displaystyle \le 2\log \ensuremath{\mathtt{n}} + 5 \enspace . \qedhere$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+</tbody></table></div>
+<br clear="ALL"><p></p> <img width="17" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1835.png" alt="$ \qedsymbol$">
+</div><p></p>
+<p>
+The following theorem summarizes the results in this section:
+</p><p>
+</p><div><b>Theorem  <span class="arabic">4</span>..<span class="arabic">3</span></b> &nbsp; 
+<i>A skiplist containing <!-- MATH
+ $\ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.4 Analysis of Skiplists_files/img1861.png" alt="$ \ensuremath{\mathtt{n}}$"></span> elements has expected size <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1862.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span> and the
+expected length of the search path for any particular element is at most
+<!-- MATH
+ $2\log \ensuremath{\mathtt{n}} + O(1)$
+ -->
+<span class="MATH"><img width="94" height="31" align="MIDDLE" border="0" src="static/4.4 Analysis of Skiplists_files/img1863.png" alt="$ 2\log \ensuremath{\mathtt{n}} + O(1)$"></span>.</i></div><p></p>
+<p>
+<br></p><hr><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot12534">....</a><a href="http://opendatastructures.org/ods-java/4_4_Analysis_Skiplists.html#tex2html40"><sup><span class="arabic">4</span>.<span class="arabic">2</span></sup></a></dt>
+<dd>See Section&nbsp;<a href="http://opendatastructures.org/ods-java/1_3_Mathematical_Background.html#sec:randomization">1.3.4</a> to see how this
+  is derived using indicator variables and linearity of expectation.
+</dd>
+<dt><a name="foot12172">... level.</a><a href="http://opendatastructures.org/ods-java/4_4_Analysis_Skiplists.html#tex2html41"><sup><span class="arabic">4</span>.<span class="arabic">3</span></sup></a></dt>
+<dd>Note that this
+  might overcount the number of steps to the left, since the experiment
+  should end either at the first heads or when the search path reaches
+  the sentinel, whichever comes first. This is not a problem since the
+  lemma is only stating an upper bound.
+</dd>
+</dl>
+<div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/4.4 Analysis of Skiplists_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

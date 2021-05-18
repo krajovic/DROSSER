@@ -1,0 +1,546 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>6.2 BinarySearchTree: An Unbalanced Binary Search Tree</title>
+<meta name="description" content="6.2 BinarySearchTree: An Unbalanced Binary Search Tree">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/6_3_Discussion_Exercises.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/6_1_BinaryTree_Basic_Binary.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/6_Binary_Trees.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/6_3_Discussion_Exercises.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<hr>
+<h1><a name="SECTION00920000000000000000"></a>
+<a name="sec:binarysearchtree"></a>
+<br>
+<span class="arabic">6</span>.<span class="arabic">2</span> <tt>BinarySearchTree</tt>: An Unbalanced Binary Search Tree
+</h1>
+<p>
+<a name="20172"></a><a name="19749"></a><a name="19750"></a>A <tt>BinarySearchTree</tt> is a special kind of binary tree in which each node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2655.png" alt="$ \mathtt{u}$"></span>,
+also stores a data value, <!-- MATH
+ $\mathtt{u.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2656.png" alt="$ \mathtt{u.x}$"></span>, from some total order.  The data values in
+a binary search tree obey the <span class="textit">binary search tree property</span>:
+<a name="19755"></a>For
+a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2657.png" alt="$ \mathtt{u}$"></span>, every data value stored in the subtree rooted at <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2658.png" alt="$ \mathtt{u.left}$"></span>
+is less than <!-- MATH
+ $\mathtt{u.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2659.png" alt="$ \mathtt{u.x}$"></span> and every data value stored in the subtree rooted at
+<!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2660.png" alt="$ \mathtt{u.right}$"></span> is greater than <!-- MATH
+ $\mathtt{u.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2661.png" alt="$ \mathtt{u.x}$"></span>.  An example of a <tt>BinarySearchTree</tt> is shown in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html#fig:bst">6.5</a>.
+</p><p>
+</p><div align="CENTER"><a name="fig:bst"></a><a name="19767"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 6.5:</strong>
+A binary search tree.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="279" height="141" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2662.png" alt="\includegraphics[scale=0.90909]{figs/bst-example}">
+    
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><h2><a name="SECTION00921000000000000000">
+<span class="arabic">6</span>.<span class="arabic">2</span>.<span class="arabic">1</span> Searching</a>
+</h2>
+<p>
+<a name="19771"></a>The binary search tree property is extremely useful because it allows
+us to quickly locate a value, <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2663.png" alt="$ \mathtt{x}$"></span>, in a binary search tree.  To do this we start
+searching for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2664.png" alt="$ \mathtt{x}$"></span> at the root, <!-- MATH
+ $\mathtt{r}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2665.png" alt="$ \mathtt{r}$"></span>.  When examining a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2666.png" alt="$ \mathtt{u}$"></span>, there
+are three cases:
+</p><ol>
+<li>If <!-- MATH
+ $\ensuremath{\mathtt{x}}< \ensuremath{\mathtt{u.x}}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2667.png" alt="$ \ensuremath{\mathtt{x}}&lt; \ensuremath{\mathtt{u.x}}$"></span>, then the search proceeds to <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2668.png" alt="$ \mathtt{u.left}$"></span>;
+</li>
+<li>If <!-- MATH
+ $\ensuremath{\mathtt{x}}> \ensuremath{\mathtt{u.x}}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2669.png" alt="$ \ensuremath{\mathtt{x}}&gt; \ensuremath{\mathtt{u.x}}$"></span>, then the search proceeds to <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2670.png" alt="$ \mathtt{u.right}$"></span>;
+</li>
+<li>If <!-- MATH
+ $\ensuremath{\mathtt{x}}= \ensuremath{\mathtt{u.x}}$
+ -->
+<span class="MATH"><img width="51" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2671.png" alt="$ \ensuremath{\mathtt{x}}= \ensuremath{\mathtt{u.x}}$"></span>, then we have found the node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2672.png" alt="$ \mathtt{u}$"></span> containing <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2673.png" alt="$ \mathtt{x}$"></span>.
+</li>
+</ol>
+The search terminates when Case&nbsp;3 occurs or when <!-- MATH
+ $\mathtt{u=nil}$
+ -->
+<span class="MATH"><img width="55" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2674.png" alt="$ \mathtt{u=nil}$"></span>.  In the
+former case, we found <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2675.png" alt="$ \mathtt{x}$"></span>.  In the latter case, we conclude that <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2676.png" alt="$ \mathtt{x}$"></span>
+is not in the binary search tree.
+<pre>    T findEQ(T x) {
+        Node u = r;
+        while (u != nil) {
+            int comp = compare(x, u.x);
+            if (comp &lt; 0) 
+                u = u.left;
+            else if (comp &gt; 0)
+                u = u.right;
+            else
+                return u.x;
+        }
+        return null;
+    }
+</pre>
+<p>
+Two examples of searches in a binary search tree are shown in
+Figure&nbsp;<a href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html#fig:bst-search">6.6</a>.  As the second example shows, even if we don't
+find <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2677.png" alt="$ \mathtt{x}$"></span> in the tree, we still gain some valuable information.  If we
+look at the last node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2678.png" alt="$ \mathtt{u}$"></span>, at which Case&nbsp;1 occurred, we see that <!-- MATH
+ $\mathtt{u.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2679.png" alt="$ \mathtt{u.x}$"></span>
+is the smallest value in the tree that is greater than <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2680.png" alt="$ \mathtt{x}$"></span>.  Similarly,
+the last node at which Case&nbsp;2 occurred contains the largest value in the
+tree that is less than <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2681.png" alt="$ \mathtt{x}$"></span>.  Therefore, by keeping track of the last
+node, <!-- MATH
+ $\mathtt{z}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2682.png" alt="$ \mathtt{z}$"></span>, at which Case&nbsp;1 occurs, a <tt>BinarySearchTree</tt> can implement
+the <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2683.png" alt="$ \mathtt{find(x)}$"></span> operation that returns the smallest value stored in the
+tree that is greater than or equal to <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2684.png" alt="$ \mathtt{x}$"></span>:
+</p><pre>    T find(T x) {
+        Node w = r, z = nil;
+        while (w != nil) {
+            int comp = compare(x, w.x);
+            if (comp &lt; 0) {
+                z = w;
+                w = w.left;
+            } else if (comp &gt; 0) {
+                w = w.right;
+            } else {
+                return w.x;
+            }
+        }
+        return z == nil ? null : z.x;
+    }
+</pre>
+<p>
+</p><div align="CENTER"><a name="fig:bst-search"></a><a name="19813"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 6.6:</strong>
+An example of (a)&nbsp;a successful search (for <span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2687.png" alt="$ 6$"></span>) and (b)&nbsp;an unsuccessful search (for <span class="MATH"><img width="22" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2688.png" alt="$ 10$"></span>) in a binary search tree.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table cellpadding="3" align="CENTER">
+<tbody><tr><td align="CENTER"><img width="549" height="327" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2685.png" alt="\includegraphics[width=\textwidth ]{figs/bst-example-2}"></td>
+<td align="CENTER"><img width="549" height="327" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2686.png" alt="\includegraphics[width=\textwidth ]{figs/bst-example-3}"></td>
+</tr>
+<tr><td align="CENTER">(a)</td>
+<td align="CENTER">(b)</td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><h2><a name="SECTION00922000000000000000">
+<span class="arabic">6</span>.<span class="arabic">2</span>.<span class="arabic">2</span> Addition</a>
+</h2>
+<p>
+To add a new value, <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2691.png" alt="$ \mathtt{x}$"></span>, to a <tt>BinarySearchTree</tt>, we first search for
+<!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2692.png" alt="$ \mathtt{x}$"></span>. If we find it, then there is no need to insert it.  Otherwise,
+we store <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2693.png" alt="$ \mathtt{x}$"></span> at a leaf child of the last node, <!-- MATH
+ $\mathtt{p}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2694.png" alt="$ \mathtt{p}$"></span>, encountered during the
+search for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2695.png" alt="$ \mathtt{x}$"></span>. Whether the new node is the left or right child of <!-- MATH
+ $\mathtt{p}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2696.png" alt="$ \mathtt{p}$"></span> depends on the result of comparing <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2697.png" alt="$ \mathtt{x}$"></span> and <!-- MATH
+ $\mathtt{p.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2698.png" alt="$ \mathtt{p.x}$"></span>.
+</p><pre>    boolean add(T x) {
+        Node p = findLast(x);
+        return addChild(p, newNode(x));        
+    }
+</pre>
+<pre>    Node findLast(T x) {
+        Node w = r, prev = nil;
+        while (w != nil) {
+            prev = w;
+            int comp = compare(x, w.x);
+            if (comp &lt; 0) {
+                w = w.left;
+            } else if (comp &gt; 0) {
+                w = w.right;
+            } else {
+                return w;
+            }
+        }
+        return prev;
+    }
+</pre>
+<pre>    boolean addChild(Node p, Node u) {
+        if (p == nil) {
+            r = u;              // inserting into empty tree
+        } else {
+            int comp = compare(u.x, p.x);
+            if (comp &lt; 0) {
+                p.left = u;
+            } else if (comp &gt; 0) {
+                p.right = u;
+            } else {
+                return false;   // u.x is already in the tree
+            }
+            u.parent = p;
+        }
+        n++;
+        return true;        
+    }
+</pre>
+An example is shown in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html#fig:bst-insert">6.7</a>. The most time-consuming
+part of this process is the initial search for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2699.png" alt="$ \mathtt{x}$"></span>, which takes an
+amount of time proportional to the height of the newly added node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2700.png" alt="$ \mathtt{u}$"></span>.
+In the worst case, this is equal to the height of the <tt>BinarySearchTree</tt>.
+<p>
+</p><div align="CENTER"><a name="fig:bst-insert"></a><a name="19844"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 6.7:</strong>
+Inserting the value <span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2703.png" alt="$ 8.5$"></span> into a binary search tree.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table cellpadding="3" align="CENTER">
+<tbody><tr><td align="CENTER"><img width="549" height="370" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2701.png" alt="\includegraphics[width=\textwidth ]{figs/bst-example-4}"></td>
+<td align="CENTER"><img width="549" height="354" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2702.png" alt="\includegraphics[width=\textwidth ]{figs/bst-example-5}"></td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><h2><a name="SECTION00923000000000000000">
+<span class="arabic">6</span>.<span class="arabic">2</span>.<span class="arabic">3</span> Removal</a>
+</h2>
+<p>
+Deleting a value stored in a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2705.png" alt="$ \mathtt{u}$"></span>, of a <tt>BinarySearchTree</tt> is a
+little more difficult.  If <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2706.png" alt="$ \mathtt{u}$"></span> is a leaf, then we can just detach <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2707.png" alt="$ \mathtt{u}$"></span>
+from its parent.  Even better: If <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2708.png" alt="$ \mathtt{u}$"></span> has only one child, then we can
+splice <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2709.png" alt="$ \mathtt{u}$"></span> from the tree by having <!-- MATH
+ $\mathtt{u.parent}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2710.png" alt="$ \mathtt{u.parent}$"></span> adopt <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2711.png" alt="$ \mathtt{u}$"></span>'s child (see
+Figure&nbsp;<a href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html#fig:bst-splice">6.8</a>):
+</p><pre>    void splice(Node u) {
+        Node s, p;
+        if (u.left != nil) {
+            s = u.left;
+        } else {
+            s = u.right;
+        }
+        if (u == r) {
+            r = s;
+            p = nil;
+        } else {
+            p = u.parent;
+            if (p.left == u) {
+                p.left = s;
+            } else {
+                p.right = s; 
+            }
+        }
+        if (s != nil) {
+            s.parent = p;
+        }
+        n--;
+    }
+</pre>
+<p>
+</p><div align="CENTER"><a name="fig:bst-splice"></a><a name="19863"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 6.8:</strong>
+Removing a leaf (<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2713.png" alt="$ 6$"></span>) or a node with only one child (<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2714.png" alt="$ 9$"></span>) is easy.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="279" height="141" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2712.png" alt="\includegraphics[scale=0.90909]{figs/bst-splice}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Things get tricky, though, when <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2717.png" alt="$ \mathtt{u}$"></span> has two children.  In this case,
+the simplest thing to do is to find a node, <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2718.png" alt="$ \mathtt{w}$"></span>, that has less than
+two children and such that <!-- MATH
+ $\mathtt{w.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2719.png" alt="$ \mathtt{w.x}$"></span> can replace <!-- MATH
+ $\mathtt{u.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2720.png" alt="$ \mathtt{u.x}$"></span>.  To maintain
+the binary search tree property, the value <!-- MATH
+ $\mathtt{w.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2721.png" alt="$ \mathtt{w.x}$"></span> should be close to the
+value of <!-- MATH
+ $\mathtt{u.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2722.png" alt="$ \mathtt{u.x}$"></span>.  For example, choosing <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2723.png" alt="$ \mathtt{w}$"></span> such that <!-- MATH
+ $\mathtt{w.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2724.png" alt="$ \mathtt{w.x}$"></span> is the smallest
+value greater than <!-- MATH
+ $\mathtt{u.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2725.png" alt="$ \mathtt{u.x}$"></span> will work.  Finding the node <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2726.png" alt="$ \mathtt{w}$"></span> is easy; it is
+the smallest value in the subtree rooted at <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2727.png" alt="$ \mathtt{u.right}$"></span>.  This node can
+be easily removed because it has no left child (see Figure&nbsp;<a href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html#fig:bst-remove">6.9</a>).
+</p><pre>    void remove(Node u) {
+        if (u.left == nil || u.right == nil) {
+            splice(u);
+        } else {
+            Node w = u.right;
+            while (w.left != nil) 
+                w = w.left;
+            u.x = w.x;
+            splice(w);
+        }
+    }
+</pre>
+<p>
+</p><div align="CENTER"><a name="fig:bst-remove"></a><a name="20340"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 6.9:</strong>
+Deleting a value (<span class="MATH"><img width="22" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2730.png" alt="$ 11$"></span>) from a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2731.png" alt="$ \mathtt{u}$"></span>, with two children is done by replacing <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2732.png" alt="$ \mathtt{u}$"></span>'s value with the smallest value in the right subtree of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2733.png" alt="$ \mathtt{u}$"></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table cellpadding="3" align="CENTER">
+<tbody><tr><td align="CENTER"><img width="549" height="276" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2728.png" alt="\includegraphics[width=\textwidth ]{figs/bst-delete-1}">
+    <img width="549" height="276" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2729.png" alt="\includegraphics[width=\textwidth ]{figs/bst-delete-2}"></td>
+<td align="CENTER">&nbsp;</td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><h2><a name="SECTION00924000000000000000">
+<span class="arabic">6</span>.<span class="arabic">2</span>.<span class="arabic">4</span> Summary</a>
+</h2>
+<p>
+The <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2734.png" alt="$ \mathtt{find(x)}$"></span>, <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2735.png" alt="$ \mathtt{add(x)}$"></span>, and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2736.png" alt="$ \mathtt{remove(x)}$"></span> operations in a
+<tt>BinarySearchTree</tt> each involve following a path from the root of the
+tree to some node in the tree. Without knowing more about the shape of
+the tree it is difficult to say much about the length of this path,
+except that it is less than <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2737.png" alt="$ \mathtt{n}$"></span>, the number of nodes in the tree.
+The following (unimpressive) theorem summarizes the performance of the
+<tt>BinarySearchTree</tt> data structure:
+</p><p>
+</p><p>
+</p><div><a name="thm:bst"><b>Theorem  <span class="arabic">6</span>..<span class="arabic">1</span></b></a> &nbsp; 
+<i><tt>BinarySearchTree</tt> implements the <tt>SSet</tt> interface and 
+  supports the operations <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2738.png" alt="$ \mathtt{add(x)}$"></span>, <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2739.png" alt="$ \mathtt{remove(x)}$"></span>,
+  and <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2740.png" alt="$ \mathtt{find(x)}$"></span> in <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2741.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span> time per operation.</i></div><p></p>
+<p>
+Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html#thm:bst">6.1</a> compares poorly with Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/4_2_SkiplistSSet_Efficient_.html#thm:skiplist">4.1</a>, which shows
+that the <tt>SkiplistSSet</tt> structure can implement the <tt>SSet</tt> interface
+with <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2742.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> expected time per operation.  The problem with the
+<tt>BinarySearchTree</tt> structure is that it can become <span class="textit">unbalanced</span>.
+Instead of looking like the tree in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html#fig:bst">6.5</a> it can look like a long
+chain of <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2743.png" alt="$ \mathtt{n}$"></span> nodes, all but the last having exactly one child.
+</p><p>
+There are a number of ways of avoiding unbalanced binary search
+trees, all of which lead to data structures that have <!-- MATH
+ $O(\log
+\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2744.png" alt="$ O(\log
+\ensuremath{\mathtt{n}})$"></span> time operations. In Chapter&nbsp;<a href="http://opendatastructures.org/ods-java/7_Random_Binary_Search_Tree.html#chap:rbs">7</a> we show how <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2745.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>
+<span class="textit">expected</span> time operations can be achieved with randomization.
+In Chapter&nbsp;<a href="http://opendatastructures.org/ods-java/8_Scapegoat_Trees.html#chap:scapegoat">8</a> we show how <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2746.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> <span class="textit">amortized</span>
+time operations can be achieved with partial rebuilding operations.
+In Chapter&nbsp;<a href="http://opendatastructures.org/ods-java/9_Red_Black_Trees.html#chap:redblack">9</a> we show how <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/img2747.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> <span class="textit">worst-case</span>
+time operations can be achieved by simulating a tree that is not binary:
+one in which nodes can have up to four children.
+</p><p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/6.2 BinarySearchTree_ An Unbalanced Binary Search Tree_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

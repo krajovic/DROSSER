@@ -1,0 +1,764 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>13.3 YFastTrie: A Doubly-Logarithmic Time SSet</title>
+<meta content="13.3 YFastTrie: A Doubly-Logarithmic Time SSet" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/13_4_Discussion_Exercises.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/13_2_XFastTrie_Searching_in.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/13_Data_Structures_Integers.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/13_4_Discussion_Exercises.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION001630000000000000000"></a>
+<a name="sec:yfast"></a>
+<br/>
+<span class="arabic">13</span>.<span class="arabic">3</span> YFastTrie: A Doubly-Logarithmic Time SSet
+</h1>
+<p>
+The XFastTrie is a vast--even exponential--improvement over the
+BinaryTrie in terms of query time, but the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5100.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5101.png" width="75"/></span>
+operations are still not terribly fast.  Furthermore, the space usage,
+<!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\cdot\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\cdot\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5102.png" width="57"/></span>, is higher than the other SSet implementations
+described in this book, which all use <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5103.png" width="36"/></span> space.  These two
+problems are related; if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5104.png" width="13"/></span> <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5105.png" width="50"/></span> operations build a structure of
+size <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\cdot\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\cdot\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5106.png" width="34"/></span>, then the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5107.png" width="50"/></span> operation requires at least on the
+order of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5108.png" width="16"/></span> time (and space) per operation.
+</p><p>
+<a name="59684"></a>The YFastTrie, discussed next, simultaneously improves the space and
+speed of XFastTries.  A YFastTrie uses an XFastTrie, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5109.png" width="22"/></span>, but only
+stores <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5110.png" width="54"/></span> values in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5111.png" width="22"/></span>.  In this way, the total space used by
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5112.png" width="22"/></span> is only <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5113.png" width="36"/></span>.  Furthermore, only one out of every <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5114.png" width="16"/></span> <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5115.png" width="50"/></span>
+or <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5116.png" width="75"/></span> operations in the YFastTrie results in an <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5117.png" width="50"/></span> or
+<!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5118.png" width="75"/></span> operation in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5119.png" width="22"/></span>.  By doing this, the average cost incurred
+by calls to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5120.png" width="22"/></span>'s <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5121.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5122.png" width="75"/></span> operations is only constant.
+</p><p>
+The obvious question becomes:  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5123.png" width="22"/></span> only stores <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5124.png" width="13"/></span>/<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5125.png" width="16"/></span> elements,
+where do the remaining <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}(1-1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}(1-1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5126.png" width="74"/></span> elements go?  These elements move 
+into <span class="textit">secondary structures</span>,
+<a name="59712"></a>in this case an extended version of
+treaps (Section <a href="http://opendatastructures.org/ods-python/7_2_Treap_Randomized_Binary.html#sec:treap">7.2</a>).  There are roughly <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5127.png" width="13"/></span>/<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5128.png" width="16"/></span> of these secondary
+structures so, on average, each of them stores <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5129.png" width="39"/></span> items.  Treaps
+support logarithmic time SSet operations, so the operations on these
+treaps will run in <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5130.png" width="63"/></span> time, as required.
+</p><p>
+More concretely, a YFastTrie contains an XFastTrie, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5131.png" width="22"/></span>,
+that contains a random sample of the data, where each element
+appears in the sample independently with probability <!-- MATH
+ $1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5132.png" width="31"/></span>.
+For convenience, the value <!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5133.png" width="46"/></span>, is always contained in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5134.png" width="22"/></span>.
+Let <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_0<\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_1<\cdots<\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{k-1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_0&lt;\ensuremath{\ensuremath{\e...
+...{\mathit{x}}}}_1&lt;\cdots&lt;\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{k-1}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5135.png" width="130"/></span> denote the elements stored in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5136.png" width="22"/></span>.
+Associated with each element, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_i$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5137.png" width="17"/></span>, is a treap, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}_i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}_i$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5138.png" width="15"/></span>, that stores
+all values in the range <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i-1}+1,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i-1}+1,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_i$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5139.png" width="97"/></span>.  This is illustrated
+in Figure <a href="http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html#fig:yfast">13.7</a>.
+</p><p>
+</p><div align="CENTER"><a name="fig:yfast"></a><a name="59737"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 13.7:</strong>
+A YFastTrie containing the values 0, 1, 3, 4,
+  6, 8, 9, 10, 11, and 13.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/yfast}" border="0" height="303" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5140.png" width="374"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5141.png" width="52"/></span> operation in a YFastTrie is fairly easy.  We search
+for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5142.png" width="12"/></span> in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5143.png" width="22"/></span> and find some value <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_i$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5144.png" width="17"/></span> associated with the treap
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}_i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}_i$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5145.png" width="15"/></span>.  We then use the treap <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5146.png" width="52"/></span> method on <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}_i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}_i$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5147.png" width="15"/></span> to answer
+the query.  The entire method is a one-liner:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{find}(\ensur...
+...suremath{\mathrm{find}(\ensuremath{\mathit{x}})}\\
+\end{flushleft}\end{leftbar}" border="0" height="67" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5148.png" width="363"/>
+<br/>
+The first <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5149.png" width="52"/></span> operation (on <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5150.png" width="22"/></span>) takes <!-- MATH
+ $O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5151.png" width="63"/></span> time.
+The second <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5152.png" width="52"/></span> operation (on a treap) takes <span class="MATH"><img align="MIDDLE" alt="$ O(\log r)$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5153.png" width="58"/></span> time, where
+<span class="MATH"><img align="MIDDLE" alt="$ r$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5154.png" width="11"/></span> is the size of the treap.  Later in this section, we will show that
+the expected size of the treap is <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5155.png" width="39"/></span> so that this operation takes
+<!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5156.png" width="63"/></span> time.<a href="http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html#foot62141" name="tex2html112"><sup><span class="arabic">13</span>.<span class="arabic">1</span></sup></a>
+</p><p>
+Adding an element to a YFastTrie is also fairly simple--most of
+the time.  The <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5159.png" width="50"/></span> method calls <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}.\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}.\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5160.png" width="74"/></span> to locate the treap,
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5161.png" width="10"/></span>, into which <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5162.png" width="12"/></span> should be inserted.  It then calls <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}.\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}.\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5163.png" width="59"/></span> to
+add <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5164.png" width="12"/></span> to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5165.png" width="10"/></span>.  At this point, it tosses a biased coin that comes up as
+heads with probability <!-- MATH
+ $1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5166.png" width="31"/></span> and as tails with probability <!-- MATH
+ $1-1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1-1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5167.png" width="54"/></span>.
+If this coin comes up heads, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5168.png" width="12"/></span> will be added to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5169.png" width="22"/></span>.
+</p><p>
+This is where things get a little more complicated.  When <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5170.png" width="12"/></span> is added to
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5171.png" width="22"/></span>, the treap <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5172.png" width="10"/></span> needs to be split into two treaps, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t_1}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5173.png" width="17"/></span> and <!-- MATH
+ $\ensuremath{t}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{t}'$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5174.png" width="15"/></span>.
+The treap <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t_1}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5175.png" width="17"/></span> contains all the values less than or equal to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5176.png" width="12"/></span>;
+<!-- MATH
+ $\ensuremath{t}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{t}'$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5177.png" width="15"/></span> is the original treap, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5178.png" width="10"/></span>, with the elements of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t_1}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5179.png" width="17"/></span> removed.
+Once this is done, we add the pair <!-- MATH
+ $\ensuremath{(\ensuremath{\mathit{x}},\ensuremath{\mathit{t_1}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{(\ensuremath{\mathit{x}},\ensuremath{\mathit{t_1}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5180.png" width="41"/></span> to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5181.png" width="22"/></span>.  Figure <a href="http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html#fig:yfast-add">13.8</a>
+shows an example.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{add}(\ensure...
+...eturn}} \ensuremath{\ensuremath{\mathit{false}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="220" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5182.png" width="309"/>
+<br/>
+</p><div align="CENTER"><a name="fig:yfast-add"></a><a name="62142"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 13.8:</strong>
+Adding the values 2 and 6 to a YFastTrie. The coin toss
+    for 6 came up heads, so 6 was added to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5184.png" width="22"/></span> and the treap containing
+    <span class="MATH"><img align="MIDDLE" alt="$ 4,5,6,8,9$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5185.png" width="70"/></span> was split.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/yfast-add}" border="0" height="303" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5183.png" width="374"/>
+</div></td></tr>
+</tbody></table>
+</div>
+Adding <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5186.png" width="12"/></span> to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5187.png" width="10"/></span> takes <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5188.png" width="63"/></span> time.  Exercise <a href="http://opendatastructures.org/ods-python/7_3_Discussion_Exercises.html#exc:treap-split">7.12</a> shows
+that splitting <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5189.png" width="10"/></span> into <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t_1}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5190.png" width="17"/></span> and <!-- MATH
+ $\ensuremath{t}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{t}'$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5191.png" width="15"/></span> can also be done in <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5192.png" width="63"/></span>
+expected time.  Adding the pair (<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5193.png" width="12"/></span>,<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t_1}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5194.png" width="17"/></span>) to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5195.png" width="22"/></span> takes <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5196.png" width="39"/></span> time,
+but only happens with probability <!-- MATH
+ $1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5197.png" width="31"/></span>.  Therefore, the expected
+running time of the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5198.png" width="50"/></span> operation is
+<p><!-- MATH
+ \begin{displaymath}
+O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}) + \frac{1}{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}) = O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}) \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}) + \frac{...
+...{w}}}}) = O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}) \enspace .
+$" border="0" height="50" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5199.png" width="216"/>
+</div><p></p>
+<p>
+The <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5200.png" width="75"/></span> method undoes the work performed by <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5201.png" width="50"/></span>.
+We use <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5202.png" width="22"/></span> to find the leaf, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5203.png" width="13"/></span>, in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5204.png" width="22"/></span> that contains the answer
+to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}.\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}.\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5205.png" width="74"/></span>.  From <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5206.png" width="13"/></span>, we get the treap, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5207.png" width="10"/></span>, containing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5208.png" width="12"/></span>
+and remove <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5209.png" width="12"/></span> from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5210.png" width="10"/></span>.  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5211.png" width="12"/></span> was also stored in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5212.png" width="22"/></span> (and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5213.png" width="12"/></span>
+is not equal to <!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5214.png" width="46"/></span>) then we remove <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5215.png" width="12"/></span> from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5216.png" width="22"/></span> and add the
+elements from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5217.png" width="12"/></span>'s treap to the treap, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t_2}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t_2}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5218.png" width="17"/></span>, that is stored by <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5219.png" width="13"/></span>'s
+successor in the linked list.   This is illustrated in
+Figure <a href="http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html#fig:yfast-remove">13.9</a>.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove}(\ens...
+...{return}} \ensuremath{\ensuremath{\mathit{ret}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="216" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5220.png" width="292"/>
+<br/>
+</p><div align="CENTER"><a name="fig:yfast-remove"></a><a name="60931"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 13.9:</strong>
+Removing the values 1 and 9 from a YFastTrie in Figure <a href="http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html#fig:yfast-add">13.8</a>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/yfast-remove}" border="0" height="304" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5221.png" width="385"/>
+</div></td></tr>
+</tbody></table>
+</div>
+Finding the node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5222.png" width="13"/></span> in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5223.png" width="22"/></span> takes <!-- MATH
+ $O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5224.png" width="63"/></span> expected time.
+Removing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5225.png" width="12"/></span> from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5226.png" width="10"/></span> takes <!-- MATH
+ $O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5227.png" width="63"/></span> expected time.  Again,
+Exercise <a href="http://opendatastructures.org/ods-python/7_3_Discussion_Exercises.html#exc:treap-split">7.12</a> shows that merging all the elements of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5228.png" width="10"/></span> into
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t_2}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t_2}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5229.png" width="17"/></span> can be done in <!-- MATH
+ $O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5230.png" width="63"/></span> time.  If necessary, removing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5231.png" width="12"/></span>
+from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5232.png" width="22"/></span> takes <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5233.png" width="39"/></span> time, but <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5234.png" width="12"/></span> is only contained in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5235.png" width="22"/></span> with
+probability <!-- MATH
+ $1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5236.png" width="31"/></span>.  Therefore, the expected time to remove an element
+from a YFastTrie is <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5237.png" width="63"/></span>.
+<p>
+Earlier in the discussion, we delayed arguing about the sizes of treaps
+in this structure until later.  Before finishing this chapter, we prove
+the result we need.
+</p><p>
+</p><p>
+</p><div><a name="lem:yfast-subtreesize"><b>Lemma  <span class="arabic">13</span>..<span class="arabic">1</span></b></a>   
+<i>Let <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5238.png" width="12"/></span> be an integer stored in a YFastTrie and let <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5239.png" width="20"/></span>
+denote the number of elements in the treap, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5240.png" width="10"/></span>, that contains <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5241.png" width="12"/></span>.
+Then <!-- MATH
+ $\mathrm{E}[\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}] \le 2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathrm{E}[\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_\ensuremath{\ensu...
+...uremath{\mathit{x}}}}] \le 2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5242.png" width="102"/></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+Refer to Figure <a href="http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html#fig:yfast-sample">13.10</a>. Let
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_1<\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_2<\cdots<\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_i=\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}<\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i+1}<\cdots<\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_1&lt;\ensuremath{\ensuremath{\e...
+...ath{\ensuremath{\mathit{x}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5244.png" width="248"/></span> denote
+the elements stored
+in the YFastTrie.  The treap <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5245.png" width="10"/></span> contains some elements greater than
+or equal to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5246.png" width="12"/></span>.  These are <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_i,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i+1},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i+j-1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_i,\ensuremath{\ensuremath{\e...
+...it{x}}}}_{i+1},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i+j-1}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5247.png" width="119"/></span>,
+where <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i+j-1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i+j-1}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5248.png" width="44"/></span> is the only one of these elements in which the
+biased coin toss performed in the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5249.png" width="50"/></span> method turned up as heads.
+In other words, <!-- MATH
+ $\mathrm{E}[j]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathrm{E}[j]$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5250.png" width="31"/></span> is equal to the expected number of biased coin
+tosses required to obtain the first heads.<a href="http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html#foot62145" name="tex2html115"><sup><span class="arabic">13</span>.<span class="arabic">2</span></sup></a>  Each coin toss is independent
+and turns up as heads with probability <!-- MATH
+ $1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1/\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5254.png" width="31"/></span>, so <!-- MATH
+ $\mathrm{E}[j]\le\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathrm{E}[j]\le\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5255.png" width="60"/></span>.
+(See Lemma <a href="http://opendatastructures.org/ods-python/4_4_Analysis_Skiplists.html#lem:coin-tosses">4.2</a> for an analysis of this for the case <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}=2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}=2$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5256.png" width="42"/></span>.)
+<p>
+Similarly, the elements of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5257.png" width="10"/></span> smaller than <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5258.png" width="12"/></span> are
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i-1},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i-k}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i-1},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i-k}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5259.png" width="87"/></span> where all these <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5260.png" width="13"/></span> coin tosses turn up as
+tails and the coin toss for <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i-k-1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{i-k-1}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5261.png" width="45"/></span> turns up as heads.  Therefore,
+<!-- MATH
+ $\mathrm{E}[k]\le\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathrm{E}[k]\le\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5262.png" width="86"/></span>, since this is the same coin tossing experiment considered
+in the preceding paragraph, but one in which the last toss is not counted.
+In summary, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}=j+k$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}=j+k$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5263.png" width="68"/></span>, so
+</p><p><!-- MATH
+ \begin{displaymath}
+\mathrm{E}[\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}] = \mathrm{E}[j+k] = \mathrm{E}[j] + \mathrm{E}[k] \le 2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1 \enspace .  \qedhere
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \mathrm{E}[\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}_\ens...
+...] \le 2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1 \enspace . \qedhere $" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5264.png" width="269"/>
+</div><p></p> <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5243.png" width="17"/>
+</div><p></p>
+<div align="CENTER"><a name="fig:yfast-sample"></a><a name="62146"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 13.10:</strong>
+The number of elements in
+  the treap <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5266.png" width="10"/></span> containing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5267.png" width="12"/></span> is determined by two coin tossing
+  experiments.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/yfast-sample}" border="0" height="109" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5265.png" width="553"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Lemma <a href="http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html#lem:yfast-subtreesize">13.1</a> was the last piece in the proof of the
+following theorem, which summarizes the performance of the YFastTrie:
+</p><p>
+</p><p>
+</p><div><b>Theorem  <span class="arabic">13</span>..<span class="arabic">3</span></b>   
+<i>A YFastTrie implements the SSet interface for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5268.png" width="16"/></span>-bit integers. A
+YFastTrie supports the operations <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5269.png" width="50"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5270.png" width="75"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5271.png" width="52"/></span>
+in <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5272.png" width="63"/></span> expected time per operation.  The space used by a
+YFastTrie that stores <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5273.png" width="13"/></span> values is <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5274.png" width="64"/></span>.</i></div><p></p>
+<p>
+The <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5275.png" width="16"/></span> term in the space requirement comes from the fact that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{xft}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{xft}}}$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5276.png" width="22"/></span> always
+stores the value <!-- MATH
+ $2^\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-1$" border="0" height="30" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5277.png" width="46"/></span>.  The implementation could be modified (at the
+expense of adding some extra cases to the code) so that it is unnecessary
+to store this value.  In this case, the space requirement in the theorem
+becomes <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5278.png" width="36"/></span>.
+</p><p>
+<br/></p><hr/><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot62141">... time.</a><a href="http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html#tex2html112"><sup><span class="arabic">13</span>.<span class="arabic">1</span></sup></a></dt>
+<dd>This is an application of <span class="textit">Jensen's Inequality</span>: If <!-- MATH
+ $\mathrm{E}[r]=\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathrm{E}[r]=\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5157.png" width="60"/></span>, then <!-- MATH
+ $\mathrm{E}[\log r]
+\le \log w$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathrm{E}[\log r]
+\le \log w$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5158.png" width="108"/></span>.
+</dd>
+<dt><a name="foot62145">... heads.</a><a href="http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html#tex2html115"><sup><span class="arabic">13</span>.<span class="arabic">2</span></sup></a></dt>
+<dd>This analysis ignores
+the fact that <span class="MATH"><img align="MIDDLE" alt="$ j$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5251.png" width="11"/></span> never exceeds <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-i+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-i+1$" border="0" height="29" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5252.png" width="58"/></span>.  However, this only decreases
+<!-- MATH
+ $\mathrm{E}[j]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathrm{E}[j]$" border="0" height="31" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/img5253.png" width="31"/></span>, so the upper bound still holds.
+</dd>
+</dl>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/13.3 YFastTrie_ A Doubly-Logarithmic Time SSet_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

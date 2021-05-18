@@ -1,0 +1,1715 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0058)http://opendatastructures.org/ods-python/14_2_B_Trees.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>14.2 B-Trees</title>
+<meta content="14.2 B-Trees" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/14.2 B-Trees_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/14_3_Discussion_Exercises.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/14_1_Block_Store.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/14_External_Memory_Searchin.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/14_3_Discussion_Exercises.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<hr/>
+<h1><a name="SECTION001720000000000000000"></a>
+<a name="sec:btree"></a>
+<br/>
+<span class="arabic">14</span>.<span class="arabic">2</span> B-Trees
+</h1>
+<p>
+In this section, we discuss a generalization of binary trees,
+called <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5353.png" width="14"/></span>-trees, which is efficient in the external memory model.
+Alternatively, <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5354.png" width="14"/></span>-trees can be viewed as the natural generalization of
+2-4 trees described in Section <a href="http://opendatastructures.org/ods-python/9_1_2_4_Trees.html#sec:twofour">9.1</a>. (A 2-4 tree is a special case
+of a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5355.png" width="14"/></span>-tree that we get by setting <span class="MATH"><img align="MIDDLE" alt="$ B=2$" border="0" height="29" src="static/14.2 B-Trees_files/img5356.png" width="40"/></span>.)
+</p><p>
+<a name="63807"></a>For any integer <span class="MATH"><img align="MIDDLE" alt="$ B\ge 2$" border="0" height="29" src="static/14.2 B-Trees_files/img5358.png" width="41"/></span>, a <span class="textit"><span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5359.png" width="14"/></span>-tree</span> is a tree in which all of
+the leaves have the same depth and every non-root internal node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5360.png" width="13"/></span>,
+has at least <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5361.png" width="14"/></span> children and at most <span class="MATH"><img align="MIDDLE" alt="$ 2B$" border="0" height="29" src="static/14.2 B-Trees_files/img5362.png" width="23"/></span> children.  The children of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5363.png" width="13"/></span>
+are stored in an array, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5364.png" width="71"/></span>.  The required number of children is
+relaxed at the root, which can have anywhere between 2 and <span class="MATH"><img align="MIDDLE" alt="$ 2B$" border="0" height="29" src="static/14.2 B-Trees_files/img5365.png" width="23"/></span> children.
+</p><p>
+If the height of a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5366.png" width="14"/></span>-tree is <span class="MATH"><img align="MIDDLE" alt="$ h$" border="0" height="30" src="static/14.2 B-Trees_files/img5367.png" width="13"/></span>, then it follows that the number,
+<span class="MATH"><img align="MIDDLE" alt="$ \ell$" border="0" height="30" src="static/14.2 B-Trees_files/img5368.png" width="12"/></span>, of leaves in the <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5369.png" width="14"/></span>-tree satisfies
+</p><p><!-- MATH
+ \begin{displaymath}
+2B^{h-1} \le \ell \le 2(2B)^{h-1} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle 2B^{h-1} \le \ell \le 2(2B)^{h-1} \enspace .
+$" border="0" height="38" src="static/14.2 B-Trees_files/img5370.png" width="158"/>
+</div><p></p>
+Taking the logarithm of the first inequality and rearranging terms yields:
+<p></p>
+<div align="CENTER" class="mathdisplay"><table align="CENTER" cellpadding="0" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="RIGHT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle h$" border="0" height="30" src="static/14.2 B-Trees_files/img5371.png" width="13"/></span></td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le \frac{\log \ell-1}{\log B} + 1$" border="0" height="52" src="static/14.2 B-Trees_files/img5372.png" width="101"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le \frac{\log \ell}{\log B} + 1$" border="0" height="52" src="static/14.2 B-Trees_files/img5373.png" width="79"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \log_B \ell + 1 \enspace .$" border="0" height="30" src="static/14.2 B-Trees_files/img5374.png" width="93"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+That is, the height of a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5375.png" width="14"/></span>-tree is proportional to the base-<span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5376.png" width="14"/></span>
+logarithm of the number of leaves.
+<p>
+Each node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5377.png" width="13"/></span>, in <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5378.png" width="14"/></span>-tree stores an array of keys
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[0],\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[2B-1]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[0...
+...suremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[2B-1]$" border="0" height="31" src="static/14.2 B-Trees_files/img5379.png" width="186"/></span>.  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5380.png" width="13"/></span> is an internal node with <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/14.2 B-Trees_files/img5381.png" width="13"/></span>
+children, then the number of keys stored at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5382.png" width="13"/></span> is exactly <span class="MATH"><img align="MIDDLE" alt="$ k-1$" border="0" height="30" src="static/14.2 B-Trees_files/img5383.png" width="36"/></span> and these
+are stored in <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[0],\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[k-2]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[0...
+...nsuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[k-2]$" border="0" height="31" src="static/14.2 B-Trees_files/img5384.png" width="175"/></span>.  The remaining <span class="MATH"><img align="MIDDLE" alt="$ 2B-k+1$" border="0" height="30" src="static/14.2 B-Trees_files/img5385.png" width="70"/></span>
+array entries in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5386.png" width="45"/></span> are set to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5387.png" width="22"/></span>.  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5388.png" width="13"/></span> is a non-root leaf
+node, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5389.png" width="13"/></span> contains between <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5390.png" width="38"/></span> and <span class="MATH"><img align="MIDDLE" alt="$ 2B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5391.png" width="46"/></span> keys. The keys in a
+<span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5392.png" width="14"/></span>-tree respect an order similar to the keys in a binary search tree.
+For any node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5393.png" width="13"/></span>, that stores <span class="MATH"><img align="MIDDLE" alt="$ k-1$" border="0" height="30" src="static/14.2 B-Trees_files/img5394.png" width="36"/></span> keys,
+</p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}[0]}} < \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}[1]}} < \cdots < \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[k-2] \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\math...
+...nsuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[k-2] \enspace .
+$" border="0" height="31" src="static/14.2 B-Trees_files/img5395.png" width="285"/>
+</div><p></p>
+If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5396.png" width="13"/></span> is an internal node, then for every <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\in\{0,\ldots,k-2\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\in\{0,\ldots,k-2\}$" border="0" height="31" src="static/14.2 B-Trees_files/img5397.png" width="105"/></span>,
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}[\ensuremath{\mathit{i}}]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}[\ensuremath{\mathit{i}}]}}$" border="0" height="31" src="static/14.2 B-Trees_files/img5398.png" width="60"/></span> is larger than every key stored in the subtree rooted at
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/14.2 B-Trees_files/img5399.png" width="86"/></span> but smaller than every key stored in the subtree rooted
+at <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}[\ensuremath{\mathit{i}}+1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}[\ensuremath{\mathit{i}}+1]}}$" border="0" height="31" src="static/14.2 B-Trees_files/img5400.png" width="110"/></span>.  Informally,
+<p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}[\ensuremath{\mathit{i}}]}} \prec \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}[\ensuremath{\mathit{i}}]}} \prec \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}[\ensuremath{\mathit{i}}+1]}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\math...
+...hit{u}}.\ensuremath{\mathit{children}}[\ensuremath{\mathit{i}}+1]}} \enspace .
+$" border="0" height="31" src="static/14.2 B-Trees_files/img5401.png" width="296"/>
+</div><p></p>
+An example of a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5402.png" width="14"/></span>-tree with <span class="MATH"><img align="MIDDLE" alt="$ B=2$" border="0" height="29" src="static/14.2 B-Trees_files/img5403.png" width="40"/></span> is shown in Figure <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree">14.2</a>.
+<p>
+</p><div align="CENTER"><a name="fig:btree"></a><a name="63867"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 14.2:</strong>
+A <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5405.png" width="14"/></span>-tree with <span class="MATH"><img align="MIDDLE" alt="$ B=2$" border="0" height="29" src="static/14.2 B-Trees_files/img5406.png" width="40"/></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-1}" border="0" height="125" src="static/14.2 B-Trees_files/img5404.png" width="555"/></td></tr>
+</tbody></table>
+</div>
+<p>
+Note that the data stored in a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5409.png" width="14"/></span>-tree node has size <span class="MATH"><img align="MIDDLE" alt="$ O(B)$" border="0" height="31" src="static/14.2 B-Trees_files/img5410.png" width="37"/></span>.  Therefore,
+in an external memory setting, the value of <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5411.png" width="14"/></span> in a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5412.png" width="14"/></span>-tree is chosen
+so that  a node fits into a single external memory block.  In this way,
+the time it takes to perform a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5413.png" width="14"/></span>-tree operation in the external memory
+model is proportional to the number of nodes that are accessed (read or
+written) by the operation.
+</p><p>
+For example, if the keys are 4 byte integers and the node indices are
+also 4 bytes, then setting <span class="MATH"><img align="MIDDLE" alt="$ B=256$" border="0" height="29" src="static/14.2 B-Trees_files/img5414.png" width="58"/></span> means that each node stores
+</p><p><!-- MATH
+ \begin{displaymath}
+(4+4)\times 2B
+ = 8\times512=4096
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle (4+4)\times 2B
+= 8\times512=4096
+$" border="0" height="31" src="static/14.2 B-Trees_files/img5415.png" width="200"/>
+</div><p></p>
+bytes of data.  This would be a perfect value of <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5416.png" width="14"/></span> for the hard disk
+or solid state drive discussed in the introduction to this chaper,
+which have a block size of <span class="MATH"><img align="MIDDLE" alt="$ 4096$" border="0" height="29" src="static/14.2 B-Trees_files/img5417.png" width="39"/></span> bytes.
+<p>
+The BTree class, which implements a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5418.png" width="14"/></span>-tree, stores a BlockStore,
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{bs}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{bs}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5419.png" width="18"/></span>, that stores BTree nodes as well as the index, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{ri}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{ri}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5420.png" width="15"/></span>, of the
+root node.  As usual, an integer, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5421.png" width="13"/></span>, is used to keep track of the number
+of items in the data structure:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{initialize}(...
+...th{\ensuremath{\mathit{n}} \gets \ensuremath{0}}\\
+\end{flushleft}\end{leftbar}" border="0" height="140" src="static/14.2 B-Trees_files/img5422.png" width="194"/>
+<br/>
+</p><p>
+</p><h2><a name="SECTION001721000000000000000">
+<span class="arabic">14</span>.<span class="arabic">2</span>.<span class="arabic">1</span> Searching</a>
+</h2>
+<p>
+The implementation of the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5423.png" width="52"/></span> operation, which is illustrated in
+Figure <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-find">14.3</a>, generalizes the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5424.png" width="52"/></span> operation in a binary
+search tree.  The search for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5425.png" width="12"/></span> starts at the root and uses the keys
+stored at a node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5426.png" width="13"/></span>, to determine in which of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5427.png" width="13"/></span>'s children the search
+should continue.
+</p><p>
+</p><div align="CENTER"><a name="fig:btree-find"></a><a name="66900"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 14.3:</strong>
+A successful search (for the value 4)
+    and an unsuccessful search (for the value 16.5) in a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5429.png" width="14"/></span>-tree. Shaded nodes show where the value of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{z}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{z}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5430.png" width="11"/></span> is updated during the searches.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-2}" border="0" height="155" src="static/14.2 B-Trees_files/img5428.png" width="555"/></td></tr>
+</tbody></table>
+</div>
+More specifically, at a node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5432.png" width="13"/></span>, the search checks if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5433.png" width="12"/></span> is stored
+in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5434.png" width="45"/></span>.  If so, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5435.png" width="12"/></span> has been found and the search is complete.
+Otherwise, the search finds the smallest integer, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5436.png" width="9"/></span>, such that
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}[\ensuremath{\mathit{i}}]}} > \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}[\ensuremath{\mathit{i}}]}} &gt; \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="31" src="static/14.2 B-Trees_files/img5437.png" width="85"/></span> and continues the search in the subtree rooted at
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/14.2 B-Trees_files/img5438.png" width="86"/></span>.  If no key in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5439.png" width="45"/></span> is greater than <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5440.png" width="12"/></span>, then the
+search continues in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5441.png" width="13"/></span>'s rightmost child.  Just like binary search
+trees, the algorithm keeps track of the most recently seen key, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{z}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{z}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5442.png" width="11"/></span>,
+that is larger than <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5443.png" width="12"/></span>.  In case <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5444.png" width="12"/></span> is not found, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{z}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{z}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5445.png" width="11"/></span> is returned as
+the smallest value that is greater or equal to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5446.png" width="12"/></span>.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{find}(\ensur...
+...bf{return}} \ensuremath{\ensuremath{\mathit{z}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="254" src="static/14.2 B-Trees_files/img5447.png" width="325"/>
+<br/>
+Central to the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5448.png" width="52"/></span> method is the <!-- MATH
+ $\ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5449.png" width="81"/></span> method that
+searches in a <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5450.png" width="22"/></span>-padded sorted array, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5451.png" width="12"/></span>, for the value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5452.png" width="12"/></span>.
+This method, illustrated in Figure <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:findit">14.4</a>, works for any array,
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5453.png" width="12"/></span>, where <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[0],\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[k-1]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[0],\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[k-1]$" border="0" height="31" src="static/14.2 B-Trees_files/img5454.png" width="109"/></span> is a sequence of keys in sorted
+order and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[k],\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}-1]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[k],\ldots,\ensuremath{\ensur...
+...hit{a}}}}[\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}-1]$" border="0" height="31" src="static/14.2 B-Trees_files/img5455.png" width="164"/></span> are all set to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5456.png" width="22"/></span>.
+If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5457.png" width="12"/></span> is in the array at position <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5458.png" width="9"/></span>, then <!-- MATH
+ $\ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5459.png" width="81"/></span> returns
+<!-- MATH
+ $-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ -\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1$" border="0" height="30" src="static/14.2 B-Trees_files/img5460.png" width="42"/></span>. Otherwise, it returns the smallest index, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5461.png" width="9"/></span>, such that
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}}>\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}}&gt;\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="31" src="static/14.2 B-Trees_files/img5462.png" width="52"/></span> or <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}}=\ensuremath{\ensuremath{\ensuremath{\mathit{nil}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}}=\ensuremath{\ensuremath{\ensuremath{\mathit{nil}}}}$" border="0" height="31" src="static/14.2 B-Trees_files/img5463.png" width="63"/></span>.
+<div align="CENTER"><a name="fig:findit"></a><a name="66901"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 14.4:</strong>
+The execution of <!-- MATH
+ $\ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},27)}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},27)}$" border="0" height="31" src="static/14.2 B-Trees_files/img5465.png" width="90"/></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/findit}" border="0" height="152" src="static/14.2 B-Trees_files/img5464.png" width="388"/></td></tr>
+</tbody></table>
+</div>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{find\_it}(\e...
+...f{return}} \ensuremath{\ensuremath{\mathit{lo}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="235" src="static/14.2 B-Trees_files/img5466.png" width="323"/>
+<br/>
+The <!-- MATH
+ $\ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5467.png" width="81"/></span> method uses a binary search 
+<a name="64143"></a>that halves the search
+space at each step, so it runs in <!-- MATH
+ $O(\log(\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}))$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log(\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}))$" border="0" height="31" src="static/14.2 B-Trees_files/img5468.png" width="123"/></span> time.  In our setting, <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}=2B$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{a}})}}=2B$" border="0" height="31" src="static/14.2 B-Trees_files/img5469.png" width="104"/></span>, so <!-- MATH
+ $\ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5470.png" width="81"/></span> runs in <span class="MATH"><img align="MIDDLE" alt="$ O(\log B)$" border="0" height="31" src="static/14.2 B-Trees_files/img5471.png" width="61"/></span> time.
+<p>
+We can analyze the running time of a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5472.png" width="14"/></span>-tree <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5473.png" width="52"/></span> operation both
+in the usual word-RAM model (where every instruction counts) and in the
+external memory model (where we only count the number of nodes accessed).
+Since each leaf in a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5474.png" width="14"/></span>-tree stores at least one key and the height
+of a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5475.png" width="14"/></span>-Tree with <span class="MATH"><img align="MIDDLE" alt="$ \ell$" border="0" height="30" src="static/14.2 B-Trees_files/img5476.png" width="12"/></span> leaves is <!-- MATH
+ $O(\log_B\ell)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log_B\ell)$" border="0" height="31" src="static/14.2 B-Trees_files/img5477.png" width="67"/></span>, the height of a
+<span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5478.png" width="14"/></span>-tree that stores <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5479.png" width="13"/></span> keys is <!-- MATH
+ $O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5480.png" width="68"/></span>.  Therefore, in the
+external memory model, the time taken by the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5481.png" width="52"/></span> operation is
+<!-- MATH
+ $O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5482.png" width="68"/></span>.  To determine the running time in the word-RAM model,
+we have to account for the cost of calling <!-- MATH
+ $\ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5483.png" width="81"/></span> for each node
+we access, so the running time of <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5484.png" width="52"/></span> in the word-RAM model is
+</p><p><!-- MATH
+ \begin{displaymath}
+O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})\times O(\log B) = O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})\times O(\log B) = O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) \enspace .
+$" border="0" height="31" src="static/14.2 B-Trees_files/img5485.png" width="225"/>
+</div><p></p>
+<p>
+</p><h2><a name="SECTION001722000000000000000">
+<span class="arabic">14</span>.<span class="arabic">2</span>.<span class="arabic">2</span> Addition</a>
+</h2>
+<p>
+One important difference between <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5486.png" width="14"/></span>-trees and the BinarySearchTree
+data structure from Section <a href="http://opendatastructures.org/ods-python/6_2_BinarySearchTree_Unbala.html#sec:binarysearchtree">6.2</a> is that the nodes of a
+<span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5487.png" width="14"/></span>-tree do not store pointers to their parents.  The reason for this
+will be explained shortly.  The lack of parent pointers means that
+the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5488.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5489.png" width="75"/></span> operations on <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5490.png" width="14"/></span>-trees are most easily
+implemented using recursion.
+</p><p>
+Like all balanced search trees, some form of rebalancing is required
+during an <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5491.png" width="50"/></span> operation.  In a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5492.png" width="14"/></span>-tree, this is done by
+<span class="textit">splitting</span> nodes.
+<a name="64174"></a>Refer to Figure <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-split">14.5</a> for what follows.
+Although splitting takes place across two levels of recursion, it is
+best understood as an operation that takes a node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5493.png" width="13"/></span> containing <span class="MATH"><img align="MIDDLE" alt="$ 2B$" border="0" height="29" src="static/14.2 B-Trees_files/img5494.png" width="23"/></span>
+keys and having <span class="MATH"><img align="MIDDLE" alt="$ 2B+1$" border="0" height="29" src="static/14.2 B-Trees_files/img5495.png" width="47"/></span> children.  It creates a new node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5496.png" width="16"/></span>, that
+adopts <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}}}[B],\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}}}[2B]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}...
+...remath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}}}[2B]$" border="0" height="31" src="static/14.2 B-Trees_files/img5497.png" width="216"/></span>.  The new node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5498.png" width="16"/></span>
+also takes <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5499.png" width="13"/></span>'s <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5500.png" width="14"/></span> largest keys, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[B],\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[2B-1]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[B...
+...suremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[2B-1]$" border="0" height="31" src="static/14.2 B-Trees_files/img5501.png" width="187"/></span>.
+At this point, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5502.png" width="13"/></span> has <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5503.png" width="14"/></span> children and <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5504.png" width="14"/></span> keys.  The extra key,
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[B-1]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[B-1]$" border="0" height="31" src="static/14.2 B-Trees_files/img5505.png" width="89"/></span>, is passed up to the parent of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5506.png" width="13"/></span>, which also adopts <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5507.png" width="16"/></span>.
+</p><p>
+Notice that the splitting operation modifies three nodes: <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5508.png" width="13"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5509.png" width="13"/></span>'s
+parent, and the new node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5510.png" width="16"/></span>.   This is why it is important that the
+nodes of a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5511.png" width="14"/></span>-tree do not maintain parent pointers.  If they did, then
+the <span class="MATH"><img align="MIDDLE" alt="$ B+1$" border="0" height="29" src="static/14.2 B-Trees_files/img5512.png" width="38"/></span> children adopted by <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5513.png" width="16"/></span> would all need to have their parent
+pointers modified. This would increase the number of external memory
+accesses from 3 to <span class="MATH"><img align="MIDDLE" alt="$ B+4$" border="0" height="29" src="static/14.2 B-Trees_files/img5514.png" width="38"/></span> and would make <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5515.png" width="14"/></span>-trees much less efficient for
+large values of <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5516.png" width="14"/></span>.
+</p><p>
+</p><div align="CENTER"><a name="fig:btree-split"></a><a name="66903"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 14.5:</strong>
+Splitting the node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5521.png" width="13"/></span> in a
+     <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5522.png" width="14"/></span>-tree (<span class="MATH"><img align="MIDDLE" alt="$ B=3$" border="0" height="29" src="static/14.2 B-Trees_files/img5523.png" width="40"/></span>). Notice that the key <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[2]=\mathrm{m}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}}[2]=\mathrm{m}$" border="0" height="31" src="static/14.2 B-Trees_files/img5524.png" width="96"/></span>
+     passes from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5525.png" width="13"/></span> to its parent.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><table align="CENTER" cellpadding="3">
+<tbody><tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-split-1}" border="0" height="191" src="static/14.2 B-Trees_files/img5519.png" width="418"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\mathrm{split}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\mathrm{split}()}$" border="0" height="31" src="static/14.2 B-Trees_files/img5517.png" width="59"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\Downarrow$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Downarrow$" border="0" height="30" src="static/14.2 B-Trees_files/img5518.png" width="13"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-split-2}" border="0" height="191" src="static/14.2 B-Trees_files/img5520.png" width="554"/></td>
+<td align="LEFT"> </td></tr>
+</tbody></table></td></tr>
+</tbody></table>
+</div>
+<p>
+The <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5527.png" width="50"/></span> method in a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5528.png" width="14"/></span>-tree is illustrated in Figure <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-add">14.6</a>.
+At a high level, this method finds a leaf, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5529.png" width="13"/></span>, at which to add the
+value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5530.png" width="12"/></span>.  If this causes <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5531.png" width="13"/></span> to become overfull (because it already
+contained <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5532.png" width="38"/></span> keys), then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5533.png" width="13"/></span> is split.  If this causes <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5534.png" width="13"/></span>'s parent to
+become overfull, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5535.png" width="13"/></span>'s parent is also split, which may cause <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5536.png" width="13"/></span>'s
+grandparent to become overfull, and so on. This process continues,
+moving up the tree one level at a time until reaching a node that
+is not overfull or until the root is split. In the former case, the
+process stops.  In the latter case, a new root is created whose two
+children become the nodes obtained when the original root was split.
+</p><p>
+</p><div align="CENTER"><a name="fig:btree-add"></a><a name="66904"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 14.6:</strong>
+The <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5542.png" width="50"/></span> operation in a
+      BTree. Adding the value 21 results in two nodes being split.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><table align="CENTER" cellpadding="3">
+<tbody><tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-add-1}" border="0" height="111" src="static/14.2 B-Trees_files/img5539.png" width="517"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\Downarrow$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Downarrow$" border="0" height="30" src="static/14.2 B-Trees_files/img5537.png" width="13"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-add-2}" border="0" height="111" src="static/14.2 B-Trees_files/img5540.png" width="554"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\Downarrow$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Downarrow$" border="0" height="30" src="static/14.2 B-Trees_files/img5538.png" width="13"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-add-3}" border="0" height="111" src="static/14.2 B-Trees_files/img5541.png" width="554"/></td>
+<td align="LEFT"> </td></tr>
+</tbody></table></td></tr>
+</tbody></table>
+</div>
+<p>
+The executive summary of the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5544.png" width="50"/></span> method is that it walks
+from the root to a leaf searching for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5545.png" width="12"/></span>, adds <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5546.png" width="12"/></span> to this leaf, and
+then walks back up to the root, splitting any overfull nodes it encounters
+along the way.  With this high level view in mind, we can now delve into
+the details of how this method can be implemented recursively.
+</p><p>
+The real work of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5547.png" width="50"/></span> is done by the <!-- MATH
+ $\ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5548.png" width="139"/></span> method,
+which adds the value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5549.png" width="12"/></span> to the subtree whose root, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5550.png" width="13"/></span>, has the
+identifier <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{ui}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{ui}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5551.png" width="18"/></span>.  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5552.png" width="13"/></span> is a leaf, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5553.png" width="12"/></span> is simply inserted into
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5554.png" width="45"/></span>.  Otherwise, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5555.png" width="12"/></span> is added recursively into the appropriate
+child, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5556.png" width="18"/></span>, of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5557.png" width="13"/></span>.  The result of this recursive call is normally
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5558.png" width="22"/></span> but may also be a reference to a newly-created node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5559.png" width="16"/></span>, that
+was created because <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5560.png" width="18"/></span> was split.  In this case, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5561.png" width="13"/></span> adopts <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5562.png" width="16"/></span>
+and takes its first key, completing the splitting operation on <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5563.png" width="18"/></span>.
+</p><p>
+After the value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5564.png" width="12"/></span> has been added (either to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5565.png" width="13"/></span> or to a descendant of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5566.png" width="13"/></span>),
+the <!-- MATH
+ $\ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5567.png" width="139"/></span> method checks to see if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5568.png" width="13"/></span> is storing too many
+(more than <span class="MATH"><img align="MIDDLE" alt="$ 2B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5569.png" width="46"/></span>) keys.  If so, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5570.png" width="13"/></span> needs to be <span class="textit">split</span>
+with a call to the <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\mathrm{split}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\mathrm{split}()}$" border="0" height="31" src="static/14.2 B-Trees_files/img5571.png" width="59"/></span> method.  The result of calling <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\mathrm{split}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\mathrm{split}()}$" border="0" height="31" src="static/14.2 B-Trees_files/img5572.png" width="59"/></span>
+is a new node that is used as the return value for <!-- MATH
+ $\ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5573.png" width="139"/></span>.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{add\_recursi...
+...{return}} \ensuremath{\ensuremath{\mathit{nil}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="312" src="static/14.2 B-Trees_files/img5574.png" width="318"/>
+<br/>
+</p><p>
+The <!-- MATH
+ $\ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5575.png" width="139"/></span> method is a helper for the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5576.png" width="50"/></span> method, which
+calls <!-- MATH
+ $\ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ri}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ri}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5577.png" width="136"/></span> to insert <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5578.png" width="12"/></span> into the root of the <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5579.png" width="14"/></span>-tree.
+If <!-- MATH
+ $\ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ri}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ri}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5580.png" width="136"/></span> causes the root to split, then a new root is
+created that takes as its children both the old root and the new node
+created by the splitting of the old root.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+% latex2html id marker 64415\begin{flushleft}
+\hspace*{1em} \e...
+...return}} \ensuremath{\ensuremath{\mathit{true}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="350" src="static/14.2 B-Trees_files/img5581.png" width="265"/>
+<br/>
+</p><p>
+The <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5582.png" width="50"/></span> method and its helper, <!-- MATH
+ $\ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5583.png" width="139"/></span>, can be analyzed
+in two phases:
+</p><p>
+</p><dl>
+<dt><strong>Downward phase:</strong></dt>
+<dd>During the downward phase of the recursion, before <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5584.png" width="12"/></span> has been added,
+    they access a sequence of BTree nodes and call <!-- MATH
+ $\ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find\_it}(\ensuremath{\mathit{a}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5585.png" width="81"/></span> on each node.
+    As with the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5586.png" width="52"/></span> method, this takes <!-- MATH
+ $O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5587.png" width="68"/></span> time in the
+    external memory model and <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5588.png" width="60"/></span> time in the word-RAM model.
+<p>
+</p></dd>
+<dt><strong>Upward phase:</strong></dt>
+<dd>During the upward phase of the recursion, after <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5589.png" width="12"/></span> has been added,
+    these methods perform a sequence of at most <!-- MATH
+ $O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5590.png" width="68"/></span> splits.
+    Each split involves only three nodes, so this phase takes <!-- MATH
+ $O(\log_B
+    \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log_B
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5591.png" width="68"/></span> time in the external memory model.  However, each split
+    involves moving <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5592.png" width="14"/></span> keys and children from one node to another, so
+    in the word-RAM model, this takes <!-- MATH
+ $O(B\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(B\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5593.png" width="72"/></span> time.
+</dd>
+</dl>
+<p>
+Recall that the value of <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5594.png" width="14"/></span> can be quite large, much larger
+than even <!-- MATH
+ $\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5595.png" width="37"/></span>.  Therefore, in the word-RAM model, adding a value
+to a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5596.png" width="14"/></span>-tree can be much slower than adding into a balanced binary
+search tree.  Later, in Section <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#sec:btree-amortized">14.2.4</a>, we will show that the
+situation is not quite so bad; the amortized number of split operations
+done during an <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5597.png" width="50"/></span> operation is constant.  This shows that the
+(amortized) running time of the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5598.png" width="50"/></span> operation in the word-RAM model
+is <!-- MATH
+ $O(B+\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(B+\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5599.png" width="85"/></span>.
+</p><p>
+</p><h2><a name="SECTION001723000000000000000">
+<span class="arabic">14</span>.<span class="arabic">2</span>.<span class="arabic">3</span> Removal</a>
+</h2>
+<p>
+The <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5600.png" width="75"/></span> operation in a BTree is, again, most easily implemented
+as a recursive method.  Although the recursive implementation of
+<!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5601.png" width="75"/></span> spreads the complexity across several methods, the overall
+process, which is illustrated in Figure <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-remove-full">14.7</a>, is fairly
+straightforward.  By shuffling keys around, removal is reduced to the
+problem of removing a value, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5602.png" width="17"/></span>, from some leaf, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5603.png" width="13"/></span>.  Removing <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5604.png" width="17"/></span>
+may leave <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5605.png" width="13"/></span> with less than <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5606.png" width="38"/></span> keys;  this situation is called
+an <span class="textit">underflow</span>.
+<a name="64549"></a>
+</p><p>
+</p><div align="CENTER"><a name="fig:btree-remove-full"></a><a name="64578"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 14.7:</strong>
+Removing the value 4 from a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5616.png" width="14"/></span>-tree
+     results in one merge and one borrowing operation.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><table align="CENTER" cellpadding="3">
+<tbody><tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-remove-full-1}" border="0" height="123" src="static/14.2 B-Trees_files/img5612.png" width="547"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\Downarrow$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Downarrow$" border="0" height="30" src="static/14.2 B-Trees_files/img5607.png" width="13"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-remove-full-2}" border="0" height="123" src="static/14.2 B-Trees_files/img5613.png" width="554"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\ensuremath{\mathrm{merge}(\ensuremath{\mathit{v}},\ensuremath{\mathit{w}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{merge}(\ensuremath{\mathit{v}},\ensuremath{\mathit{w}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5608.png" width="84"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\Downarrow$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Downarrow$" border="0" height="30" src="static/14.2 B-Trees_files/img5609.png" width="13"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-remove-full-3}" border="0" height="123" src="static/14.2 B-Trees_files/img5614.png" width="507"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\ensuremath{\mathrm{shift\_lR}(\ensuremath{\mathit{w}},\ensuremath{\mathit{v}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{shift\_lR}(\ensuremath{\mathit{w}},\ensuremath{\mathit{v}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5610.png" width="93"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\Downarrow$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Downarrow$" border="0" height="30" src="static/14.2 B-Trees_files/img5611.png" width="13"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-remove-full-4}" border="0" height="123" src="static/14.2 B-Trees_files/img5615.png" width="507"/></td>
+<td align="LEFT"> </td></tr>
+</tbody></table></td></tr>
+</tbody></table>
+</div>
+<p>
+When an underflow occurs, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5618.png" width="13"/></span> either borrows keys from, or is merged with,
+one of its siblings.  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5619.png" width="13"/></span> is merged with a sibling, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5620.png" width="13"/></span>'s parent
+will now have one less child and one less key, which can cause <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5621.png" width="13"/></span>'s
+parent to underflow; this is again corrected by borrowing or merging,
+but merging may cause <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5622.png" width="13"/></span>'s grandparent to underflow.  This process
+works its way back up to the root until there is no more underflow or
+until the root has its last two children merged into a single child.
+When the latter case occurs, the root is removed and its lone child
+becomes the new root.
+</p><p>
+Next we delve into the details of how each of these steps is implemented.
+The first job of the <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5623.png" width="75"/></span> method is to find the element <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5624.png" width="12"/></span> that
+should be removed.  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5625.png" width="12"/></span> is found in a leaf, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5626.png" width="12"/></span> is removed from
+this leaf.  Otherwise, if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5627.png" width="12"/></span> is found at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/14.2 B-Trees_files/img5628.png" width="60"/></span> for some internal
+node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5629.png" width="13"/></span>, then the algorithm removes the smallest value, <!-- MATH
+ $\ensuremath{x}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{x}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5630.png" width="17"/></span>, in the
+subtree rooted at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}[\ensuremath{\mathit{i}}+1]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{children}}[\ensuremath{\mathit{i}}+1]}$" border="0" height="31" src="static/14.2 B-Trees_files/img5631.png" width="110"/></span>.  The value <!-- MATH
+ $\ensuremath{x}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{x}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5632.png" width="17"/></span> is the smallest
+value stored in the BTree that is greater than <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5633.png" width="12"/></span>.  The value of <!-- MATH
+ $\ensuremath{x}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{x}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5634.png" width="17"/></span>
+is then used to replace <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5635.png" width="12"/></span> in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{keys}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/14.2 B-Trees_files/img5636.png" width="60"/></span>.  This process is illustrated
+in Figure <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-remove">14.8</a>.
+</p><p>
+</p><div align="CENTER"><a name="fig:btree-remove"></a><a name="66907"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 14.8:</strong>
+The <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5640.png" width="75"/></span> operation
+      in a BTree. To remove the value <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}=10$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}=10$" border="0" height="29" src="static/14.2 B-Trees_files/img5641.png" width="47"/></span> we replace it with the
+      the value <!-- MATH
+ $\ensuremath{\ensuremath{x}'}=11$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{x}'}=11$" border="0" height="31" src="static/14.2 B-Trees_files/img5642.png" width="52"/></span> and remove 11 from the leaf that contains it.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><table align="CENTER" cellpadding="3">
+<tbody><tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-remove-1}" border="0" height="125" src="static/14.2 B-Trees_files/img5638.png" width="555"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\Downarrow$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Downarrow$" border="0" height="30" src="static/14.2 B-Trees_files/img5637.png" width="13"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-remove-2}" border="0" height="125" src="static/14.2 B-Trees_files/img5639.png" width="555"/></td>
+<td align="LEFT"> </td></tr>
+</tbody></table></td></tr>
+</tbody></table>
+</div>
+<p>
+The <!-- MATH
+ $\ensuremath{\mathrm{remove\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5644.png" width="165"/></span> method is a recursive implementation of the
+preceding algorithm:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove\_recu...
+...bf{return}} \ensuremath{\ensuremath{\mathit{y}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="488" src="static/14.2 B-Trees_files/img5645.png" width="411"/>
+<br/>
+</p><p>
+Note that, after recursively removing the value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5646.png" width="12"/></span> from the <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5647.png" width="9"/></span>th child of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5648.png" width="13"/></span>,
+<!-- MATH
+ $\ensuremath{\mathrm{remove\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_recursive}(\ensuremath{\mathit{x}},\ensuremath{\mathit{ui}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5649.png" width="165"/></span> needs to ensure that this child still has at
+least <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5650.png" width="38"/></span> keys.  In the preceding code, this is done using a
+method called <!-- MATH
+ $\ensuremath{\mathrm{check\_underflow}(\ensuremath{\mathit{x}},\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{check\_underflow}(\ensuremath{\mathit{x}},\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5651.png" width="152"/></span>, which checks for and corrects an
+underflow in the <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5652.png" width="9"/></span>th child of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5653.png" width="13"/></span>.  Let <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5654.png" width="16"/></span> be the <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5655.png" width="9"/></span>th child of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5656.png" width="13"/></span>.
+If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5657.png" width="16"/></span> has only <span class="MATH"><img align="MIDDLE" alt="$ B-2$" border="0" height="29" src="static/14.2 B-Trees_files/img5658.png" width="38"/></span> keys, then this needs to be fixed.  The fix
+requires using a sibling of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5659.png" width="16"/></span>.  This can be either child <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1$" border="0" height="30" src="static/14.2 B-Trees_files/img5660.png" width="33"/></span> of
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5661.png" width="13"/></span> or child <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1$" border="0" height="30" src="static/14.2 B-Trees_files/img5662.png" width="33"/></span> of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5663.png" width="13"/></span>.  We will usually use child <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1$" border="0" height="30" src="static/14.2 B-Trees_files/img5664.png" width="33"/></span> of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5665.png" width="13"/></span>,
+which is the sibling, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5666.png" width="12"/></span>, of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5667.png" width="16"/></span> directly to its left.  The only time
+this doesn't work is when <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}=0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}=0$" border="0" height="30" src="static/14.2 B-Trees_files/img5668.png" width="35"/></span>, in which case we use the sibling
+directly to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5669.png" width="16"/></span>'s right.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{check\_under...
+...nsuremath{\mathit{u}}, \ensuremath{\mathit{i}})}\\
+\end{flushleft}\end{leftbar}" border="0" height="143" src="static/14.2 B-Trees_files/img5670.png" width="291"/>
+<br/>
+In the following, we focus on the case when <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\neq 0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\neq 0$" border="0" height="30" src="static/14.2 B-Trees_files/img5671.png" width="34"/></span> so that any
+underflow at the <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/14.2 B-Trees_files/img5672.png" width="9"/></span>th child of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5673.png" width="13"/></span> will be corrected with the help
+of the <!-- MATH
+ $(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1)$" border="0" height="31" src="static/14.2 B-Trees_files/img5674.png" width="43"/></span>st child of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5675.png" width="13"/></span>.  The case <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}=0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}=0$" border="0" height="30" src="static/14.2 B-Trees_files/img5676.png" width="35"/></span> is similar and the
+details can be found in the accompanying source code.
+</p><p>
+To fix an underflow at node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5677.png" width="16"/></span>, we need to find more keys (and possibly
+also children), for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5678.png" width="16"/></span>.  There are two ways to do this:
+</p><p>
+</p><dl>
+<dt><strong>Borrowing:</strong></dt>
+<dd><a name="64861"></a>If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5679.png" width="16"/></span> has a sibling, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5680.png" width="12"/></span>, with more than <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5681.png" width="38"/></span> keys,
+  then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5682.png" width="16"/></span> can borrow some keys (and possibly also children) from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5683.png" width="12"/></span>.
+  More specifically, if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5684.png" width="12"/></span> stores <!-- MATH
+ $\ensuremath{\mathrm{size}(\ensuremath{\mathit{v}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{size}(\ensuremath{\mathit{v}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5685.png" width="49"/></span> keys, then between them,
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5686.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5687.png" width="16"/></span> have a total of
+  <p><!-- MATH
+ \begin{displaymath}
+B-2 + \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}} \ge 2B-2
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle B-2 + \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}} \ge 2B-2
+$" border="0" height="31" src="static/14.2 B-Trees_files/img5688.png" width="162"/>
+</div><p></p>
+keys.  We can therefore shift keys from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5689.png" width="12"/></span> to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5690.png" width="16"/></span> so that each of
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5691.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5692.png" width="16"/></span> has at least <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5693.png" width="38"/></span> keys.  This process is illustrated in
+  Figure <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-borrow">14.9</a>.
+<p>
+</p><div align="CENTER"><a name="fig:btree-borrow"></a><a name="66909"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 14.9:</strong>
+If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5698.png" width="12"/></span> has more than <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5699.png" width="38"/></span> keys,
+       then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5700.png" width="16"/></span> can borrow keys from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5701.png" width="12"/></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><table align="CENTER" cellpadding="3">
+<tbody><tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-borrow-1}" border="0" height="191" src="static/14.2 B-Trees_files/img5696.png" width="554"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\ensuremath{\mathrm{shift\_rL}(\ensuremath{\mathit{v}},\ensuremath{\mathit{w}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{shift\_rL}(\ensuremath{\mathit{v}},\ensuremath{\mathit{w}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5694.png" width="94"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\Downarrow$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Downarrow$" border="0" height="30" src="static/14.2 B-Trees_files/img5695.png" width="13"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-borrow-2}" border="0" height="191" src="static/14.2 B-Trees_files/img5697.png" width="554"/></td>
+<td align="LEFT"> </td></tr>
+</tbody></table></td></tr>
+</tbody></table>
+</div>
+<p>
+</p></dd>
+<dt><strong>Merging:</strong></dt>
+<dd><a name="64898"></a>If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5703.png" width="12"/></span> has only <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5704.png" width="38"/></span> keys, we must do something more
+  drastic, since <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5705.png" width="12"/></span> cannot afford to give any keys to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5706.png" width="16"/></span>.  Therefore,
+  we <span class="textit">merge</span> <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5707.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5708.png" width="16"/></span> as shown in Figure <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-merge">14.10</a>.  The merge
+  operation is the opposite of the split operation.  It takes two nodes
+  that contain a total of <span class="MATH"><img align="MIDDLE" alt="$ 2B-3$" border="0" height="29" src="static/14.2 B-Trees_files/img5709.png" width="46"/></span> keys and merges them into a single
+  node that contains <span class="MATH"><img align="MIDDLE" alt="$ 2B-2$" border="0" height="29" src="static/14.2 B-Trees_files/img5710.png" width="46"/></span> keys.  (The additional key comes from the
+  fact that, when we merge <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5711.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5712.png" width="16"/></span>, their common parent, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5713.png" width="13"/></span>, now
+  has one less child and therefore needs to give up one of its keys.)
+<p>
+</p><div align="CENTER"><a name="fig:btree-merge"></a><a name="66911"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 14.10:</strong>
+Merging two siblings <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5718.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5719.png" width="16"/></span>
+     in a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5720.png" width="14"/></span>-tree (<span class="MATH"><img align="MIDDLE" alt="$ B=3$" border="0" height="29" src="static/14.2 B-Trees_files/img5721.png" width="40"/></span>).</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><table align="CENTER" cellpadding="3">
+<tbody><tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-merge-1}" border="0" height="191" src="static/14.2 B-Trees_files/img5716.png" width="554"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\ensuremath{\mathrm{merge}(\ensuremath{\mathit{v}},\ensuremath{\mathit{w}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{merge}(\ensuremath{\mathit{v}},\ensuremath{\mathit{w}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5714.png" width="84"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER" colspan="1"><span><!-- MATH
+ $\Downarrow$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Downarrow$" border="0" height="30" src="static/14.2 B-Trees_files/img5715.png" width="13"/></span></span></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/btree-merge-2}" border="0" height="191" src="static/14.2 B-Trees_files/img5717.png" width="391"/></td>
+<td align="LEFT"> </td></tr>
+</tbody></table></td></tr>
+</tbody></table>
+</div>
+</dd>
+</dl>
+<p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{check\_under...
+...} \gets \ensuremath{\ensuremath{\mathit{w}}.id}}\\
+\end{flushleft}\end{leftbar}" border="0" height="200" src="static/14.2 B-Trees_files/img5723.png" width="420"/>
+<br/>
+</p><p>
+To summarize, the <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5724.png" width="75"/></span> method in a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5725.png" width="14"/></span>-tree follows a root to
+leaf path, removes a key <!-- MATH
+ $\ensuremath{x}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{x}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5726.png" width="17"/></span> from a leaf, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5727.png" width="13"/></span>, and then performs zero
+or more merge operations involving <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5728.png" width="13"/></span> and its ancestors, and performs
+at most one borrowing operation.  Since each merge and borrow operation
+involves modifying only three nodes, and only <!-- MATH
+ $O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5729.png" width="68"/></span> of these
+operations occur, the entire process takes <!-- MATH
+ $O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5730.png" width="68"/></span> time in the
+external memory model.  Again, however, each merge and borrow operation
+takes <span class="MATH"><img align="MIDDLE" alt="$ O(B)$" border="0" height="31" src="static/14.2 B-Trees_files/img5731.png" width="37"/></span> time in the word-RAM model, so (for now) the most we can
+say about the running time required by <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5732.png" width="75"/></span> in the word-RAM model
+is that it is <!-- MATH
+ $O(B\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(B\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5733.png" width="80"/></span>.
+</p><p>
+</p><h2><a name="SECTION001724000000000000000"></a>
+<a name="sec:btree-amortized"></a>
+<br/>
+<span class="arabic">14</span>.<span class="arabic">2</span>.<span class="arabic">4</span> Amortized Analysis of <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5734.png" width="14"/></span>-Trees
+</h2>
+<p>
+Thus far, we have shown that
+</p><ol>
+<li>In the external memory model, the running time of <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5735.png" width="52"/></span>,
+    <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5736.png" width="50"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5737.png" width="75"/></span> in a <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5738.png" width="14"/></span>-tree is <!-- MATH
+ $O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5739.png" width="68"/></span>.
+</li>
+<li>In the word-RAM model, the running time of <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5740.png" width="52"/></span> is <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5741.png" width="60"/></span>
+    and the running time of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5742.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5743.png" width="75"/></span> is <!-- MATH
+ $O(B\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(B\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5744.png" width="72"/></span>.
+</li>
+</ol>
+<p>
+The following lemma shows that, so far, we have overestimated the number of merge and split operations performed by <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5745.png" width="14"/></span>-trees.
+</p><p>
+</p><p>
+</p><div><a name="lem:btree-split"><b>Lemma  <span class="arabic">14</span>..<span class="arabic">1</span></b></a>   
+<i>Starting with an empty <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5746.png" width="14"/></span>-tree and performing any sequence of
+  <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/14.2 B-Trees_files/img5747.png" width="17"/></span> <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5748.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5749.png" width="75"/></span> operations results in at most <span class="MATH"><img align="MIDDLE" alt="$ 3m/2$" border="0" height="29" src="static/14.2 B-Trees_files/img5750.png" width="41"/></span> splits,
+  merges, and borrows being performed.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+   The proof of this has already been sketched in
+   Section <a href="http://opendatastructures.org/ods-python/9_3_Summary.html#sec:redblack-summary">9.3</a> for the special case in which <span class="MATH"><img align="MIDDLE" alt="$ B=2$" border="0" height="29" src="static/14.2 B-Trees_files/img5752.png" width="40"/></span>.
+   The lemma can be proven using a credit scheme,
+   <a name="65042"></a>in which
+  
+<ol>
+<li>each split, merge, or borrow operation is paid for with two
+      credits, i.e., a credit is removed each time one of these operations
+      occurs; and
+</li>
+<li>at most three credits are created during any <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5753.png" width="50"/></span> or
+      <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5754.png" width="75"/></span> operation.
+  
+</li>
+</ol>
+  Since at most <span class="MATH"><img align="MIDDLE" alt="$ 3m$" border="0" height="29" src="static/14.2 B-Trees_files/img5755.png" width="26"/></span> credits are ever created and each split,
+  merge, and borrow is paid for with with two credits, it follows
+  that at most <span class="MATH"><img align="MIDDLE" alt="$ 3m/2$" border="0" height="29" src="static/14.2 B-Trees_files/img5756.png" width="41"/></span> splits, merges, and borrows are performed.
+  These credits are illustrated using the  symbol in
+  Figures <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-split">14.5</a>, <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-borrow">14.9</a>, and
+  <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#fig:btree-merge">14.10</a>.
+<p>
+To keep track of these credits the proof maintains the following
+  <span class="textit">credit invariant</span>:
+  <a name="65053"></a>Any non-root node with <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5757.png" width="38"/></span> keys stores one
+  credit and any node with <span class="MATH"><img align="MIDDLE" alt="$ 2B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5758.png" width="46"/></span> keys stores three credits.  A node
+  that stores at least <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5759.png" width="14"/></span> keys and most <span class="MATH"><img align="MIDDLE" alt="$ 2B-2$" border="0" height="29" src="static/14.2 B-Trees_files/img5760.png" width="46"/></span> keys need not store
+  any credits.  What remains is to show that we can maintain the credit
+  invariant and satisfy properties 1 and 2, above, during each <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5761.png" width="50"/></span>
+  and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5762.png" width="75"/></span> operation.
+</p><p>
+<img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/14.2 B-Trees_files/img5751.png" width="17"/>
+</p></div><p></p>
+<h4><a name="SECTION001724010000000000000">
+<span class="arabic">14</span>.<span class="arabic">2</span>.<span class="arabic">4</span>.<span class="arabic">0</span>.<span class="arabic">1</span> Adding:</a>
+</h4>
+  The <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5763.png" width="50"/></span> method does not perform any merges or borrows, so we
+  need only consider split operations that occur as a result of calls
+  to <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5764.png" width="50"/></span>.
+<p>
+Each split operation occurs because a key is added to a node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5765.png" width="13"/></span>, that
+  already contains <span class="MATH"><img align="MIDDLE" alt="$ 2B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5766.png" width="46"/></span> keys.  When this happens, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5767.png" width="13"/></span> is split into two
+  nodes, <!-- MATH
+ $\ensuremath{u}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{u}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5768.png" width="19"/></span> and <!-- MATH
+ $\ensuremath{u}''$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{u}''$" border="0" height="31" src="static/14.2 B-Trees_files/img5769.png" width="22"/></span> having <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5770.png" width="38"/></span> and <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5771.png" width="14"/></span> keys, respectively.  Prior to
+  this operation, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5772.png" width="13"/></span> was storing <span class="MATH"><img align="MIDDLE" alt="$ 2B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5773.png" width="46"/></span> keys, and hence three credits.
+  Two of these credits can be used to pay for the split and the other
+  credit can be given to <!-- MATH
+ $\ensuremath{u}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{u}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5774.png" width="19"/></span> (which has <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5775.png" width="38"/></span> keys) to maintain the
+  credit invariant.  Therefore, we can pay for the split and maintain
+  the credit invariant during any split.
+</p><p>
+The only other modification to nodes that occur during an <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5776.png" width="50"/></span>
+  operation happens after all splits, if any, are complete.  This
+  modification involves adding a new key to some node <!-- MATH
+ $\ensuremath{u}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{u}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5777.png" width="19"/></span>.  If, prior
+  to this, <!-- MATH
+ $\ensuremath{u}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{u}'$" border="0" height="31" src="static/14.2 B-Trees_files/img5778.png" width="19"/></span> had <span class="MATH"><img align="MIDDLE" alt="$ 2B-2$" border="0" height="29" src="static/14.2 B-Trees_files/img5779.png" width="46"/></span> children, then it now has <span class="MATH"><img align="MIDDLE" alt="$ 2B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5780.png" width="46"/></span> children and
+  must therefore receive three credits.  These are the only credits given
+  out by the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5781.png" width="50"/></span> method.
+</p><p>
+</p><h4><a name="SECTION001724020000000000000">
+<span class="arabic">14</span>.<span class="arabic">2</span>.<span class="arabic">4</span>.<span class="arabic">0</span>.<span class="arabic">2</span> Removing:</a>
+</h4>
+  During a call to <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5782.png" width="75"/></span>, zero or more merges occur and are possibly
+  followed by a single borrow.  Each merge occurs because two nodes,
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5783.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5784.png" width="16"/></span>, each of which had exactly <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5785.png" width="38"/></span> keys prior to calling
+  <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5786.png" width="75"/></span> were merged into a single node with exactly <span class="MATH"><img align="MIDDLE" alt="$ 2B-2$" border="0" height="29" src="static/14.2 B-Trees_files/img5787.png" width="46"/></span> keys.
+  Each such merge therefore frees up two credits that can be used to
+  pay for the merge.
+<p>
+After any merges are performed, at most one borrow operation occurs,
+  after which no further merges or borrows occur.  This borrow operation
+  only occurs if we remove a key from a leaf, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5788.png" width="12"/></span>, that has <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5789.png" width="38"/></span> keys.
+  The node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5790.png" width="12"/></span> therefore has one credit, and this credit goes towards
+  the cost of the borrow.  This single credit is not enough to pay for
+  the borrow, so we create one credit to complete the payment.
+</p><p>
+At this point, we have created one credit and we still need to show
+  that the credit invariant can be maintained.  In the worst case,
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5791.png" width="12"/></span>'s sibling, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5792.png" width="16"/></span>, has exactly <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5793.png" width="14"/></span> keys before the borrow so that,
+  afterwards, both <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5794.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5795.png" width="16"/></span> have <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5796.png" width="38"/></span> keys.  This means that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5797.png" width="12"/></span> and
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5798.png" width="16"/></span> each should be storing a credit when the operation is complete.
+  Therefore, in this case, we create an additional two credits to give to
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5799.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/14.2 B-Trees_files/img5800.png" width="16"/></span>.  Since a borrow happens at most once during a <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5801.png" width="75"/></span>
+  operation, this means that we create at most three credits, as required.
+</p><p>
+If the <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5802.png" width="75"/></span> operation does not include a borrow operation, this
+  is because it finishes by removing a key from some node that, prior
+  to the operation, had <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5803.png" width="14"/></span> or more keys.  In the worst case, this node
+  had exactly <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5804.png" width="14"/></span> keys, so that it now has <span class="MATH"><img align="MIDDLE" alt="$ B-1$" border="0" height="29" src="static/14.2 B-Trees_files/img5805.png" width="38"/></span> keys and must be given
+  one credit, which we create.
+</p><p>
+In either case--whether the removal finishes with a borrow
+  operation or not--at most three credits need to be created during a
+  call to <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5806.png" width="75"/></span> to maintain the credit invariant and pay for all
+  borrows and merges that occur. This completes the proof of the lemma.
+</p><p>
+The purpose of Lemma <a href="http://opendatastructures.org/ods-python/14_2_B_Trees.html#lem:btree-split">14.1</a> is to show that, in the word-RAM
+model the cost of splits, merges and joins during a sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/14.2 B-Trees_files/img5807.png" width="17"/></span>
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5808.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5809.png" width="75"/></span> operations is only <span class="MATH"><img align="MIDDLE" alt="$ O(Bm)$" border="0" height="31" src="static/14.2 B-Trees_files/img5810.png" width="50"/></span>.  That is, the
+amortized cost per operation is only <span class="MATH"><img align="MIDDLE" alt="$ O(B)$" border="0" height="31" src="static/14.2 B-Trees_files/img5811.png" width="37"/></span>, so the amortized cost
+of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5812.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5813.png" width="75"/></span> in the word-RAM model is <!-- MATH
+ $O(B+\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(B+\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5814.png" width="85"/></span>.
+This is summarized by the following pair of theorems:
+</p><p>
+</p><p>
+</p><div><b>Theorem  <span class="arabic">14</span>..<span class="arabic">1</span></b> (External Memory <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5815.png" width="14"/></span>-Trees)    
+<i>A BTree implements the SSet interface. In the external memory model,
+  a BTree supports the operations <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5816.png" width="50"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5817.png" width="75"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5818.png" width="52"/></span>
+  in <!-- MATH
+ $O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log_B \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5819.png" width="68"/></span> time per operation.</i></div><p></p>
+<p>
+</p><p>
+</p><div><b>Theorem  <span class="arabic">14</span>..<span class="arabic">2</span></b> (Word-RAM <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.2 B-Trees_files/img5820.png" width="14"/></span>-Trees)    
+<i>A BTree implements the SSet interface. In the word-RAM model, and
+  ignoring the cost of splits, merges, and borrows, a BTree supports
+  the operations <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5821.png" width="50"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5822.png" width="75"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5823.png" width="52"/></span> in <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/14.2 B-Trees_files/img5824.png" width="60"/></span>
+  time per operation.
+  Furthermore, beginning with an empty BTree, any sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/14.2 B-Trees_files/img5825.png" width="17"/></span>
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5826.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/14.2 B-Trees_files/img5827.png" width="75"/></span> operations results in a total of <span class="MATH"><img align="MIDDLE" alt="$ O(Bm)$" border="0" height="31" src="static/14.2 B-Trees_files/img5828.png" width="50"/></span>
+  time spent performing splits, merges, and borrows.</i></div><p></p>
+<p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/14.2 B-Trees_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DROSSER</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main4.css')}}">
+</head>
+<body>
+
+<div class="titlebar">
+<h2 style="font-family:Times New Roman;font-size:40px"><img src="static/css/Drosser.png" alt="DROSSER" style="float:left; width:200px; height:180px">Welcome to DROSSER</h2>
+
+
+<p></p>
+<form action="{{ url_for('display_section') }}" name="ask" method="post">
+    <label style="font-size:20px" for="query">Ask a question:</label>
+    <input type="text" id="query" name="query" placeholder="Type another question" size=45>
+    <input type="submit" value="Go!">
+</form>
+
+{% if question != "" %}
+    <p>Question: <b>{{question}}</b> </p>
+{% endif %}
+{% if error %}
+    <p> {{error}} </p>
+{% endif %}
+{% if answer != "" %}
+    <p>Answer: <b>{{answer}}</b></p>
+{% endif %}
+{% if title != "" %}
+    <p> The relevant section is: <b>{{title}}</b> </p>
+{% endif %}
+
+{% if metrics %}
+<form action="{{ url_for('update_metrics') }}" name="metrics" method="post">
+  <label for="metrics">How helpful was this section?</label>
+  <select id="metrics" name="metrics">
+    <option value="5">Very helpful</option>
+    <option value="4">Somewhat helpful</option>
+    <option value="3">Relevant</option>
+    <option value="2">Informative but not relevant</option>
+    <option value="1">Irrelevant</option>
+  </select>
+  <input type="submit" value="Rate">
+</form>
+{% endif %}
+
+</div>
+<hr>
+<div class="main">
+{{ section | safe}}
+</div>
+
+
+<p><a href="/">Home</a></p>
+
+</body>
+</html>

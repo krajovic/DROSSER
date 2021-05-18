@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0060)http://opendatastructures.org/ods-python/6_Binary_Trees.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>6. Binary Trees</title>
+<meta content="6. Binary Trees" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/6. Binary Trees_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/7_Random_Binary_Search_Tree.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/5_Hash_Tables.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/ods-python-html.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/6_1_BinaryTree_Basic_Binary.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION00900000000000000000"></a>
+<a name="chap:binarytrees"></a>
+<br/>
+<span class="arabic">6</span>. Binary Trees
+</h1>
+<p>
+This chapter introduces one of the most fundamental structures in computer
+science: binary trees.  The use of the word <span class="textit">tree</span>
+<a name="32276"></a><a name="32277"></a><a name="32278"></a>here comes from
+the fact that, when we draw them, the resultant drawing often resembles
+the trees found in a forest.  There are many ways of ways of defining
+binary trees.  Mathematically, a <span class="textit">binary tree</span> is a connected,
+undirected, finite graph with no cycles, and no vertex of degree greater
+than three.
+</p><p>
+For most computer science applications, binary trees are <span class="textit">rooted:</span>
+<a name="32281"></a><a name="32282"></a>A special node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{r}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{r}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2579.png" width="10"/></span>, of degree at most two is called the <span class="textit">root</span>
+of the tree.  For every node, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}\neq \ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}\neq \ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2580.png" width="36"/></span>, the second node on the
+path from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2581.png" width="13"/></span> to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{r}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{r}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2582.png" width="10"/></span> is called the <span class="textit">parent</span> of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2583.png" width="13"/></span>.
+<a name="32291"></a>Each of the
+other nodes adjacent to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2584.png" width="13"/></span> is called a <span class="textit">child</span>
+<a name="32294"></a> of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2585.png" width="13"/></span>. Most of the
+binary trees we are interested in are <span class="textit">ordered</span>,
+<a name="32297"></a><a name="32298"></a>so we distinguish
+between the <span class="textit">left child</span> and <span class="textit">right child</span> of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2586.png" width="13"/></span>.
+<a name="32302"></a><a name="32303"></a><a name="32304"></a><a name="32305"></a>
+</p><p>
+In illustrations, binary trees are usually drawn from the root
+downward, with the root at the top of the drawing and the left and right
+children respectively given by left and right positions in the drawing
+(Figure <a href="http://opendatastructures.org/ods-python/6_Binary_Trees.html#fig:bintree-orientation">6.1</a>).  For example, Figure <a href="http://opendatastructures.org/ods-python/6_Binary_Trees.html#fig:binary-tree">6.2</a>.a shows
+a binary tree with nine nodes.
+</p><p>
+</p><div align="CENTER"><a name="fig:bintree-orientation"></a><a name="34979"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 6.1:</strong>
+The parent, left child, and right child of the node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2588.png" width="13"/></span>
+    in a BinaryTree.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/bintree-traverse-1}" border="0" height="161" src="static/6. Binary Trees_files/img2587.png" width="106"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><div align="CENTER"><a name="fig:binary-tree"></a><a name="32323"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 6.2:</strong>
+A binary tree with (a) nine real nodes and (b) ten external nodes.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table align="CENTER" cellpadding="3">
+<tbody><tr><td align="CENTER"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/bintree-1}" border="0" height="285" src="static/6. Binary Trees_files/img2589.png" width="480"/></td>
+<td align="CENTER"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/bintree-2}" border="0" height="358" src="static/6. Binary Trees_files/img2590.png" width="553"/></td>
+</tr>
+<tr><td align="CENTER">(a)</td>
+<td align="CENTER">(b)</td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Because binary trees are so important, a certain terminology has developed
+for them: The <span class="textit">depth</span>
+<a name="32327"></a>of a node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2591.png" width="13"/></span>, in a binary tree is the
+length of the path from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2592.png" width="13"/></span> to the root of the tree.   If a node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2593.png" width="16"/></span>,
+is on the path from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2594.png" width="13"/></span> to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{r}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{r}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2595.png" width="10"/></span>, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2596.png" width="16"/></span> is called an <span class="textit">ancestor</span>
+<a name="32335"></a>of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2597.png" width="13"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2598.png" width="13"/></span> a <span class="textit">descendant</span>
+<a name="32339"></a>of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2599.png" width="16"/></span>.  The <span class="textit">subtree</span> of a
+node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2600.png" width="13"/></span>, is the binary tree that is rooted at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2601.png" width="13"/></span> and contains all
+of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2602.png" width="13"/></span>'s descendants.  The <span class="textit">height</span>
+<a name="32346"></a> of a node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2603.png" width="13"/></span>, is the length
+of the longest path from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2604.png" width="13"/></span> to one of its descendants.  The <span class="textit">height</span> of
+<a name="32350"></a>a tree is the height of its root.
+A node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/6. Binary Trees_files/img2605.png" width="13"/></span>, is a <span class="textit">leaf</span>
+<a name="32353"></a>if it has no children.
+</p><p>
+We sometimes think of the tree as being augmented with <span class="textit">external
+nodes</span>. Any node that does not have a left child has an external
+node as its left child, and, correspondingly, any node that does
+not have a right child has an external node as its right child (see
+Figure <a href="http://opendatastructures.org/ods-python/6_Binary_Trees.html#fig:binary-tree">6.2</a>.b).  It is easy to verify, by induction, that a
+binary tree with <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\ge 1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\ge 1$" border="0" height="29" src="static/6. Binary Trees_files/img2606.png" width="40"/></span> real nodes has <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1$" border="0" height="29" src="static/6. Binary Trees_files/img2607.png" width="37"/></span> external nodes.
+</p><p>
+<br/></p><hr/>
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/6. Binary Trees_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0070)http://opendatastructures.org/ods-python/5_4_Discussion_Exercises.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>5.4 Discussion and Exercises</title>
+<meta content="5.4 Discussion and Exercises" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/5.4 Discussion and Exercises_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/5_3_Hash_Codes.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/5_Hash_Tables.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/6_Binary_Trees.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION00840000000000000000">
+<span class="arabic">5</span>.<span class="arabic">4</span> Discussion and Exercises</a>
+</h1>
+<p>
+Hash tables and hash codes represent an enormous and active field
+of research that is just touched upon in this chapter.  The online
+Bibliography on Hashing [<a href="http://opendatastructures.org/ods-python/Bibliography.html#hashing">10</a>]
+<a name="25243"></a>contains nearly 2000 entries.
+</p><p>
+A variety of different hash table implementations exist. The one
+described in Section <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#sec:hashtable">5.1</a> is known as <span class="textit">hashing with chaining</span>
+<a name="25246"></a>(each array entry contains a chain (List) of elements).  Hashing with
+chaining dates back to an internal IBM memorandum authored by H. P. Luhn
+and dated January 1953. This memorandum also seems to be one of the
+earliest references to linked lists.
+</p><p>
+<a name="25247"></a>An alternative to hashing with chaining is that used by <span class="textit">open
+addressing</span> schemes, where all data is stored directly in an
+array.  These schemes include the LinearHashTable structure of
+Section <a href="http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html#sec:linearhashtable">5.2</a>. This idea was also proposed, independently, by
+a group at IBM in the 1950s.  Open addressing schemes must deal with the
+problem of <span class="textit">collision resolution</span>: 
+<a name="25251"></a>the case where two values hash
+to the same array location.  Different strategies exist for collision
+resolution; these provide different performance guarantees and often
+require more sophisticated hash functions than the ones described here.
+</p><p>
+Yet another category of hash table implementations are the so-called
+<span class="textit">perfect hashing</span> methods.
+<a name="25253"></a>These are methods in which <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2497.png" width="52"/></span>
+operations take <span class="MATH"><img align="MIDDLE" alt="$ O(1)$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2498.png" width="36"/></span> time in the worst-case.  For static data sets,
+this can be accomplished by finding <span class="textit">perfect hash functions</span>
+<a name="25257"></a><a name="25258"></a>for
+the data; these are functions that map each piece of data to a unique
+array location.  For data that changes over time, perfect hashing
+methods include <span class="textit">FKS two-level hash tables</span>
+<a name="25260"></a><a name="25261"></a>[<a href="http://opendatastructures.org/ods-python/Bibliography.html#fks84">31</a>,<a href="http://opendatastructures.org/ods-python/Bibliography.html#dkkmrt94">24</a>]
+and <span class="textit">cuckoo hashing</span> [<a href="http://opendatastructures.org/ods-python/Bibliography.html#pr04">55</a>].
+<a name="25265"></a><a name="25266"></a>
+</p><p>
+The hash functions presented in this chapter are probably among the most
+practical methods currently known that can be proven to work well for any
+set of data.  Other provably good methods date back to the pioneering work
+of Carter and Wegman who introduced the notion of <span class="textit">universal hashing</span>
+<a name="25268"></a><a name="25269"></a>and described several hash functions for different scenarios [<a href="http://opendatastructures.org/ods-python/Bibliography.html#cw79">14</a>].
+Tabulation hashing, described in Section <a href="http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html#sec:tabulation">5.2.3</a>, is due to Carter
+and Wegman [<a href="http://opendatastructures.org/ods-python/Bibliography.html#cw79">14</a>], but its analysis, when applied to linear probing
+(and several other hash table schemes) is due to P<img align="MIDDLE" alt="{\v{a\/}}\kern.05em" border="0" height="26" src="static/5.4 Discussion and Exercises_files/img2577.png" width="10"/>tra<img align="MIDDLE" alt="{\c{s\/}}" border="0" height="19" src="static/5.4 Discussion and Exercises_files/img2578.png" width="8"/>cu and
+Thorup [<a href="http://opendatastructures.org/ods-python/Bibliography.html#pt12">58</a>].
+</p><p>
+The idea of <span class="textit">multiplicative hashing</span>
+<a name="25277"></a><a name="25278"></a>is very old and seems to be
+part of the hashing folklore [<a href="http://opendatastructures.org/ods-python/Bibliography.html#k97v3">48</a>, Section 6.4].  However, the
+idea of choosing the multiplier <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{z}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{z}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2499.png" width="11"/></span> to be a random <span class="textit">odd</span> number,
+and the analysis in Section <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#sec:multihash">5.1.1</a> is due to Dietzfelbinger <span class="textit">et al.</span> [<a href="http://opendatastructures.org/ods-python/Bibliography.html#dhkp97">23</a>].  This version of multiplicative hashing is one of the
+simplest, but its collision probability of <!-- MATH
+ $2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.4 Discussion and Exercises_files/img2500.png" width="35"/></span> is a factor of two
+larger than what one could expect with a random function from <!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}\to
+2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}\to
+2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.4 Discussion and Exercises_files/img2501.png" width="61"/></span>.  The <span class="textit">multiply-add hashing</span>
+<a name="25288"></a><a name="25289"></a>method uses the function
+</p><p><!-- MATH
+ \begin{displaymath}
+h(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}) = ((\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}} + b) \bmod 2^{\ensuremath{\ensuremath{2w}}}) \ddiv 2^{\ensuremath{\ensuremath{2w}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle h(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}) = ((\ensurem...
+...ensuremath{\ensuremath{2w}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}
+$" border="0" height="38" src="static/5.4 Discussion and Exercises_files/img2502.png" width="236"/>
+</div><p></p>
+where <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{z}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{z}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2503.png" width="11"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/5.4 Discussion and Exercises_files/img2504.png" width="12"/></span> are each randomly chosen from <!-- MATH
+ $\{0,\ldots,2^{\ensuremath{\ensuremath{2w}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,2^{\ensuremath{\ensuremath{2w}}}-1\}$" border="0" height="35" src="static/5.4 Discussion and Exercises_files/img2505.png" width="100"/></span>.
+Multiply-add hashing has a collision probability of only <!-- MATH
+ $1/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.4 Discussion and Exercises_files/img2506.png" width="35"/></span>
+[<a href="http://opendatastructures.org/ods-python/Bibliography.html#d96">21</a>], but requires <!-- MATH
+ $2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2507.png" width="24"/></span>-bit precision arithmetic.
+<p>
+There are a number of methods of obtaining hash codes from fixed-length
+sequences of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2508.png" width="16"/></span>-bit integers.  One particularly fast method
+[<a href="http://opendatastructures.org/ods-python/Bibliography.html#bhkkr99">11</a>] is the function
+</p><p><!-- MATH
+ \begin{displaymath}
+\begin{array}{l}
+  h(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{r-1}) \\
+   \quad = \left(\sum_{i=0}^{r/2-1} ((\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{2i}+\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}_{2i})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}})((\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{2i+1}+\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}_{2i+1})\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}})\right) \bmod 2^{2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}
+\end{array}
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img alt="\begin{displaymath}\begin{array}{l}
+h(\ensuremath{\ensuremath{\ensuremath{\math...
+...2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}
+\end{array}\end{displaymath}" border="0" height="60" src="static/5.4 Discussion and Exercises_files/img2509.png" width="450"/>
+</div><p></p>
+where <span class="MATH"><img align="MIDDLE" alt="$ r$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2510.png" width="11"/></span> is even and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}_{r-1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}_{r-1}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2511.png" width="75"/></span> are randomly chosen from
+<!-- MATH
+ $\{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}\}$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2512.png" width="70"/></span>. This yields a <!-- MATH
+ $2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2513.png" width="24"/></span>-bit hash code that has
+collision probability <!-- MATH
+ $1/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="30" src="static/5.4 Discussion and Exercises_files/img2514.png" width="37"/></span>.  This can be reduced to a <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2515.png" width="16"/></span>-bit hash
+code using multiplicative (or multiply-add) hashing. This method is fast
+because it requires only <span class="MATH"><img align="MIDDLE" alt="$ r/2$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2516.png" width="26"/></span> <!-- MATH
+ $2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2517.png" width="24"/></span>-bit multiplications whereas the
+method described in Section <a href="http://opendatastructures.org/ods-python/5_3_Hash_Codes.html#sec:stringhash">5.3.2</a> requires <span class="MATH"><img align="MIDDLE" alt="$ r$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2518.png" width="11"/></span> multiplications.
+(The <span class="MATH"><img align="MIDDLE" alt="$ \bmod$" border="0" height="30" src="static/5.4 Discussion and Exercises_files/img2519.png" width="40"/></span> operations occur implicitly by using <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2520.png" width="16"/></span> and <!-- MATH
+ $2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2521.png" width="24"/></span>-bit
+arithmetic for the additions and multiplications, respectively.)
+<p>
+The method from Section <a href="http://opendatastructures.org/ods-python/5_3_Hash_Codes.html#sec:polyhash">5.3.3</a> of using polynomials over prime fields
+to hash variable-length arrays and strings is due to Dietzfelbinger <span class="textit">et al.</span> [<a href="http://opendatastructures.org/ods-python/Bibliography.html#dgmp92">22</a>].  Due to its use of the <span class="MATH"><img align="MIDDLE" alt="$ \bmod$" border="0" height="30" src="static/5.4 Discussion and Exercises_files/img2522.png" width="40"/></span> operator which relies
+on a costly machine instruction, it is, unfortunately, not very fast.
+Some variants of this method choose the prime <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{p}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{p}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2523.png" width="12"/></span> to be one of the form
+<!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1$" border="0" height="30" src="static/5.4 Discussion and Exercises_files/img2524.png" width="46"/></span>, in which case the <span class="MATH"><img align="MIDDLE" alt="$ \bmod$" border="0" height="30" src="static/5.4 Discussion and Exercises_files/img2525.png" width="40"/></span> operator can be replaced with
+addition (<span class="MATH"><img align="MIDDLE" alt="$ +$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2526.png" width="14"/></span>) and bitwise-and (<span class="MATH"><img align="MIDDLE" alt="$ \wedge $" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2527.png" width="15"/></span>) operations [<a href="http://opendatastructures.org/ods-python/Bibliography.html#k97v2">47</a>, Section 3.6].
+Another option is to apply one of the fast methods for fixed-length
+strings to blocks of length <span class="MATH"><img align="MIDDLE" alt="$ c$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2528.png" width="11"/></span> for some constant <span class="MATH"><img align="MIDDLE" alt="$ c&gt;1$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2529.png" width="37"/></span> and then apply
+the prime field method to the resulting sequence of <!-- MATH
+ $\lceil r/c\rceil$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \lceil r/c\rceil$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2530.png" width="37"/></span>
+hash codes.
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">5</span>..<span class="arabic">1</span></b>   
+A certain university assigns each of its students student numbers the
+  first time they register for any course.  These numbers are sequential
+  integers that started at 0 many years ago and are now in the millions.
+  Suppose we have a class of one hundred first year students and we want
+  to assign them hash codes based on their student numbers.  Does it
+  make more sense to use the first two digits or the last two digits of
+  their student number?  Justify your answer.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">5</span>..<span class="arabic">2</span></b>   
+Consider the hashing scheme in Section <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#sec:multihash">5.1.1</a>, and suppose
+  <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.4 Discussion and Exercises_files/img2531.png" width="46"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}\le \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}/2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}\le \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}/2$" border="0" height="30" src="static/5.4 Discussion and Exercises_files/img2532.png" width="57"/></span>.
+  
+<ol>
+<li>Show that, for any choice
+      of the muliplier, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{z}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{z}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2533.png" width="11"/></span>, there exists <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2534.png" width="13"/></span> values that all have
+      the same hash code. (Hint: This is easy, and doesn't require any
+      number theory.)
+</li>
+<li>Given the multiplier, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{z}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{z}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2535.png" width="11"/></span>, describe <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2536.png" width="13"/></span> values that all
+      have the same hash code.  (Hint: This is harder, and requires
+      some basic number theory.)
+  
+</li>
+</ol></div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">5</span>..<span class="arabic">3</span></b>   
+Prove that the bound <!-- MATH
+ $2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.4 Discussion and Exercises_files/img2537.png" width="35"/></span> in Lemma <a href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html#lem:universal-hashing">5.1</a> is
+  the best possible bound by showing that, if <!-- MATH
+ $x=2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}-2}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ x=2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}-2}$" border="0" height="36" src="static/5.4 Discussion and Exercises_files/img2538.png" width="76"/></span> and
+  <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}=3\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}=3\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2539.png" width="46"/></span>, then <!-- MATH
+ $\Pr\{\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}=\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{y}})}}\}=2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Pr\{\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}=\ensurem...
+...remath{\mathit{y}})}}\}=2/2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.4 Discussion and Exercises_files/img2540.png" width="199"/></span>.  (Hint look
+  at the binary representations of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{zx}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{zx}}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2541.png" width="19"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}3\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}3\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2542.png" width="28"/></span> and use the fact
+  that <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}3\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}} = \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}x\ensuremath{+\ensuremath{2}}z\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{z}}}}3\ensuremath{\ensuremath{\ens...
+...x\ensuremath{+\ensuremath{2}}z\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2543.png" width="100"/></span>.)</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:linear-probing"><b>Exercise  <span class="arabic">5</span>..<span class="arabic">4</span></b></a>   
+Reprove Lemma <a href="http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html#lem:linear-probing">5.4</a> using the full version of Stirling's
+  Approximation given in Section <a href="http://opendatastructures.org/ods-python/1_3_Mathematical_Background.html#sec:factorials">1.3.2</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">5</span>..<span class="arabic">5</span></b>   
+Consider the following simplified version of the code for adding
+  an element <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2544.png" width="12"/></span> to a LinearHashTable, which simply stores <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2545.png" width="12"/></span> in the
+  first <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.4 Discussion and Exercises_files/img2546.png" width="22"/></span> array entry it finds.  Explain why this could be very slow
+  by giving an example of a sequence of <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2547.png" width="36"/></span> <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2548.png" width="50"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2549.png" width="75"/></span>,
+  and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2550.png" width="52"/></span> operations that would take on the order of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}^2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}^2$" border="0" height="35" src="static/5.4 Discussion and Exercises_files/img2551.png" width="21"/></span>
+  time to execute.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{add\_slow}(\...
+...return}} \ensuremath{\ensuremath{\mathit{true}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="216" src="static/5.4 Discussion and Exercises_files/img2552.png" width="360"/>
+<br/></div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">5</span>..<span class="arabic">6</span></b>   
+Early versions of the Java <!-- MATH
+ $\ensuremath{\mathrm{hash\_code}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{hash\_code}()}$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2553.png" width="86"/></span> method for the String class
+  worked by not using all of the characters found in long strings. For
+  example, for a sixteen character string, the hash code was computed
+  using only the eight even-indexed characters. Explain why this was a
+  very bad idea by giving an example of large set of strings that all
+  have the same hash code.</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:hash-hack-first"><b>Exercise  <span class="arabic">5</span>..<span class="arabic">7</span></b></a>   
+Suppose you have an object made up of two <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2554.png" width="16"/></span>-bit integers, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2555.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{y}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{y}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2556.png" width="12"/></span>.
+  Show why <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\oplus\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\oplus\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2557.png" width="36"/></span> does not make a good hash code for your object.
+  Give an example of a large set of objects that would all have hash
+  code 0.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">5</span>..<span class="arabic">8</span></b>   
+Suppose you have an object made up of two <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2558.png" width="16"/></span>-bit integers, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2559.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{y}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{y}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2560.png" width="12"/></span>.
+  Show why <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}+\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}+\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2561.png" width="35"/></span> does not make a good hash code for your object.
+  Give an example of a large set of objects that would all have the same
+  hash code.</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:hash-hack-last"><b>Exercise  <span class="arabic">5</span>..<span class="arabic">9</span></b></a>   
+Suppose you have an object made up of two <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2562.png" width="16"/></span>-bit integers, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2563.png" width="12"/></span>
+  and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{y}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{y}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2564.png" width="12"/></span>.  Suppose that the hash code for your object is defined
+  by some deterministic function <!-- MATH
+ $h(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ h(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}})$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2565.png" width="45"/></span> that produces a single
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2566.png" width="16"/></span>-bit integer.  Prove that there exists a large set of objects that
+  have the same hash code.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">5</span>..<span class="arabic">10</span></b>   
+Let <!-- MATH
+ $p=2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ p=2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1$" border="0" height="30" src="static/5.4 Discussion and Exercises_files/img2567.png" width="73"/></span> for some positive integer <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2568.png" width="16"/></span>.  Explain why, for a
+  positive integer <span class="MATH"><img align="MIDDLE" alt="$ x$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2569.png" width="13"/></span>
+<p><!-- MATH
+ \begin{displaymath}
+(x\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}) + (x\ddiv 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}) \equiv x \bmod (2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1) \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle (x\bmod 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}) + ...
+... x \bmod (2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1) \enspace .
+$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2570.png" width="289"/>
+</div><p></p>
+  (This gives an algorithm for computing <!-- MATH
+ $x \bmod (2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ x \bmod (2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1)$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2571.png" width="106"/></span> by
+  repeatedly setting
+  until <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}} \le 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}} \le 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1$" border="0" height="30" src="static/5.4 Discussion and Exercises_files/img2572.png" width="72"/></span>.)</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">5</span>..<span class="arabic">11</span></b>   
+Find some commonly used hash table implementation such as the (
+  or the HashTable or LinearHashTable implementations in this book,
+  and design a program that stores integers in this data
+  structure so that there are integers, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2573.png" width="12"/></span>, such that <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.4 Discussion and Exercises_files/img2574.png" width="52"/></span> takes
+  linear time.  That is, find a set of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2575.png" width="13"/></span> integers for which there are
+  <!-- MATH
+ $c\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ c\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/5.4 Discussion and Exercises_files/img2576.png" width="20"/></span> elements that hash to the same table location.
+<p>
+Depending on how good the implementation is, you may be able to do this
+  just by inspecting the code for the implementation, or you may have to
+  write some code that does trial insertions and searches, timing how long
+  it takes to add and find particular values. (This can be, and has been,
+  used to launch denial of service attacks on web servers [<a href="http://opendatastructures.org/ods-python/Bibliography.html#cw03">17</a>].)
+  <a name="25525"></a></p></div><p></p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/5.4 Discussion and Exercises_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

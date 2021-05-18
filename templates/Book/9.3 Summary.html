@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0057)http://opendatastructures.org/ods-python/9_3_Summary.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>9.3 Summary</title>
+<meta content="9.3 Summary" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/9.3 Summary_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/9_4_Discussion_Exercises.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/9_Red_Black_Trees.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/9_4_Discussion_Exercises.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION001230000000000000000"></a>
+<a name="sec:redblack-summary"></a>
+<br/>
+<span class="arabic">9</span>.<span class="arabic">3</span> Summary
+</h1>
+<p>
+The following theorem summarizes the performance of the RedBlackTree data structure:
+</p><p>
+</p><p>
+</p><div><b>Theorem  <span class="arabic">9</span>..<span class="arabic">1</span></b>   
+<i>A RedBlackTree implements the SSet interface and
+  supports the operations <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.3 Summary_files/img3772.png" width="50"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.3 Summary_files/img3773.png" width="75"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.3 Summary_files/img3774.png" width="52"/></span> in <!-- MATH
+ $O(\log
+  \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/9.3 Summary_files/img3775.png" width="60"/></span> worst-case time per operation.</i></div><p></p>
+<p>
+Not included in the above theorem is the following extra bonus:
+</p><p>
+</p><p>
+</p><div><a name="thm:redblack-amortized"><b>Theorem  <span class="arabic">9</span>..<span class="arabic">2</span></b></a>   
+<i>Beginning with an empty RedBlackTree, any sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/9.3 Summary_files/img3776.png" width="17"/></span>
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.3 Summary_files/img3777.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.3 Summary_files/img3778.png" width="75"/></span> operations results in a total of <span class="MATH"><img align="MIDDLE" alt="$ O(m)$" border="0" height="31" src="static/9.3 Summary_files/img3779.png" width="40"/></span>
+  time spent during all calls <!-- MATH
+ $\ensuremath{\mathrm{add\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.3 Summary_files/img3780.png" width="93"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.3 Summary_files/img3781.png" width="119"/></span>. </i></div><p></p>
+<p>
+We only sketch a proof of Theorem <a href="http://opendatastructures.org/ods-python/9_3_Summary.html#thm:redblack-amortized">9.2</a>. By comparing
+<!-- MATH
+ $\ensuremath{\mathrm{add\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.3 Summary_files/img3782.png" width="93"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.3 Summary_files/img3783.png" width="119"/></span> with the algorithms for adding or
+removing a leaf in a 2-4 tree, we can convince ourselves that this
+property is inherited from a 2-4 tree.  In particular, if we can show
+that the total time spent splitting, merging, and borrowing in a 2-4
+tree is <span class="MATH"><img align="MIDDLE" alt="$ O(m)$" border="0" height="31" src="static/9.3 Summary_files/img3784.png" width="40"/></span>, then this implies Theorem <a href="http://opendatastructures.org/ods-python/9_3_Summary.html#thm:redblack-amortized">9.2</a>.
+</p><p>
+The proof of this theorem for 2-4 trees uses the potential
+method
+<a name="43951"></a>of amortized analysis.<a href="http://opendatastructures.org/ods-python/9_3_Summary.html#foot44632" name="tex2html80"><sup><span class="arabic">9</span>.<span class="arabic">2</span></sup></a> Define the potential of an
+internal node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.3 Summary_files/img3785.png" width="13"/></span> in a 2-4 tree as
+</p><p><!-- MATH
+ \begin{displaymath}
+\Phi(\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}) =
+    \begin{cases} 
+      1 & \text{if \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}} has 2 children} \\
+      0 & \text{if \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}} has 3 children} \\
+      3 & \text{if \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}} has 4 children}  
+    \end{cases}
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \Phi(\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}) =
+\begi...
+...\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}} has 4 children}
+\end{cases}$" border="0" height="84" src="static/9.3 Summary_files/img3786.png" width="217"/>
+</div><p></p>
+and the potential of a 2-4 tree as the sum of the potentials of its nodes.
+When a split occurs, it is because a node with four children becomes
+two nodes, with two and three children.  This means that the overall
+potential drops by <span class="MATH"><img align="MIDDLE" alt="$ 3-1-0 = 2$" border="0" height="29" src="static/9.3 Summary_files/img3787.png" width="86"/></span>. When a merge occurs, two nodes that used
+to have two children are replaced by one node with three children. The
+result is a drop in potential of <span class="MATH"><img align="MIDDLE" alt="$ 2-0=2$" border="0" height="29" src="static/9.3 Summary_files/img3788.png" width="63"/></span>.  Therefore, for every split
+or merge, the potential decreases by two.
+<p>
+Next notice that, if we ignore splitting and merging of nodes, there are
+only a constant number of nodes whose number of children is changed by
+the addition or removal of a leaf.  When adding a node, one node has
+its number of children increase by one, increasing the potential by
+at most three.  During the removal of a leaf, one node has its number
+of children decrease by one, increasing the potential by at most one,
+and two nodes may be involved in a borrowing operation, increasing their
+total potential by at most one.
+</p><p>
+To summarize, each merge and split causes the potential to drop by
+at least two.  Ignoring merging and splitting, each addition or removal
+causes the potential to rise by at most three, and the potential is always
+non-negative.  Therefore, the number of splits and merges caused by <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/9.3 Summary_files/img3789.png" width="17"/></span>
+additions or removals on an initially empty tree is at most <span class="MATH"><img align="MIDDLE" alt="$ 3m/2$" border="0" height="29" src="static/9.3 Summary_files/img3790.png" width="41"/></span>.
+Theorem <a href="http://opendatastructures.org/ods-python/9_3_Summary.html#thm:redblack-amortized">9.2</a> is a consequence of this analysis and the
+correspondence between 2-4 trees and red-black trees.
+</p><p>
+<br/></p><hr/><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot44632">... analysis.</a><a href="http://opendatastructures.org/ods-python/9_3_Summary.html#tex2html80"><sup><span class="arabic">9</span>.<span class="arabic">2</span></sup></a></dt>
+<dd>See the proofs of
+Lemma <a href="http://opendatastructures.org/ods-python/2_5_DualArrayDeque_Building.html#lem:dualarraydeque-amortized">2.2</a> and Lemma <a href="http://opendatastructures.org/ods-python/3_3_SEList_Space_Efficient_.html#lem:selist-amortized">3.1</a> for
+other applications of the potential method.
+</dd>
+</dl>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/9.3 Summary_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

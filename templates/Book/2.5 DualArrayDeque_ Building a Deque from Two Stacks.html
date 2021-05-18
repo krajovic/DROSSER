@@ -1,0 +1,707 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/2_5_DualArrayDeque_Building.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>2.5 DualArrayDeque: Building a Deque from Two Stacks</title>
+<meta content="2.5 DualArrayDeque: Building a Deque from Two Stacks" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/2_6_RootishArrayStack_Space.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/2_4_ArrayDeque_Fast_Deque_O.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/2_Array_Based_Lists.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/2_6_RootishArrayStack_Space.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<hr/>
+<h1><a name="SECTION00550000000000000000"></a>
+<a name="sec:dualarraydeque"></a>
+<br/>
+<span class="arabic">2</span>.<span class="arabic">5</span> DualArrayDeque: Building a Deque from Two Stacks
+</h1>
+<p>
+<a name="5661"></a>Next, we present a data structure, the DualArrayDeque that
+achieves the same performance bounds as an ArrayDeque by using
+two ArrayStacks.  Although the asymptotic performance of the
+DualArrayDeque is no better than that of the ArrayDeque, it is
+still worth studying, since it offers a good example of how to make a
+sophisticated data structure by combining two simpler data structures.
+</p><p>
+A DualArrayDeque represents a list using two ArrayStacks.  Recall that
+an ArrayStack is fast when the operations on it modify elements near
+the end.  A DualArrayDeque places two ArrayStacks, called <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img767.png" width="37"/></span>
+and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{back}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{back}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img768.png" width="34"/></span>, back-to-back so that operations are fast at either end.
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{initialize}(...
+...ets \ensuremath{\mathrm{\mathrm{ArrayStack}}()}}\\
+\end{flushleft}\end{leftbar}" border="0" height="86" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img769.png" width="204"/>
+<br/>
+</p><p>
+A DualArrayDeque does not explicitly store the number, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img770.png" width="13"/></span>,
+of elements it contains.  It doesn't need to, since it contains
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}} + \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=\ensuremath{\ensuremath{\ens...
+...ize}()}} + \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img771.png" width="191"/></span> elements.  Nevertheless, when
+analyzing the DualArrayDeque we will still use <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img772.png" width="13"/></span> to denote the number
+of elements it contains.
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{size}()}\\
+...
+...() + \ensuremath{\mathit{back}}.\mathrm{size}()}\\
+\end{flushleft}\end{leftbar}" border="0" height="67" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img773.png" width="270"/>
+<br/>
+</p><p>
+The <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img774.png" width="37"/></span> ArrayStack stores the list elements that whose indices
+are <!-- MATH
+ $0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}-1$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img775.png" width="139"/></span>, but stores them in reverse order.
+The <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{back}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{back}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img776.png" width="34"/></span> ArrayStack contains list elements with indices
+in <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}},\ldots,\ensuremath{\ensuremath{\mathrm{size}()}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}},\ldots,\ensuremath{\ensuremath{\mathrm{size}()}}-1$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img777.png" width="167"/></span> in the normal order.  In this way,
+<!-- MATH
+ $\ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img778.png" width="41"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img779.png" width="53"/></span> translate into appropriate calls to <!-- MATH
+ $\ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img780.png" width="41"/></span>
+or <!-- MATH
+ $\ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img781.png" width="53"/></span> on either <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img782.png" width="37"/></span> or <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{back}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{back}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img783.png" width="34"/></span>, which take <span class="MATH"><img align="MIDDLE" alt="$ O(1)$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img784.png" width="36"/></span> time per operation.
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{get}(\ensure...
+...\ensuremath{\mathit{front}}.\mathrm{size}(), x})\\
+\end{flushleft}\end{leftbar}" border="0" height="239" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img785.png" width="329"/>
+<br/>
+</p><p>
+Note that if an index <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}<\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}&lt;\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img786.png" width="100"/></span>, then it corresponds to the
+element of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img787.png" width="37"/></span> at position <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img788.png" width="122"/></span>, since the
+elements of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img789.png" width="37"/></span> are stored in reverse order.
+</p><p>
+Adding and removing elements from a DualArrayDeque is illustrated in
+Figure <a href="http://opendatastructures.org/ods-python/2_5_DualArrayDeque_Building.html#fig:dualarraydeque">2.4</a>.  The <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img790.png" width="60"/></span> operation manipulates either <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img791.png" width="37"/></span>
+or <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{back}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{back}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img792.png" width="34"/></span>, as appropriate:
+</p><p>
+</p><div align="CENTER"><a name="fig:dualarraydeque"></a><a name="10360"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 2.4:</strong>
+A sequence of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img794.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img795.png" width="72"/></span> operations on a
+  DualArrayDeque.  Arrows denote elements being copied.  Operations that
+  result in a rebalancing by <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img796.png" width="68"/></span> are marked with an asterisk.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/dualarraydeque}" border="0" height="280" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img793.png" width="315"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{add}(\ensure...
+...m} \hspace*{1em} \ensuremath{\mathrm{balance}()}\\
+\end{flushleft}\end{leftbar}" border="0" height="143" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img797.png" width="261"/>
+<br/>
+</p><p>
+The <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img798.png" width="60"/></span> method performs rebalancing of the two ArrayStacks
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img799.png" width="37"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{back}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{back}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img800.png" width="34"/></span>, by calling the <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img801.png" width="68"/></span> method.  The
+implementation of <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img802.png" width="68"/></span> is described below, but for now it is
+sufficient to know that <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img803.png" width="68"/></span> ensures that, unless <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{size}()}}<2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{size}()}}&lt;2$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img804.png" width="67"/></span>,
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img805.png" width="78"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img806.png" width="75"/></span> do not differ by more than a factor
+of 3.  In particular, <!-- MATH
+ $3\cdot\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}} \ge \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 3\cdot\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}} \ge \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img807.png" width="184"/></span> and
+<!-- MATH
+ $3\cdot\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}} \ge \ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 3\cdot\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}} \ge \ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img808.png" width="184"/></span>.
+</p><p>
+Next we analyze the cost of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img809.png" width="60"/></span>, ignoring the cost of calls to
+<!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img810.png" width="68"/></span>. If <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}<\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}&lt;\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img811.png" width="100"/></span>, then <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img812.png" width="60"/></span> gets implemented
+by the call to <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{add}(\ensuremath{\mathit{front}}.\mathrm{size}()-\ensuremath{\mathit{i}}-1,x})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{add}(\ensuremath{\mathit{front}}.\mathrm{size}()-\ensuremath{\mathit{i}}-1,x})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img813.png" width="210"/></span>.  Since <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img814.png" width="37"/></span> is an
+ArrayStack, the cost of this is
+</p><p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:das-front"></a><!-- MATH
+ \begin{equation}
+O(\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}-(\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1)+1) = O(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1) \enspace .
+\end{equation}
+ -->
+<table align="CENTER" cellpadding="0" class="equation" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="CENTER" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle O(\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{siz...
+...i}}}}-1)+1) = O(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1) \enspace .$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img815.png" width="350"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+(<span class="arabic">2</span>.<span class="arabic">1</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+On the other hand, if <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\ge\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\ge\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img816.png" width="101"/></span>, then <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img817.png" width="60"/></span> gets
+implemented as <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{add}(\ensuremath{\mathit{i}}-\ensuremath{\mathit{front}}.\mathrm{size}(),x})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{add}(\ensuremath{\mathit{i}}-\ensuremath{\mathit{front}}.\mathrm{size}(),x})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img818.png" width="183"/></span>.  The cost of this is
+<p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:das-back"></a><!-- MATH
+ \begin{equation}
+O(\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}-(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}})+1) = O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1) \enspace .
+\end{equation}
+ -->
+<table align="CENTER" cellpadding="0" class="equation" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="CENTER" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle O(\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size...
+...h{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1) \enspace .$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img819.png" width="347"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+(<span class="arabic">2</span>.<span class="arabic">2</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+<p>
+Notice that the first case (<a href="http://opendatastructures.org/ods-python/2_5_DualArrayDeque_Building.html#eq:das-front">2.1</a>) occurs when <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}<\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}&lt;\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img820.png" width="50"/></span>.
+The second case (<a href="http://opendatastructures.org/ods-python/2_5_DualArrayDeque_Building.html#eq:das-back">2.2</a>) occurs when <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\ge 3\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\ge 3\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img821.png" width="59"/></span>.  When
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4\le\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}<3\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4\le\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}&lt;3\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img822.png" width="100"/></span>, we cannot be sure whether the operation affects
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img823.png" width="37"/></span> or <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{back}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{back}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img824.png" width="34"/></span>, but in either case, the operation takes
+<!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})=O(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}})=O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})=O(\ensuremath{\ensuremath...
+...th{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}})$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img825.png" width="152"/></span> time, since <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\ge \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\ge \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img826.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}>
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}&gt;
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img827.png" width="73"/></span>.  Summarizing the situation, we have
+</p><p><!-- MATH
+ \begin{displaymath}
+\mbox{Running time of } \ensuremath{\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}} \le
+          \left\{\begin{array}{ll}
+            O(1+ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}) & \mbox{if $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}< \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$} \\
+            O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) & \mbox{if $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4 \le \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}} < 3\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$} \\
+            O(1+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}) & \mbox{if $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}} \ge 3\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$}
+          \end{array}\right.
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+   Running time of <img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ens...
+...\ge 3\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$}
+\end{array}\right.
+$" border="0" height="74" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img828.png" width="307"/>
+</div><p></p>
+Thus, the running time of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img829.png" width="60"/></span>, if we ignore the cost of the call
+to <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img830.png" width="68"/></span>, is <!-- MATH
+ $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}, \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}, \ensuremath{\ensu...
+...{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img831.png" width="129"/></span>.
+<p>
+The <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img832.png" width="72"/></span> operation and its analysis resemble the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img833.png" width="60"/></span>
+operation and analysis.
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove}(\ens...
+...bf{return}} \ensuremath{\ensuremath{\mathit{x}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="159" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img834.png" width="328"/>
+<br/>
+</p><p>
+</p><h2><a name="SECTION00551000000000000000">
+<span class="arabic">2</span>.<span class="arabic">5</span>.<span class="arabic">1</span> Balancing</a>
+</h2>
+<p>
+Finally, we turn to the <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img835.png" width="68"/></span> operation performed by <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img836.png" width="60"/></span>
+and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img837.png" width="72"/></span>.  This operation ensures that neither <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img838.png" width="37"/></span> nor <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{back}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{back}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img839.png" width="34"/></span>
+becomes too big (or too small).  It ensures that, unless there are fewer
+than two elements, each of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img840.png" width="37"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{back}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{back}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img841.png" width="34"/></span> contain at least <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img842.png" width="28"/></span>
+elements. If this is not the case, then it moves elements between them
+so that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img843.png" width="37"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{back}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{back}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img844.png" width="34"/></span> contain exactly <!-- MATH
+ $\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2\rfloor$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2\rfloor$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img845.png" width="40"/></span> elements
+and <!-- MATH
+ $\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2\rceil$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \lceil\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2\rceil$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img846.png" width="40"/></span> elements, respectively.
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{balance}()}\...
+...\ensuremath{\mathit{back}} \gets \ensuremath{b}}\\
+\end{flushleft}\end{leftbar}" border="0" height="254" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img847.png" width="495"/>
+<br/>
+</p><p>
+Here there is little to analyze.  If the <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img848.png" width="68"/></span> operation does
+rebalancing, then it moves <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img849.png" width="36"/></span> elements and this takes <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img850.png" width="36"/></span>
+time. This is bad, since <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img851.png" width="68"/></span> is called with each call to
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img852.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img853.png" width="72"/></span>.  However, the following lemma shows that, on
+average, <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img854.png" width="68"/></span> only spends a constant amount of time per operation.
+</p><p>
+</p><p>
+</p><div><a name="lem:dualarraydeque-amortized"><b>Lemma  <span class="arabic">2</span>..<span class="arabic">2</span></b></a>   
+<i>If an empty DualArrayDeque is created and any sequence of <span class="MATH"><img align="MIDDLE" alt="$ m\ge 1$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img855.png" width="43"/></span> calls
+  to <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img856.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img857.png" width="72"/></span> are performed, then the total time spent
+  during all calls to <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img858.png" width="68"/></span> is <span class="MATH"><img align="MIDDLE" alt="$ O(m)$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img859.png" width="40"/></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  We will show that, if <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img861.png" width="68"/></span> is forced to shift elements, then
+  the number of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img862.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img863.png" width="72"/></span> operations since the last
+  time any elements were shifted by <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img864.png" width="68"/></span> is at least <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2-1$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img865.png" width="52"/></span>.
+  As in the proof of Lemma <a href="http://opendatastructures.org/ods-python/2_1_ArrayStack_Fast_Stack_O.html#lem:arraystack-amortized">2.1</a>, this is sufficient
+  to prove that the total time spent by <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img866.png" width="68"/></span> is <span class="MATH"><img align="MIDDLE" alt="$ O(m)$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img867.png" width="40"/></span>.
+<p>
+We will perform our analysis using a technique knows as the
+  <span class="textit">potential method</span>.
+  <a name="6164"></a><a name="6165"></a>Define the <span class="textit">potential</span>, <span class="MATH"><img align="BOTTOM" alt="$ \Phi$" border="0" height="14" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img868.png" width="17"/></span>, of the
+  DualArrayDeque as the difference in size between <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{front}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{front}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img869.png" width="37"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{back}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{back}}}$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img870.png" width="34"/></span>:
+  </p><p><!-- MATH
+ \begin{displaymath}
+\Phi = |\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}} - \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}| \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \Phi = \vert\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\...
+...emath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}\vert \enspace . $" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img871.png" width="213"/>
+</div><p></p>
+The interesting thing about this potential is that a call to <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img872.png" width="60"/></span>
+  or <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img873.png" width="72"/></span> that does not do any balancing can increase the potential
+  by at most 1.
+<p>
+Observe that, immediately after a call to <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img874.png" width="68"/></span> that shifts
+  elements, the potential, <span class="MATH"><img align="MIDDLE" alt="$ \Phi_0$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img875.png" width="23"/></span>, is at most 1, since
+  </p><p><!-- MATH
+ \begin{displaymath}
+\Phi_0 = \left|\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2\rfloor-\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2\rceil\right|\le 1  \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \Phi_0 = \left\vert\lfloor\ensuremath{\ensuremath{\ensuremath{\ma...
+...remath{\ensuremath{\ensuremath{\mathit{n}}}}/2\rceil\right\vert\le 1 \enspace .$" border="0" height="30" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img876.png" width="173"/>
+</div><p></p>
+<p>
+Consider the situation immediately before a call to <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img877.png" width="68"/></span> that
+  shifts elements and suppose, without loss of generality, that <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img878.png" width="68"/></span>
+  is shifting elements because <!-- MATH
+ $3\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}} < \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 3\ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}} &lt; \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img879.png" width="174"/></span>.
+  Notice that, in this case,
+  <br/>
+</p><div align="CENTER" class="mathdisplay">
+<!-- MATH
+ \begin{eqnarray*}
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} & = & \ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}+\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}} \\
+       & < & \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}/3+\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}} \\
+       & = & \frac{4}{3}\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}
+\end{eqnarray*}
+ -->
+<table align="CENTER" cellpadding="0" width="100%">
+<tbody><tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img880.png" width="13"/></td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle =$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img881.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}+\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img882.png" width="164"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle &lt;$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img883.png" width="14"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}/3+\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img884.png" width="176"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle =$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img885.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \frac{4}{3}\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}$" border="0" height="51" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img886.png" width="87"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+</tbody></table></div>
+<br clear="ALL"/>
+  Furthermore, the potential at this point in time is
+  <br/>
+<div align="CENTER" class="mathdisplay">
+<!-- MATH
+ \begin{eqnarray*}
+\Phi_1 & = & \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}} - \ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}} \\
+      &>& \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}} - \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}/3 \\
+      &=& \frac{2}{3}\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}} \\
+      &>& \frac{2}{3}\times\frac{3}{4}\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \\
+      &=& \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2
+\end{eqnarray*}
+ -->
+<table align="CENTER" cellpadding="0" width="100%">
+<tbody><tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \Phi_1$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img887.png" width="23"/></td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle =$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img888.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}} - \ensuremath{\ensuremath{\ensuremath{\mathit{front}}.\mathrm{size}()}}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img889.png" width="164"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle &gt;$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img890.png" width="14"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}} - \ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}/3$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img891.png" width="175"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle =$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img892.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \frac{2}{3}\ensuremath{\ensuremath{\ensuremath{\mathit{back}}.\mathrm{size}()}}$" border="0" height="50" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img893.png" width="87"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle &gt;$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img894.png" width="14"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \frac{2}{3}\times\frac{3}{4}\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="50" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img895.png" width="53"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle =$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img896.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img897.png" width="28"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+</tbody></table></div>
+<br clear="ALL"/>
+  Therefore, the number of calls to <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img898.png" width="60"/></span> or <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img899.png" width="72"/></span> since
+  the last time <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img900.png" width="68"/></span> shifted elements is at least <!-- MATH
+ $\Phi_1-\Phi_0
+  > \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \Phi_1-\Phi_0
+&gt; \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2-1$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img901.png" width="121"/></span>. This completes the proof.
+ <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img860.png" width="17"/>
+</div><p></p>
+<p>
+</p><h2><a name="SECTION00552000000000000000">
+<span class="arabic">2</span>.<span class="arabic">5</span>.<span class="arabic">2</span> Summary</a>
+</h2>
+<p>
+The following theorem summarizes the properties of a DualArrayDeque:
+</p><p>
+</p><p>
+</p><div><a name="thm:dualarraydeque"><b>Theorem  <span class="arabic">2</span>..<span class="arabic">4</span></b></a>   
+<i>A DualArrayDeque implements the List interface.  Ignoring the
+  cost of calls to <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img902.png" width="55"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img903.png" width="68"/></span>, a DualArrayDeque
+  supports the operations
+  </i>
+<ul>
+<li><!-- MATH
+ $\ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img904.png" width="41"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img905.png" width="53"/></span> in <span class="MATH"><img align="MIDDLE" alt="$ O(1)$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img906.png" width="36"/></span> time per operation; and
+</li>
+<li><!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img907.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img908.png" width="72"/></span> in <!-- MATH
+ $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensur...
+...{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img909.png" width="129"/></span> time
+          per operation.
+  
+</li>
+</ul><i>
+  Furthermore, beginning with an empty DualArrayDeque, any sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img910.png" width="17"/></span>
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img911.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img912.png" width="72"/></span> operations results in a total of <span class="MATH"><img align="MIDDLE" alt="$ O(m)$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img913.png" width="40"/></span>
+  time spent during all calls to <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img914.png" width="55"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{balance}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{balance}()}$" border="0" height="31" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/img915.png" width="68"/></span>.</i></div><p></p>
+<p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/2.5 DualArrayDeque_ Building a Deque from Two Stacks_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

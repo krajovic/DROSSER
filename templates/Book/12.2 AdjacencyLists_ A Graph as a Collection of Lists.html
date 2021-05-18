@@ -1,0 +1,392 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-java/12_2_AdjacencyLists_Graph_a.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>12.2 AdjacencyLists: A Graph as a Collection of Lists</title>
+<meta name="description" content="12.2 AdjacencyLists: A Graph as a Collection of Lists">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/12_3_Graph_Traversal.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/12_1_AdjacencyMatrix_Repres.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/12_Graphs.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/12_3_Graph_Traversal.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<h1><a name="SECTION001520000000000000000"></a>
+<a name="sec:adjacency-list"></a>
+<br>
+<span class="arabic">12</span>.<span class="arabic">2</span> <tt>AdjacencyLists</tt>: A Graph as a Collection of Lists
+</h1>
+<p>
+<a name="31765"></a><span class="textit">Adjacency list</span> representations of graphs take a more vertex-centric
+approach.  There are many possible implementations of adjacency lists.
+In this section, we present a simple one.  At the end of the section,
+we discuss different possibilities.  In an adjacency list representation,
+the graph <span class="MATH"><img width="73" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4584.png" alt="$ G=(V,E)$"></span> is represented as an array, <!-- MATH
+ $\mathtt{adj}$
+ -->
+<span class="MATH"><img width="29" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4585.png" alt="$ \mathtt{adj}$"></span>, of lists.  The list
+<!-- MATH
+ $\mathtt{adj[i]}$
+ -->
+<span class="MATH"><img width="48" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4586.png" alt="$ \mathtt{adj[i]}$"></span> contains a list of all the vertices adjacent to vertex <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4587.png" alt="$ \mathtt{i}$"></span>.
+That is, it contains every index <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4588.png" alt="$ \mathtt{j}$"></span> such that <!-- MATH
+ $\ensuremath{\mathtt{(i,j)}}\in E$
+ -->
+<span class="MATH"><img width="64" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4589.png" alt="$ \ensuremath{\mathtt{(i,j)}}\in E$"></span>.
+</p><pre>    int n;
+    List&lt;Integer&gt;[] adj;
+    AdjacencyLists(int n0) {
+        n = n0;
+        adj = (List&lt;Integer&gt;[])new List[n];
+        for (int i = 0; i &lt; n; i++) 
+            adj[i] = new ArrayStack&lt;Integer&gt;(Integer.class);
+    }
+</pre>
+(An example is shown in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/12_2_AdjacencyLists_Graph_a.html#fig:graph-adjlist">12.3</a>.)  In this particular
+implementation, we represent each list in <!-- MATH
+ $\mathtt{adj}$
+ -->
+<span class="MATH"><img width="29" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4590.png" alt="$ \mathtt{adj}$"></span> as an <tt>ArrayStack</tt>, because we would like constant time access
+by position. Other options are also possible.  Specifically, we could
+have implemented <!-- MATH
+ $\mathtt{adj}$
+ -->
+<span class="MATH"><img width="29" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4591.png" alt="$ \mathtt{adj}$"></span> as a <tt>DLList</tt>.
+<p>
+</p><div align="CENTER"><a name="fig:graph-adjlist"></a><a name="31788"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 12.3:</strong>
+A graph and its adjacency lists</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="308" height="215" align="BOTTOM" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4592.png" alt="\includegraphics[scale=0.90909]{figs/graph}"> <br>
+<br>
+<br>
+<br>    <table cellpadding="3" border="1" align="CENTER">
+<tbody><tr><td align="CENTER">0</td>
+<td align="CENTER">1</td>
+<td align="CENTER">2</td>
+<td align="CENTER">3</td>
+<td align="CENTER">4</td>
+<td align="CENTER">5</td>
+<td align="CENTER">6</td>
+<td align="CENTER">7</td>
+<td align="CENTER">8</td>
+<td align="CENTER">9</td>
+<td align="CENTER">10</td>
+<td align="CENTER">11</td>
+<td align="CENTER">&nbsp;</td>
+</tr>
+<tr><td align="CENTER">1</td>
+<td align="CENTER">0</td>
+<td align="CENTER">1</td>
+<td align="CENTER">2</td>
+<td align="CENTER">0</td>
+<td align="CENTER">1</td>
+<td align="CENTER">5</td>
+<td align="CENTER">6</td>
+<td align="CENTER">4</td>
+<td align="CENTER">8</td>
+<td align="CENTER">9</td>
+<td align="CENTER">10</td>
+<td align="CENTER">&nbsp;</td>
+</tr>
+<tr><td align="CENTER">4</td>
+<td align="CENTER">2</td>
+<td align="CENTER">3</td>
+<td align="CENTER">7</td>
+<td align="CENTER">5</td>
+<td align="CENTER">2</td>
+<td align="CENTER">2</td>
+<td align="CENTER">3</td>
+<td align="CENTER">9</td>
+<td align="CENTER">5</td>
+<td align="CENTER">6</td>
+<td align="CENTER">7</td>
+<td align="CENTER">&nbsp;</td>
+</tr>
+<tr><td align="CENTER">&nbsp;</td>
+<td align="CENTER">6</td>
+<td align="CENTER">6</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">8</td>
+<td align="CENTER">6</td>
+<td align="CENTER">7</td>
+<td align="CENTER">11</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">10</td>
+<td align="CENTER">11</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+</tr>
+<tr><td align="CENTER">&nbsp;</td>
+<td align="CENTER">5</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">9</td>
+<td align="CENTER">10</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+</tr>
+<tr><td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">4</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+<td align="CENTER">&nbsp;</td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The <!-- MATH
+ $\mathtt{addEdge(i,j)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4593.png" alt="$ \mathtt{addEdge(i,j)}$"></span> operation just appends the value <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4594.png" alt="$ \mathtt{j}$"></span> to the list <!-- MATH
+ $\mathtt{adj[i]}$
+ -->
+<span class="MATH"><img width="48" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4595.png" alt="$ \mathtt{adj[i]}$"></span>:
+</p><pre>    void addEdge(int i, int j) {
+        adj[i].add(j);
+    }
+</pre>
+This takes constant time.
+<p>
+The <!-- MATH
+ $\mathtt{removeEdge(i,j)}$
+ -->
+<span class="MATH"><img width="122" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4596.png" alt="$ \mathtt{removeEdge(i,j)}$"></span> operation searches through the list <!-- MATH
+ $\mathtt{adj[i]}$
+ -->
+<span class="MATH"><img width="48" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4597.png" alt="$ \mathtt{adj[i]}$"></span>
+until it finds <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4598.png" alt="$ \mathtt{j}$"></span> and then removes it:
+</p><pre>    void removeEdge(int i, int j) {
+        Iterator&lt;Integer&gt; it = adj[i].iterator();
+        while (it.hasNext()) {
+            if (it.next() == j) {
+                it.remove();
+                return;
+            }
+        }    
+    }
+</pre>
+This takes <!-- MATH
+ $O(\deg(\ensuremath{\mathtt{i}}))$
+ -->
+<span class="MATH"><img width="72" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4599.png" alt="$ O(\deg(\ensuremath{\mathtt{i}}))$"></span> time, where <!-- MATH
+ $\deg(\ensuremath{\mathtt{i}})$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4600.png" alt="$ \deg(\ensuremath{\mathtt{i}})$"></span> (the <span class="textit">degree</span>
+<a name="31804"></a>of
+<!-- MATH
+ $\ensuremath{\mathtt{i}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4601.png" alt="$ \ensuremath{\mathtt{i}}$"></span>) counts the number of edges in <span class="MATH"><img width="15" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4602.png" alt="$ E$"></span> that have <!-- MATH
+ $\ensuremath{\mathtt{i}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4603.png" alt="$ \ensuremath{\mathtt{i}}$"></span> as their source.
+<p>
+The <!-- MATH
+ $\mathtt{hasEdge(i,j)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4604.png" alt="$ \mathtt{hasEdge(i,j)}$"></span> operation is similar;  it searches through the list
+<!-- MATH
+ $\mathtt{adj[i]}$
+ -->
+<span class="MATH"><img width="48" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4605.png" alt="$ \mathtt{adj[i]}$"></span> until it finds <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4606.png" alt="$ \mathtt{j}$"></span> (and returns true), or reaches the end of
+the list (and returns false):
+</p><pre>    boolean hasEdge(int i, int j) {
+        return adj[i].contains(j);
+    }
+</pre>
+This also takes <!-- MATH
+ $O(\deg(\ensuremath{\mathtt{i}}))$
+ -->
+<span class="MATH"><img width="72" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4607.png" alt="$ O(\deg(\ensuremath{\mathtt{i}}))$"></span> time.
+<p>
+The <!-- MATH
+ $\mathtt{outEdges(i)}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4608.png" alt="$ \mathtt{outEdges(i)}$"></span> operation is very simple;
+it returns the list <!-- MATH
+ $\mathtt{adj[i]}$
+ -->
+<span class="MATH"><img width="48" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4609.png" alt="$ \mathtt{adj[i]}$"></span>
+:
+</p><pre>    List&lt;Integer&gt; outEdges(int i) {
+        return adj[i];
+    }
+</pre>
+This clearly takes constant time.
+<p>
+The <!-- MATH
+ $\mathtt{inEdges(i)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4610.png" alt="$ \mathtt{inEdges(i)}$"></span> operation is much more work.  It scans over every
+vertex <span class="MATH"><img width="11" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4611.png" alt="$ j$"></span> checking if the edge <!-- MATH
+ $\mathtt{(i,j)}$
+ -->
+<span class="MATH"><img width="37" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4612.png" alt="$ \mathtt{(i,j)}$"></span> exists and, if so, adding <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4613.png" alt="$ \mathtt{j}$"></span>
+to the output list:
+</p><pre>    List&lt;Integer&gt; inEdges(int i) {
+        List&lt;Integer&gt; edges = new ArrayStack&lt;Integer&gt;(Integer.class);
+        for (int j = 0; j &lt; n; j++)
+            if (adj[j].contains(i))    edges.add(j);
+        return edges;
+    }
+</pre>
+This operation is very slow. It scans the adjacency list of every vertex,
+so it takes <!-- MATH
+ $O(\ensuremath{\mathtt{n}} + \ensuremath{\mathtt{m}})$
+ -->
+<span class="MATH"><img width="60" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4614.png" alt="$ O(\ensuremath{\mathtt{n}} + \ensuremath{\mathtt{m}})$"></span> time.
+<p>
+The following theorem summarizes the performance of the above data structure:
+</p><p>
+</p><p>
+</p><div><b>Theorem  <span class="arabic">12</span>..<span class="arabic">2</span></b> &nbsp; 
+<i>The <tt>AdjacencyLists</tt> data structure implements the <tt>Graph</tt> interface.
+An <tt>AdjacencyLists</tt> supports the operations
+</i>
+<ul>
+<li><!-- MATH
+ $\mathtt{addEdge(i,j)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4615.png" alt="$ \mathtt{addEdge(i,j)}$"></span> in constant time per operation;
+</li>
+<li><!-- MATH
+ $\mathtt{removeEdge(i,j)}$
+ -->
+<span class="MATH"><img width="122" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4616.png" alt="$ \mathtt{removeEdge(i,j)}$"></span> and <!-- MATH
+ $\mathtt{hasEdge(i,j)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4617.png" alt="$ \mathtt{hasEdge(i,j)}$"></span> in <!-- MATH
+ $O(\deg(\ensuremath{\mathtt{i}}))$
+ -->
+<span class="MATH"><img width="72" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4618.png" alt="$ O(\deg(\ensuremath{\mathtt{i}}))$"></span> time
+    per operation;
+</li>
+<li><!-- MATH
+ $\mathtt{outEdges(i)}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4619.png" alt="$ \mathtt{outEdges(i)}$"></span> in constant time per operation; and
+  
+</li>
+<li><!-- MATH
+ $\mathtt{inEdges(i)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4620.png" alt="$ \mathtt{inEdges(i)}$"></span> in <!-- MATH
+ $O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$
+ -->
+<span class="MATH"><img width="60" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4621.png" alt="$ O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$"></span> time per operation.
+</li>
+</ul><i>
+The space used by a <tt>AdjacencyLists</tt> is  <!-- MATH
+ $O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$
+ -->
+<span class="MATH"><img width="60" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4622.png" alt="$ O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$"></span>.</i></div><p></p>
+<p>
+As alluded to earlier, there are many different choices to be made when
+implementing a graph as an adjacency list.  Some questions that come
+up include:
+</p><ul>
+<li>What type of collection should be used to store each element
+  of <!-- MATH
+ $\mathtt{adj}$
+ -->
+<span class="MATH"><img width="29" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4623.png" alt="$ \mathtt{adj}$"></span>?  One could use an array-based list,  a linked-list, or even
+  a hashtable.
+</li>
+<li>Should there be a second adjacency list, <!-- MATH
+ $\mathtt{inadj}$
+ -->
+<span class="MATH"><img width="46" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4624.png" alt="$ \mathtt{inadj}$"></span>, that stores,
+  for each <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4625.png" alt="$ \mathtt{i}$"></span>, the list of vertices, <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4626.png" alt="$ \mathtt{j}$"></span>, such that <!-- MATH
+ $\ensuremath{\mathtt{(j,i)}}\in E$
+ -->
+<span class="MATH"><img width="64" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4627.png" alt="$ \ensuremath{\mathtt{(j,i)}}\in E$"></span>?
+  This can greatly reduce the running-time of the <!-- MATH
+ $\mathtt{inEdges(i)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4628.png" alt="$ \mathtt{inEdges(i)}$"></span>
+  operation, but requires slightly more work when adding or removing
+  edges.
+</li>
+<li>Should the entry for the edge <!-- MATH
+ $\mathtt{(i,j)}$
+ -->
+<span class="MATH"><img width="37" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4629.png" alt="$ \mathtt{(i,j)}$"></span> in <!-- MATH
+ $\mathtt{adj[i]}$
+ -->
+<span class="MATH"><img width="48" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4630.png" alt="$ \mathtt{adj[i]}$"></span> be linked by
+  a reference to the corresponding entry in <!-- MATH
+ $\mathtt{inadj[j]}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4631.png" alt="$ \mathtt{inadj[j]}$"></span>?
+</li>
+<li>Should edges be first-class objects with their own associated data?
+  In this way, <!-- MATH
+ $\mathtt{adj}$
+ -->
+<span class="MATH"><img width="29" height="29" align="MIDDLE" border="0" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/img4632.png" alt="$ \mathtt{adj}$"></span> would contain lists of edges rather than lists of vertices (integers).
+</li>
+</ul>
+Most of these questions come down to a tradeoff between complexity (and
+space) of implementation and performance features of the implementation.
+<p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/12.2 AdjacencyLists_ A Graph as a Collection of Lists_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

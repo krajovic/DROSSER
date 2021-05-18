@@ -1,0 +1,541 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-java/10_2_MeldableHeap_Randomize.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>10.2 MeldableHeap: A Randomized Meldable Heap</title>
+<meta name="description" content="10.2 MeldableHeap: A Randomized Meldable Heap">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/10_3_Discussion_Exercises.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/10_1_BinaryHeap_Implicit_Bi.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/10_Heaps.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/10_3_Discussion_Exercises.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<hr>
+<h1><a name="SECTION001320000000000000000"></a>
+<a name="sec:meldableheap"></a>
+<br>
+<span class="arabic">10</span>.<span class="arabic">2</span> <tt>MeldableHeap</tt>: A Randomized Meldable Heap
+</h1>
+<p>
+<a name="27615"></a>In this section, we describe the <tt>MeldableHeap</tt>, a priority <tt>Queue</tt>
+implementation in which the underlying structure is also a heap-ordered
+binary tree.  However, unlike a <tt>BinaryHeap</tt> in which the underlying
+binary tree is completely defined by the number of elements, there
+are no restrictions on the shape of the binary tree that underlies
+a <tt>MeldableHeap</tt>; anything goes.
+</p><p>
+The <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3890.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3891.png" alt="$ \mathtt{remove()}$"></span> operations in a <tt>MeldableHeap</tt> are
+implemented in terms of the <!-- MATH
+ $\mathtt{merge(h1,h2)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3892.png" alt="$ \mathtt{merge(h1,h2)}$"></span> operation.  This operation
+takes two heap nodes <!-- MATH
+ $\mathtt{h1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3893.png" alt="$ \mathtt{h1}$"></span> and <!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3894.png" alt="$ \mathtt{h2}$"></span> and merges them, returning a heap
+node that is the root of a heap that contains all elements in the subtree
+rooted at <!-- MATH
+ $\mathtt{h1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3895.png" alt="$ \mathtt{h1}$"></span> and all elements in the subtree rooted at <!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3896.png" alt="$ \mathtt{h2}$"></span>.
+</p><p>
+The nice thing about a <!-- MATH
+ $\mathtt{merge(h1,h2)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3897.png" alt="$ \mathtt{merge(h1,h2)}$"></span> operation is that it can be
+defined recursively. See Figure&nbsp;<a href="http://opendatastructures.org/ods-java/10_2_MeldableHeap_Randomize.html#fig:meldable-merge">10.4</a>.  If either <!-- MATH
+ $\mathtt{h1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3898.png" alt="$ \mathtt{h1}$"></span> or
+<!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3899.png" alt="$ \mathtt{h2}$"></span> is <!-- MATH
+ $\mathtt{nil}$
+ -->
+<span class="MATH"><img width="29" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3900.png" alt="$ \mathtt{nil}$"></span>, then we are merging with an empty set, so we return <!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3901.png" alt="$ \mathtt{h2}$"></span>
+or <!-- MATH
+ $\mathtt{h1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3902.png" alt="$ \mathtt{h1}$"></span>, respectively.  Otherwise, assume <!-- MATH
+ $\ensuremath{\mathtt{h1.x}} \le \ensuremath{\mathtt{h2.x}}$
+ -->
+<span class="MATH"><img width="80" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3903.png" alt="$ \ensuremath{\mathtt{h1.x}} \le \ensuremath{\mathtt{h2.x}}$"></span> since,
+if <!-- MATH
+ $\ensuremath{\mathtt{h1.x}} > \ensuremath{\mathtt{h2.x}}$
+ -->
+<span class="MATH"><img width="79" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3904.png" alt="$ \ensuremath{\mathtt{h1.x}} &gt; \ensuremath{\mathtt{h2.x}}$"></span>, then we can reverse the roles of <!-- MATH
+ $\mathtt{h1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3905.png" alt="$ \mathtt{h1}$"></span> and <!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3906.png" alt="$ \mathtt{h2}$"></span>.
+Then we know that the root of the merged heap will contain <!-- MATH
+ $\mathtt{h1.x}$
+ -->
+<span class="MATH"><img width="33" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3907.png" alt="$ \mathtt{h1.x}$"></span>, and
+we can recursively merge <!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3908.png" alt="$ \mathtt{h2}$"></span> with <!-- MATH
+ $\mathtt{h1.left}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3909.png" alt="$ \mathtt{h1.left}$"></span> or <!-- MATH
+ $\mathtt{h1.right}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3910.png" alt="$ \mathtt{h1.right}$"></span>, as we wish.
+This is where randomization comes in, and we toss a coin to decide
+whether to merge <!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3911.png" alt="$ \mathtt{h2}$"></span> with <!-- MATH
+ $\mathtt{h1.left}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3912.png" alt="$ \mathtt{h1.left}$"></span> or <!-- MATH
+ $\mathtt{h1.right}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3913.png" alt="$ \mathtt{h1.right}$"></span>:
+</p><pre>    Node&lt;T&gt; merge(Node&lt;T&gt; h1, Node&lt;T&gt; h2) {
+        if (h1 == nil) return h2;
+        if (h2 == nil) return h1;
+        if (compare(h2.x, h1.x) &lt; 0) return merge(h2, h1);
+        // now we know h1.x &lt;= h2.x
+        if (rand.nextBoolean()) {
+            h1.left = merge(h1.left, h2);
+            h1.left.parent = h1;
+        } else {
+            h1.right = merge(h1.right, h2);
+            h1.right.parent = h1;
+        }
+        return h1;
+    }
+</pre>
+<p>
+</p><div align="CENTER"><a name="fig:meldable-merge"></a><a name="27759"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 10.4:</strong>
+Merging <!-- MATH
+ $\mathtt{h1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3915.png" alt="$ \mathtt{h1}$"></span> and <!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3916.png" alt="$ \mathtt{h2}$"></span> is done by merging <!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3917.png" alt="$ \mathtt{h2}$"></span> with one of
+  <!-- MATH
+ $\mathtt{h1.left}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3918.png" alt="$ \mathtt{h1.left}$"></span> or <!-- MATH
+ $\mathtt{h1.right}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3919.png" alt="$ \mathtt{h1.right}$"></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><img width="552" height="493" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3914.png" alt="\includegraphics[width=\textwidth ]{figs/meldable-merge}"></td></tr>
+</tbody></table>
+</div>
+<p>
+In the next section, we show that <!-- MATH
+ $\mathtt{merge(h1,h2)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3920.png" alt="$ \mathtt{merge(h1,h2)}$"></span> runs in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3921.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>
+expected time, where <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3922.png" alt="$ \mathtt{n}$"></span> is the total number of elements in <!-- MATH
+ $\mathtt{h1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3923.png" alt="$ \mathtt{h1}$"></span> and <!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3924.png" alt="$ \mathtt{h2}$"></span>.
+</p><p>
+With access to a <!-- MATH
+ $\mathtt{merge(h1,h2)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3925.png" alt="$ \mathtt{merge(h1,h2)}$"></span> operation, the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3926.png" alt="$ \mathtt{add(x)}$"></span> operation is easy.  We create a new node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3927.png" alt="$ \mathtt{u}$"></span> containing <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3928.png" alt="$ \mathtt{x}$"></span> and then merge <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3929.png" alt="$ \mathtt{u}$"></span> with the root of our heap:
+</p><pre>    boolean add(T x) {
+        Node&lt;T&gt; u = newNode();
+        u.x = x;
+        r = merge(u, r);
+        r.parent = nil;
+        n++;
+        return true;
+    }
+</pre>
+This takes <!-- MATH
+ $O(\log (\ensuremath{\mathtt{n}}+1)) = O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="165" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3930.png" alt="$ O(\log (\ensuremath{\mathtt{n}}+1)) = O(\log \ensuremath{\mathtt{n}})$"></span> expected time.
+<p>
+The <!-- MATH
+ $\mathtt{remove()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3931.png" alt="$ \mathtt{remove()}$"></span> operation is similarly easy.  The node we want to remove
+is the root, so we just merge its two children and make the result the root:
+</p><pre>    T remove() {
+        T x = r.x;
+        r = merge(r.left, r.right);
+        if (r != nil) r.parent = nil;
+        n--;
+        return x;
+    }
+</pre>
+Again, this takes <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3932.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> expected time.
+<p>
+Additionally, a <tt>MeldableHeap</tt> can implement many other operations in
+<!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3933.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> expected time, including:
+</p><ul>
+<li><!-- MATH
+ $\mathtt{remove(u)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3934.png" alt="$ \mathtt{remove(u)}$"></span>: remove the node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3935.png" alt="$ \mathtt{u}$"></span> (and its key <!-- MATH
+ $\mathtt{u.x}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3936.png" alt="$ \mathtt{u.x}$"></span>) from the heap.
+</li>
+<li><!-- MATH
+ $\mathtt{absorb(h)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3937.png" alt="$ \mathtt{absorb(h)}$"></span>: add all the elements of the <tt>MeldableHeap</tt> <!-- MATH
+ $\mathtt{h}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3938.png" alt="$ \mathtt{h}$"></span> to this heap, emptying <!-- MATH
+ $\mathtt{h}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3939.png" alt="$ \mathtt{h}$"></span> in the process.
+</li>
+</ul>
+Each of these operations can be implemented using a constant number of
+<!-- MATH
+ $\mathtt{merge(h1,h2)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3940.png" alt="$ \mathtt{merge(h1,h2)}$"></span> operations that each take <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3941.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> expected time.
+<p>
+</p><h2><a name="SECTION001321000000000000000">
+<span class="arabic">10</span>.<span class="arabic">2</span>.<span class="arabic">1</span> Analysis of <!-- MATH
+ $\mathtt{merge(h1,h2)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3942.png" alt="$ \mathtt{merge(h1,h2)}$"></span></a>
+</h2>
+<p>
+The analysis of <!-- MATH
+ $\mathtt{merge(h1,h2)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3943.png" alt="$ \mathtt{merge(h1,h2)}$"></span> is based on the analysis of a random walk
+in a binary tree.  A <span class="textit">random walk</span> in a binary tree starts at the
+root of the tree.  At each step in the random walk, a coin is tossed and,
+depending on the result of this coin toss, the walk proceeds to the left
+or to the right child of the current node.  The walk ends when it falls
+off the tree (the current node becomes <!-- MATH
+ $\mathtt{nil}$
+ -->
+<span class="MATH"><img width="29" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3944.png" alt="$ \mathtt{nil}$"></span>).
+</p><p>
+The following lemma is somewhat remarkable because it does not depend
+at all on the shape of the binary tree:
+</p><p>
+</p><p>
+</p><div><a name="lem:tree-random-walk"><b>Lemma  <span class="arabic">10</span>..<span class="arabic">1</span></b></a> &nbsp; 
+<i>The expected length of a random walk in a binary tree with <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3945.png" alt="$ \mathtt{n}$"></span> nodes is at most <!-- MATH
+ $\mathtt{\log (n+1)}$
+ -->
+<span class="MATH"><img width="69" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3946.png" alt="$ \mathtt{\log (n+1)}$"></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+The proof is by induction on <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3948.png" alt="$ \mathtt{n}$"></span>. In the base case, <!-- MATH
+ $\ensuremath{\mathtt{n}}=0$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3949.png" alt="$ \ensuremath{\mathtt{n}}=0$"></span> and the walk
+has length <!-- MATH
+ $0=\log (\ensuremath{\mathtt{n}}+1)$
+ -->
+<span class="MATH"><img width="95" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3950.png" alt="$ 0=\log (\ensuremath{\mathtt{n}}+1)$"></span>.  Suppose now that the result is true for
+all non-negative integers <!-- MATH
+ $\ensuremath{\mathtt{n}}'< \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="42" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3951.png" alt="$ \ensuremath{\mathtt{n}}&#39;&lt; \ensuremath{\mathtt{n}}$"></span>.
+<p>
+Let <!-- MATH
+ $\ensuremath{\mathtt{n}}_1$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3952.png" alt="$ \ensuremath{\mathtt{n}}_1$"></span> denote the size of the root's left subtree, so that
+<!-- MATH
+ $\ensuremath{\mathtt{n}}_2=\ensuremath{\mathtt{n}}-\ensuremath{\mathtt{n}}_1-1$
+ -->
+<span class="MATH"><img width="100" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3953.png" alt="$ \ensuremath{\mathtt{n}}_2=\ensuremath{\mathtt{n}}-\ensuremath{\mathtt{n}}_1-1$"></span> is the size of the root's right subtree.  Starting at
+the root, the walk takes one step and then continues in a subtree of
+size <!-- MATH
+ $\ensuremath{\mathtt{n}}_1$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3954.png" alt="$ \ensuremath{\mathtt{n}}_1$"></span> or <!-- MATH
+ $\ensuremath{\mathtt{n}}_2$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3955.png" alt="$ \ensuremath{\mathtt{n}}_2$"></span>.  By our inductive hypothesis, the expected
+length of the walk is then
+</p><p><!-- MATH
+ \begin{displaymath}
+\mathrm{E}[W] = 1 + \frac{1}{2}\log (\ensuremath{\mathtt{n}}_1+1) + \frac{1}{2}\log (\ensuremath{\mathtt{n}}_2+1)  \enspace ,
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="282" height="50" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3956.png" alt="$\displaystyle \mathrm{E}[W] = 1 + \frac{1}{2}\log (\ensuremath{\mathtt{n}}_1+1) + \frac{1}{2}\log (\ensuremath{\mathtt{n}}_2+1) \enspace ,
+$">
+</div><p></p>
+since each of <!-- MATH
+ $\ensuremath{\mathtt{n}}_1$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3957.png" alt="$ \ensuremath{\mathtt{n}}_1$"></span> and <!-- MATH
+ $\ensuremath{\mathtt{n}}_2$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3958.png" alt="$ \ensuremath{\mathtt{n}}_2$"></span> are less than <!-- MATH
+ $\ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3959.png" alt="$ \ensuremath{\mathtt{n}}$"></span>.  Since <span class="MATH"><img width="26" height="30" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3960.png" alt="$ \log$"></span>
+is a concave function, <!-- MATH
+ $\mathrm{E}[W]$
+ -->
+<span class="MATH"><img width="41" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3961.png" alt="$ \mathrm{E}[W]$"></span> is maximized when <!-- MATH
+ $\ensuremath{\mathtt{n}}_1=\ensuremath{\mathtt{n}}_2=(\ensuremath{\mathtt{n}}-1)/2$
+ -->
+<span class="MATH"><img width="128" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3962.png" alt="$ \ensuremath{\mathtt{n}}_1=\ensuremath{\mathtt{n}}_2=(\ensuremath{\mathtt{n}}-1)/2$"></span>.
+Therefore,
+ the expected number of steps taken by the random walk is 
+<p></p>
+<div align="CENTER" class="mathdisplay"><table cellpadding="0" width="100%" align="CENTER">
+<tbody><tr valign="MIDDLE">
+<td nowrap="" align="RIGHT"><span class="MATH"><img width="41" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3963.png" alt="$\displaystyle \mathrm{E}[W]$"></span></td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="230" height="50" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3964.png" alt="$\displaystyle = 1 + \frac{1}{2}\log (\ensuremath{\mathtt{n}}_1+1) + \frac{1}{2}\log (\ensuremath{\mathtt{n}}_2+1)$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="156" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3965.png" alt="$\displaystyle \le 1 + \log ((\ensuremath{\mathtt{n}}-1)/2+1)$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="132" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3966.png" alt="$\displaystyle = 1 + \log ((\ensuremath{\mathtt{n}}+1)/2)$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="95" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3967.png" alt="$\displaystyle = \log (\ensuremath{\mathtt{n}}+1) \enspace . \qedhere$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+</tbody></table></div>
+<br clear="ALL"><p></p> <img width="17" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3947.png" alt="$ \qedsymbol$">
+</div><p></p>
+<p>
+We make a quick digression to note that, for readers who know a little
+about information theory, the proof of Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/10_2_MeldableHeap_Randomize.html#lem:tree-random-walk">10.1</a> can
+be stated in terms of entropy.  
+</p><p></p>
+<div><i>Proof</i>.
+[Information Theoretic Proof of Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/10_2_MeldableHeap_Randomize.html#lem:tree-random-walk">10.1</a>]
+Let <span class="MATH"><img width="18" height="30" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3969.png" alt="$ d_i$"></span> denote the depth of the <span class="MATH"><img width="10" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3970.png" alt="$ i$"></span>th external node and recall that a
+binary tree with <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3971.png" alt="$ \mathtt{n}$"></span> nodes has <!-- MATH
+ $\mathtt{n+1}$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3972.png" alt="$ \mathtt{n+1}$"></span> external nodes.  The probability
+of the random walk reaching the <span class="MATH"><img width="10" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3973.png" alt="$ i$"></span>th external node is exactly
+<!-- MATH
+ $p_i=1/2^{d_i}$
+ -->
+<span class="MATH"><img width="70" height="36" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3974.png" alt="$ p_i=1/2^{d_i}$"></span>, so the expected length of the random walk is given by
+<p><!-- MATH
+ \begin{displaymath}
+H=\sum_{i=0}^{\ensuremath{\mathtt{n}}} p_id_i
+    =\sum_{i=0}^{\ensuremath{\mathtt{n}}} p_i\log\left(2^{d_i}\right)
+    = \sum_{i=0}^{\ensuremath{\mathtt{n}}}p_i\log({1/p_i})
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="320" height="61" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3975.png" alt="$\displaystyle H=\sum_{i=0}^{\ensuremath{\mathtt{n}}} p_id_i
+=\sum_{i=0}^{\ensu...
+...og\left(2^{d_i}\right)
+= \sum_{i=0}^{\ensuremath{\mathtt{n}}}p_i\log({1/p_i})
+$">
+</div><p></p>
+The right hand side of this equation is easily recognizable as the
+entropy of a probability distribution over <!-- MATH
+ $\ensuremath{\mathtt{n}}+1$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3976.png" alt="$ \ensuremath{\mathtt{n}}+1$"></span> elements.  A basic
+fact about the entropy of a distribution over <!-- MATH
+ $\ensuremath{\mathtt{n}}+1$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3977.png" alt="$ \ensuremath{\mathtt{n}}+1$"></span> elements is that
+it does not exceed <!-- MATH
+ $\log(\ensuremath{\mathtt{n}}+1)$
+ -->
+<span class="MATH"><img width="69" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3978.png" alt="$ \log(\ensuremath{\mathtt{n}}+1)$"></span>, which proves the lemma.
+ <img width="17" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3968.png" alt="$ \qedsymbol$">
+</div><p></p>
+<p>
+With this result on random walks, we can now easily prove that the
+running time of the <!-- MATH
+ $\mathtt{merge(h1,h2)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3979.png" alt="$ \mathtt{merge(h1,h2)}$"></span> operation is <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3980.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>.
+</p><p>
+</p><p>
+</p><div><b>Lemma  <span class="arabic">10</span>..<span class="arabic">2</span></b> &nbsp; 
+<i>If <!-- MATH
+ $\mathtt{h1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3981.png" alt="$ \mathtt{h1}$"></span> and <!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3982.png" alt="$ \mathtt{h2}$"></span> are the roots of two heaps containing <!-- MATH
+ $\ensuremath{\mathtt{n}}_1$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3983.png" alt="$ \ensuremath{\mathtt{n}}_1$"></span>
+  and <!-- MATH
+ $\ensuremath{\mathtt{n}}_2$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3984.png" alt="$ \ensuremath{\mathtt{n}}_2$"></span> nodes, respectively, then the expected running time of
+  <!-- MATH
+ $\mathtt{merge(h1,h2)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3985.png" alt="$ \mathtt{merge(h1,h2)}$"></span> is at most <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3986.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span>, where <!-- MATH
+ $\ensuremath{\mathtt{n}}=\ensuremath{\mathtt{n}}_1+\ensuremath{\mathtt{n}}_2$
+ -->
+<span class="MATH"><img width="77" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3987.png" alt="$ \ensuremath{\mathtt{n}}=\ensuremath{\mathtt{n}}_1+\ensuremath{\mathtt{n}}_2$"></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  Each step of the merge algorithm takes one step of a random walk,
+  either in the heap rooted at <!-- MATH
+ $\mathtt{h1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3989.png" alt="$ \mathtt{h1}$"></span> or the heap rooted at <!-- MATH
+ $\mathtt{h2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3990.png" alt="$ \mathtt{h2}$"></span>.
+  The algorithm terminates when either of these two random walks fall
+  out of its corresponding tree (when <!-- MATH
+ $\ensuremath{\mathtt{h1}}=\ensuremath{\mathtt{null}}$
+ -->
+<span class="MATH"><img width="72" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3991.png" alt="$ \ensuremath{\mathtt{h1}}=\ensuremath{\mathtt{null}}$"></span> or <!-- MATH
+ $\ensuremath{\mathtt{h2}}=\ensuremath{\mathtt{null}}$
+ -->
+<span class="MATH"><img width="72" height="29" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3992.png" alt="$ \ensuremath{\mathtt{h2}}=\ensuremath{\mathtt{null}}$"></span>).
+  Therefore, the expected number of steps performed by the merge algorithm
+  is at most
+  <p><!-- MATH
+ \begin{displaymath}
+\log (\ensuremath{\mathtt{n}}_1+1) + \log (\ensuremath{\mathtt{n}}_2+1) \le 2\log \ensuremath{\mathtt{n}} \enspace . \qedhere
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="235" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3993.png" alt="$\displaystyle \log (\ensuremath{\mathtt{n}}_1+1) + \log (\ensuremath{\mathtt{n}}_2+1) \le 2\log \ensuremath{\mathtt{n}} \enspace . \qedhere
+$">
+</div><p></p> <img width="17" height="14" align="BOTTOM" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3988.png" alt="$ \qedsymbol$">
+</div><p></p>
+<p>
+</p><h2><a name="SECTION001322000000000000000">
+<span class="arabic">10</span>.<span class="arabic">2</span>.<span class="arabic">2</span> Summary</a>
+</h2>
+<p>
+The following theorem summarizes the performance of a <tt>MeldableHeap</tt>:
+</p><p>
+</p><p>
+</p><div><a name="thm:meldableheap"><b>Theorem  <span class="arabic">10</span>..<span class="arabic">2</span></b></a> &nbsp; 
+<i>A <tt>MeldableHeap</tt> implements the (priority) <tt>Queue</tt> interface.
+  A <tt>MeldableHeap</tt> supports the operations <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3994.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3995.png" alt="$ \mathtt{remove()}$"></span>
+  in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/img3996.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> expected time per operation.</i></div><p></p>
+<p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/10.2 MeldableHeap_ A Randomized Meldable Heap_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

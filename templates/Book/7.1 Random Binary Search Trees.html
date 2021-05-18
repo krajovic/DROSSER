@@ -1,0 +1,611 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>7.1 Random Binary Search Trees</title>
+<meta content="7.1 Random Binary Search Trees" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/7.1 Random Binary Search Trees_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/7_2_Treap_Randomized_Binary.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/7_Random_Binary_Search_Tree.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/7_Random_Binary_Search_Tree.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/7_2_Treap_Randomized_Binary.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<hr/>
+<h1><a name="SECTION001010000000000000000"></a>
+<a name="sec:rbst"></a>
+<br/>
+<span class="arabic">7</span>.<span class="arabic">1</span> Random Binary Search Trees
+</h1>
+<p>
+Consider the two binary search trees shown in Figure <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#fig:rbs-lvc">7.1</a>, each of
+which has <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=15$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=15$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2850.png" width="48"/></span> nodes.  The one on the left is a list and the other
+is a perfectly balanced binary search tree. The one on the left has a
+height of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1=14$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1=14$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2851.png" width="72"/></span> and the one on the right has a height of three.
+</p><p>
+</p><div align="CENTER"><a name="fig:rbs-lvc"></a><a name="36056"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 7.1:</strong>
+Two binary search trees containing the integers <!-- MATH
+ $0,\ldots,14$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 0,\ldots,14$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2854.png" width="59"/></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table align="CENTER" cellpadding="3">
+<tbody><tr><td align="CENTER"><img align="BOTTOM" alt="\includegraphics[scale=0.90909,scale=0.95]{figs-python/bst-path}" border="0" height="214" src="static/7.1 Random Binary Search Trees_files/img2852.png" width="140"/></td>
+<td align="CENTER"><img align="BOTTOM" alt="\includegraphics[scale=0.90909,scale=0.95]{figs-python/bst-balanced}" border="0" height="134" src="static/7.1 Random Binary Search Trees_files/img2853.png" width="283"/></td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Imagine how these two trees could have been constructed.  The one on
+the left occurs if we start with an empty BinarySearchTree and add
+the sequence
+</p><p><!-- MATH
+ \begin{displaymath}
+\langle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14 \rangle \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \langle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14 \rangle \enspace .
+$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2856.png" width="281"/>
+</div><p></p>
+No other sequence of additions will create this tree (as you can prove
+by induction on <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2857.png" width="13"/></span>). On the other hand, the tree on the right can be
+created by the sequence
+<p><!-- MATH
+ \begin{displaymath}
+\langle 7,3,11,1,5,9,13,0,2,4,6,8,10,12,14 \rangle  \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \langle 7,3,11,1,5,9,13,0,2,4,6,8,10,12,14 \rangle \enspace .
+$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2858.png" width="281"/>
+</div><p></p>
+Other sequences work as well, including
+<p><!-- MATH
+ \begin{displaymath}
+\langle 7,3,1,5,0,2,4,6,11,9,13,8,10,12,14 \rangle  \enspace ,
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \langle 7,3,1,5,0,2,4,6,11,9,13,8,10,12,14 \rangle \enspace ,
+$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2859.png" width="281"/>
+</div><p></p>
+and
+<p><!-- MATH
+ \begin{displaymath}
+\langle 7,3,1,11,5,0,2,4,6,9,13,8,10,12,14 \rangle \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \langle 7,3,1,11,5,0,2,4,6,9,13,8,10,12,14 \rangle \enspace .
+$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2860.png" width="281"/>
+</div><p></p>
+In fact, there are <!-- MATH
+ $21,964,800$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 21,964,800$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2861.png" width="85"/></span> addition sequences that generate the
+tree on the right and only one that generates the tree on the left.
+<p>
+The above example gives some anecdotal evidence that, if we choose a
+random permutation of <!-- MATH
+ $0,\ldots,14$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 0,\ldots,14$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2862.png" width="59"/></span>, and add it into a binary search
+tree, then we are more likely to get a very balanced tree (the right
+side of Figure <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#fig:rbs-lvc">7.1</a>) than we are to get a very unbalanced tree
+(the left side of Figure <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#fig:rbs-lvc">7.1</a>).
+</p><p>
+We can formalize this notion by studying random binary search trees.
+A <span class="textit">random binary search tree</span>
+<a name="36063"></a><a name="36064"></a>of size <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2863.png" width="13"/></span> is obtained in the
+following way:  Take a random permutation, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_0,\ldots,\ensuremath{\ensure...
+...\ensuremath{\mathit{x}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2864.png" width="77"/></span>,
+of the integers <!-- MATH
+ $0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2865.png" width="74"/></span> and add its elements, one by one,
+into a BinarySearchTree.  By <span class="textit">random permutation</span>
+<a name="36071"></a><a name="36072"></a>we mean that
+each of the possible <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2866.png" width="18"/></span> permutations (orderings) of <!-- MATH
+ $0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2867.png" width="74"/></span>
+is equally likely, so that the probability of obtaining any particular
+permutation is <!-- MATH
+ $1/\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1/\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2868.png" width="32"/></span>.
+</p><p>
+Note that the values <!-- MATH
+ $0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2869.png" width="74"/></span> could be replaced by any ordered
+set of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2870.png" width="13"/></span> elements without changing any of the properties of the
+random binary search tree.  The element <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2871.png" width="109"/></span> is
+simply standing in for the element of rank <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2872.png" width="12"/></span> in an ordered set of
+size <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2873.png" width="13"/></span>.
+</p><p>
+Before we can present our main result about random binary search trees,
+we must take some time for a short digression to discuss a type of number
+that comes up frequently when studying randomized structures. For a
+non-negative integer, <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2874.png" width="13"/></span>, the <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2875.png" width="13"/></span>-th <span class="textit">harmonic number</span>,
+<a name="36083"></a><a name="36084"></a>denoted
+<span class="MATH"><img align="MIDDLE" alt="$ H_k$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2877.png" width="24"/></span>, is defined as
+</p><p><!-- MATH
+ \begin{displaymath}
+H_k = 1 + 1/2 + 1/3 + \cdots + 1/k \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle H_k = 1 + 1/2 + 1/3 + \cdots + 1/k \enspace .
+$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2878.png" width="208"/>
+</div><p></p>
+The harmonic number <span class="MATH"><img align="MIDDLE" alt="$ H_k$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2879.png" width="24"/></span> has no simple closed form, but it is very
+closely related to the natural logarithm of <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2880.png" width="13"/></span>.  In particular,
+<p><!-- MATH
+ \begin{displaymath}
+\ln k < H_k \le \ln k + 1  \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ln k &lt; H_k \le \ln k + 1 \enspace .
+$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2881.png" width="143"/>
+</div><p></p>
+Readers who have studied calculus might notice that this is because
+the integral <!-- MATH
+ $\int_1^k\! (1/x)\, \mathrm{d}x= \ln k$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \int_1^k\! (1/x)\, \mathrm{d}x= \ln k$" border="0" height="44" src="static/7.1 Random Binary Search Trees_files/img2882.png" width="114"/></span>.  Keeping in mind that an integral can be
+interpreted as the area between a curve and the <span class="MATH"><img align="MIDDLE" alt="$ x$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2883.png" width="13"/></span>-axis, the value of
+<span class="MATH"><img align="MIDDLE" alt="$ H_k$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2884.png" width="24"/></span> can be lower-bounded by the integral <!-- MATH
+ $\int_1^k\! (1/x)\, \mathrm{d}x$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \int_1^k\! (1/x)\, \mathrm{d}x$" border="0" height="44" src="static/7.1 Random Binary Search Trees_files/img2885.png" width="72"/></span> and upper-bounded by
+<!-- MATH
+ $1+ \int_1^k\! (1/x)\, \mathrm{d}x$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1+ \int_1^k\! (1/x)\, \mathrm{d}x$" border="0" height="44" src="static/7.1 Random Binary Search Trees_files/img2886.png" width="96"/></span>.  (See Figure <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#fig:harmonic-integral">7.2</a> for a graphical explanation.)
+<p>
+</p><div align="CENTER"><a name="fig:harmonic-integral"></a><a name="37173"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 7.2:</strong>
+The <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2889.png" width="13"/></span>th harmonic number <!-- MATH
+ $H_k=\sum_{i=1}^k 1/i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ H_k=\sum_{i=1}^k 1/i$" border="0" height="38" src="static/7.1 Random Binary Search Trees_files/img2890.png" width="97"/></span> is upper- and lower-bounded by two integrals. The value of these integrals is given by the 
+  area of the shaded region, while the value of <span class="MATH"><img align="MIDDLE" alt="$ H_k$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2891.png" width="24"/></span> is given by the area of
+  the rectangles.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table align="CENTER" cellpadding="3">
+<tbody><tr><td align="CENTER"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/harmonic-2}" border="0" height="362" src="static/7.1 Random Binary Search Trees_files/img2887.png" width="550"/></td>
+<td align="CENTER"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/harmonic-3}" border="0" height="362" src="static/7.1 Random Binary Search Trees_files/img2888.png" width="545"/></td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><p>
+</p><div><a name="lem:rbs"><b>Lemma  <span class="arabic">7</span>..<span class="arabic">1</span></b></a>   
+<i>In a random binary search tree of size <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2895.png" width="13"/></span>, the following statements hold:
+  </i>
+<ol>
+<li>For any <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2896.png" width="109"/></span>, the expected length of the
+    search path for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2897.png" width="12"/></span> is <!-- MATH
+ $H_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}+1} + H_{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} - O(1)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ H_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}+1} + H_{\ensuremath{\ensu...
+...uremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} - O(1)$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2898.png" width="133"/></span>.<a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#foot38451" name="tex2html59"><sup><span class="arabic">7</span>.<span class="arabic">1</span></sup></a>
+</li>
+<li>For any <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in(-1,n)\setminus\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in(-1,n)\setminus\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2903.png" width="165"/></span>, the
+    expected length of the search path for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2904.png" width="12"/></span> is <!-- MATH
+ $H_{\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil}
+    + H_{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ H_{\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil}
++ H_{\ensur...
+...th{\mathit{n}}}}-\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2905.png" width="91"/></span>.
+  
+</li>
+</ol></div><p></p>
+<p>
+We will prove Lemma <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a> in the next section.  For now, consider what
+the two parts of Lemma <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a> tell us.  The first part tells us that if
+we search for an element in a tree of size <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2906.png" width="13"/></span>, then the expected length
+of the search path is at most <!-- MATH
+ $2\ln n + O(1)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\ln n + O(1)$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2907.png" width="87"/></span>.  The second part tells
+us the same thing about searching for a value not stored in the tree.
+When we compare the two parts of the lemma, we see that it is only
+slightly faster to search for something that is in the tree compared to
+something that is not.
+</p><p>
+</p><h2><a name="SECTION001011000000000000000"><span class="arabic">7</span>.<span class="arabic">1</span>.<span class="arabic">1</span> Proof of Lemma </a><a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a>
+</h2>
+<p>
+The key observation needed to prove Lemma <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a> is the following:
+The search path for a value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2908.png" width="12"/></span> in the open interval <!-- MATH
+ $(-1,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (-1,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2909.png" width="48"/></span> in a
+random binary search tree, <span class="MATH"><img align="MIDDLE" alt="$ T$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2910.png" width="16"/></span>, contains the node with key <!-- MATH
+ $i < \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ i &lt; \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2911.png" width="35"/></span>
+if, and only if, in the random permutation used to create <span class="MATH"><img align="MIDDLE" alt="$ T$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2912.png" width="16"/></span>, <span class="MATH"><img align="MIDDLE" alt="$ i$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2913.png" width="10"/></span>
+appears before any of <!-- MATH
+ $\{i+1,i+2,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{i+1,i+2,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2914.png" width="129"/></span>.
+</p><p>
+To see this, refer to Figure <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#fig:rbst-records">7.3</a> and notice that until
+some value in <!-- MATH
+ $\{i,i+1,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{i,i+1,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2915.png" width="105"/></span> is added, the search
+paths for each value in the open interval <!-- MATH
+ $(i-1,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor+1)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (i-1,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor+1)$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2916.png" width="94"/></span>
+are identical.  (Remember that for two values to have
+different search paths, there must be some element in the tree that
+compares differently with them.)  Let <span class="MATH"><img align="MIDDLE" alt="$ j$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2917.png" width="11"/></span> be the first element in
+<!-- MATH
+ $\{i,i+1,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{i,i+1,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2918.png" width="105"/></span> to appear in the random permutation.
+Notice that <span class="MATH"><img align="MIDDLE" alt="$ j$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2919.png" width="11"/></span> is now and will always be on the search path for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2920.png" width="12"/></span>.
+If <span class="MATH"><img align="MIDDLE" alt="$ j\neq i$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2921.png" width="33"/></span> then the node <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_j$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_j$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2922.png" width="19"/></span> containing <span class="MATH"><img align="MIDDLE" alt="$ j$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2923.png" width="11"/></span> is created before the
+node <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_i$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2924.png" width="18"/></span> that contains <span class="MATH"><img align="MIDDLE" alt="$ i$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2925.png" width="10"/></span>.  Later, when <span class="MATH"><img align="MIDDLE" alt="$ i$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2926.png" width="10"/></span> is added, it will be
+added to the subtree rooted at <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_j\ensuremath{.\ensuremath{\ensuremath{\mathit{left}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_j\ensuremath{.\ensuremath{\ensuremath{\mathit{left}}}}$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2927.png" width="44"/></span>, since <span class="MATH"><img align="MIDDLE" alt="$ i&lt;j$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2928.png" width="33"/></span>.  On the other
+hand, the search path for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2929.png" width="12"/></span> will never visit this subtree because it
+will proceed to <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_j\ensuremath{.\ensuremath{\ensuremath{\mathit{right}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_j\ensuremath{.\ensuremath{\ensuremath{\mathit{right}}}}$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2930.png" width="55"/></span> after visiting <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_j$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_j$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2931.png" width="19"/></span>.
+</p><p>
+</p><div align="CENTER"><a name="fig:rbst-records"></a><a name="38454"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 7.3:</strong>
+The value <!-- MATH
+ $i<\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ i&lt;\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2933.png" width="35"/></span> is on the search path for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2934.png" width="12"/></span> if and only
+   if <span class="MATH"><img align="MIDDLE" alt="$ i$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2935.png" width="10"/></span> is the first element among <!-- MATH
+ $\{i,i+1,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{i,i+1,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2936.png" width="105"/></span> added to the tree.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="% latex2html id marker 84546
+\includegraphics[width=\textwidth ]{figs-python/rbst-records}" border="0" height="353" src="static/7.1 Random Binary Search Trees_files/img2932.png" width="552"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Similarly, for <!-- MATH
+ $i>\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ i&gt;\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2937.png" width="35"/></span>, <span class="MATH"><img align="MIDDLE" alt="$ i$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2938.png" width="10"/></span> appears in the search path for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2939.png" width="12"/></span>
+if and only if <span class="MATH"><img align="MIDDLE" alt="$ i$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2940.png" width="10"/></span> appears before any of <!-- MATH
+ $\{\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil,
+\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil+1,\ldots,i-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil,
+\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil+1,\ldots,i-1\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2941.png" width="143"/></span> in the random permutation used to
+create <span class="MATH"><img align="MIDDLE" alt="$ T$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2942.png" width="16"/></span>.
+</p><p>
+Notice that, if we start with a random permutation of <!-- MATH
+ $\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2943.png" width="61"/></span>,
+then the subsequences containing only <!-- MATH
+ $\{i,i+1,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{i,i+1,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2944.png" width="105"/></span>
+and <!-- MATH
+ $\{\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil, \lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil+1,\ldots,i-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil, \lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil+1,\ldots,i-1\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2945.png" width="143"/></span> are also random
+permutations of their respective elements.  Each element, then, in the
+subsets <!-- MATH
+ $\{i,i+1,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{i,i+1,\ldots,\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2946.png" width="105"/></span> and <!-- MATH
+ $\{\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil,
+\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil+1,\ldots,i-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil,
+\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil+1,\ldots,i-1\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2947.png" width="143"/></span> is equally likely to appear before
+any other in its subset in the random permutation used to create <span class="MATH"><img align="MIDDLE" alt="$ T$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2948.png" width="16"/></span>.
+So we have
+</p><p><!-- MATH
+ \begin{displaymath}
+\Pr\{\mbox{$i$\  is on the search path for \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}}\}
+  = \left\{ \begin{array}{ll}
+     1/(\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rfloor-i+1) & \mbox{if $i < \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$} \\
+     1/(i-\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil+1) & \mbox{if $i > \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$}
+     \end{array}\right . \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \Pr\{$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2949.png" width="26"/><img align="MIDDLE" alt="$\displaystyle \mbox{$i$\ is on the search path for \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}}$" border="0" height="30" src="static/7.1 Random Binary Search Trees_files/img2950.png" width="195"/><img align="MIDDLE" alt="$\displaystyle \}
+= \left\{ \begin{array}{ll}
+1/(\lfloor\ensuremath{\ensuremat...
+...emath{\ensuremath{\ensuremath{\mathit{x}}}}$}
+\end{array}\right . \enspace .
+$" border="0" height="56" src="static/7.1 Random Binary Search Trees_files/img2951.png" width="220"/>
+</div><p></p>
+<p>
+With this observation, the proof of Lemma <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a>
+involves some simple calculations with harmonic numbers:
+</p><p>
+</p><p></p>
+<div><i>Proof</i>.
+[Proof of Lemma <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a>]
+Let <span class="MATH"><img align="MIDDLE" alt="$ I_i$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2953.png" width="15"/></span> be the indicator random variable that is equal to one when <span class="MATH"><img align="MIDDLE" alt="$ i$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2954.png" width="10"/></span>
+appears on the search path for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2955.png" width="12"/></span> and zero otherwise.  Then the length
+of the search path is given by
+<p><!-- MATH
+ \begin{displaymath}
+\sum_{i\in\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}\setminus\{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\}} I_i
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \sum_{i\in\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}\setminus\{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\}} I_i
+$" border="0" height="57" src="static/7.1 Random Binary Search Trees_files/img2956.png" width="98"/>
+</div><p></p>
+so, if <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2957.png" width="109"/></span>, the expected length of the search
+path is given by (see Figure <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#fig:rbst-probs">7.4</a>.a)
+<p></p>
+<div align="CENTER" class="mathdisplay"><table align="CENTER" cellpadding="0" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="RIGHT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \mathrm{E}\left[\sum_{i=0}^{\ensuremath{\ensuremath{\ensuremath{\...
+...athit{x}}}}+1}^{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1} I_i\right]$" border="0" height="67" src="static/7.1 Random Binary Search Trees_files/img2958.png" width="124"/></span></td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \sum_{i=0}^{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-1...
+...\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1} \mathrm{E}\left[I_i\right]$" border="0" height="67" src="static/7.1 Random Binary Search Trees_files/img2959.png" width="158"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \sum_{i=0}^{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-1...
+...{n}}}}-1} 1/(i-\lceil\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\rceil+1)$" border="0" height="67" src="static/7.1 Random Binary Search Trees_files/img2960.png" width="274"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \sum_{i=0}^{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}-1...
+...math{\mathit{n}}}}-1} 1/(i-\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}+1)$" border="0" height="67" src="static/7.1 Random Binary Search Trees_files/img2961.png" width="249"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \frac{1}{2}+\frac{1}{3}+\cdots+\frac{1}{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}+1}$" border="0" height="50" src="static/7.1 Random Binary Search Trees_files/img2962.png" width="140"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \quad {} + \frac{1}{2}+\frac{1}{3}+\cdots+\frac{1}{\ensuremath{\e...
+...th{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}}$" border="0" height="50" src="static/7.1 Random Binary Search Trees_files/img2963.png" width="157"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = H_{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}+1} + H_{\e...
+...\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}} - 2 \enspace .$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2964.png" width="136"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+The corresponding calculations for a search value
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in(-1,n)\setminus\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in(-1,n)\setminus\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1\}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2965.png" width="165"/></span> are almost identical (see
+Figure <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#fig:rbst-probs">7.4</a>.b).
+ <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/7.1 Random Binary Search Trees_files/img2952.png" width="17"/>
+</div><p></p>
+<p>
+</p><div align="CENTER"><a name="fig:rbst-probs"></a><a name="38475"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 7.4:</strong>
+The probabilities of an element being on the search path for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2968.png" width="12"/></span>
+   when (a) <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2969.png" width="12"/></span> is an integer and (b) when <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2970.png" width="12"/></span> is not an integer.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table align="CENTER" cellpadding="3">
+<tbody><tr><td align="LEFT"> </td><td align="CENTER"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/rbst-probs-a}" border="0" height="64" src="static/7.1 Random Binary Search Trees_files/img2966.png" width="552"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER">(a)</td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/rbst-probs-b}" border="0" height="67" src="static/7.1 Random Binary Search Trees_files/img2967.png" width="552"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="CENTER">(b)</td>
+<td align="LEFT"> </td></tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><h2><a name="SECTION001012000000000000000">
+<span class="arabic">7</span>.<span class="arabic">1</span>.<span class="arabic">2</span> Summary</a>
+</h2>
+<p>
+The following theorem summarizes the performance of a random binary
+search tree:
+</p><p>
+</p><p>
+</p><div><a name="thm:rbs"><b>Theorem  <span class="arabic">7</span>..<span class="arabic">1</span></b></a>   
+<i>A random binary search tree can be constructed in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2971.png" width="71"/></span> time.
+In a random binary search tree, the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2972.png" width="52"/></span> operation takes <!-- MATH
+ $O(\log
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/7.1 Random Binary Search Trees_files/img2973.png" width="60"/></span> expected time.</i></div><p></p>
+<p>
+We should emphasize again that the expectation in Theorem <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#thm:rbs">7.1</a> is with
+respect to the random permutation used to create the random binary
+search tree.  In particular, it does not depend on a random choice of
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2974.png" width="12"/></span>; it is true for every value of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2975.png" width="12"/></span>.
+</p><p>
+<br/></p><hr/><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot38451">....</a><a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#tex2html59"><sup><span class="arabic">7</span>.<span class="arabic">1</span></sup></a></dt>
+<dd>The
+    expressions <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}+1$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2899.png" width="36"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2900.png" width="36"/></span> can be interpreted respectively
+    as the number of elements in the tree less than or equal to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2901.png" width="12"/></span>
+    and the number of elements in the tree greater than or equal to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/7.1 Random Binary Search Trees_files/img2902.png" width="12"/></span>.
+</dd>
+</dl>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/7.1 Random Binary Search Trees_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

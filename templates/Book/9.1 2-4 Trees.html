@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0057)http://opendatastructures.org/ods-java/9_1_2_4_Trees.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>9.1 2-4 Trees</title>
+<meta name="description" content="9.1 2-4 Trees">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/9.1 2-4 Trees_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/9_2_RedBlackTree_Simulated_.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/9_Red_Black_Trees.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/9_Red_Black_Trees.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/9_2_RedBlackTree_Simulated_.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<hr>
+<h1><a name="SECTION001210000000000000000"></a>
+<a name="sec:twofour"></a>
+<br>
+<span class="arabic">9</span>.<span class="arabic">1</span> 2-4 Trees
+</h1>
+<p>
+A 2-4 tree is a rooted tree with the following properties:
+</p><p>
+</p><div><b>Property  <span class="arabic">9</span>..<span class="arabic">1</span></b> (height)  &nbsp; 
+All leaves have the same depth.</div><p></p>
+<p>
+</p><div><b>Property  <span class="arabic">9</span>..<span class="arabic">2</span></b> (degree)  &nbsp; 
+Every internal node has 2, 3, or 4 children.</div><p></p>
+An example of a 2-4 tree is shown in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/9_1_2_4_Trees.html#fig:twofour-example">9.1</a>.
+<div align="CENTER"><a name="fig:twofour-example"></a><a name="25086"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 9.1:</strong>
+A 2-4 tree of height 3.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="334" height="149" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3457.png" alt="\includegraphics[scale=0.90909]{figs/24rb-2}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+The properties of 2-4 trees imply that their height is logarithmic in
+the number of leaves:
+<p>
+</p><div><a name="lem:twofour-height"><b>Lemma  <span class="arabic">9</span>..<span class="arabic">1</span></b></a> &nbsp; 
+<i>A 2-4 tree with <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3458.png" alt="$ \mathtt{n}$"></span> leaves has height at most <!-- MATH
+ $\log \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="36" height="30" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3459.png" alt="$ \log \ensuremath{\mathtt{n}}$"></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  The lower-bound of 2 on the number of children of an internal node
+  implies that, if the height of a 2-4 tree is <span class="MATH"><img width="13" height="30" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3461.png" alt="$ h$"></span>, then it has at least
+  <span class="MATH"><img width="20" height="36" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3462.png" alt="$ 2^h$"></span> leaves.  In other words,
+  <p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\mathtt{n}} \ge 2^h \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="58" height="38" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3463.png" alt="$\displaystyle \ensuremath{\mathtt{n}} \ge 2^h \enspace .
+$">
+</div><p></p>
+Taking logarithms on both sides of this inequality gives <!-- MATH
+ $h \le \log \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="62" height="30" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3464.png" alt="$ h \le \log \ensuremath{\mathtt{n}}$"></span>.
+ <img width="17" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3460.png" alt="$ \qedsymbol$">
+</div><p></p>
+<p>
+</p><h2><a name="SECTION001211000000000000000">
+<span class="arabic">9</span>.<span class="arabic">1</span>.<span class="arabic">1</span> Adding a Leaf</a>
+</h2>
+<p>
+Adding a leaf to a 2-4 tree is easy (see Figure&nbsp;<a href="http://opendatastructures.org/ods-java/9_1_2_4_Trees.html#fig:twofour-add">9.2</a>).  If we
+want to add a leaf <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3465.png" alt="$ \mathtt{u}$"></span> as the child of some node <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3466.png" alt="$ \mathtt{w}$"></span> on the second-last
+level, then we simply make <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3467.png" alt="$ \mathtt{u}$"></span> a child of <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3468.png" alt="$ \mathtt{w}$"></span>.  This certainly maintains
+the height property, but could violate the degree property;  if <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3469.png" alt="$ \mathtt{w}$"></span>
+had four children prior to adding <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3470.png" alt="$ \mathtt{u}$"></span>, then <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3471.png" alt="$ \mathtt{w}$"></span> now has five children.
+In this case, we <span class="textit">split</span>
+<a name="25108"></a><!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3472.png" alt="$ \mathtt{w}$"></span> into two nodes, <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3473.png" alt="$ \mathtt{w}$"></span> and <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3474.png" alt="$ \mathtt{w}$"></span>', having
+two and three children, respectively.
+But now <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3475.png" alt="$ \mathtt{w}$"></span>' has no parent,
+so we recursively make <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3476.png" alt="$ \mathtt{w}$"></span>' a child of <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3477.png" alt="$ \mathtt{w}$"></span>'s parent.  Again, this may
+cause <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3478.png" alt="$ \mathtt{w}$"></span>'s parent to have too many children in which case we split it.
+This process goes on until we reach a node that has fewer than four children,
+or until we split the root, <!-- MATH
+ $\mathtt{r}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3479.png" alt="$ \mathtt{r}$"></span>, into two nodes <!-- MATH
+ $\mathtt{r}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3480.png" alt="$ \mathtt{r}$"></span> and <!-- MATH
+ $\mathtt{r'}$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3481.png" alt="$ \mathtt{r&#39;}$"></span>.  In the
+latter case, we make a new root that has <!-- MATH
+ $\mathtt{r}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3482.png" alt="$ \mathtt{r}$"></span> and <!-- MATH
+ $\mathtt{r'}$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3483.png" alt="$ \mathtt{r&#39;}$"></span> as children.
+This simultaneously increases the depth of all leaves and so maintains
+the height property.
+</p><p>
+</p><div align="CENTER"><a name="fig:twofour-add"></a><a name="26000"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 9.2:</strong>
+Adding a leaf to a 2-4 Tree.
+  This process stops after one split because <!-- MATH
+ $\mathtt{w.parent}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3487.png" alt="$ \mathtt{w.parent}$"></span> has a degree of less
+  than 4 before the addition.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table cellpadding="3" align="CENTER">
+<tbody><tr><td align="CENTER"><img width="311" height="149" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3484.png" alt="\includegraphics[scale=0.90909]{figs/24tree-add-1}"></td>
+</tr>
+<tr><td align="CENTER"><img width="311" height="168" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3485.png" alt="\includegraphics[scale=0.90909]{figs/24tree-add-2}"></td>
+</tr>
+<tr><td align="CENTER"><img width="318" height="168" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3486.png" alt="\includegraphics[scale=0.90909]{figs/24tree-add-3}"></td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Since the height of the 2-4 tree is never more than <!-- MATH
+ $\log \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="36" height="30" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3488.png" alt="$ \log \ensuremath{\mathtt{n}}$"></span>, the
+process of adding a leaf finishes after at most <!-- MATH
+ $\log \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="36" height="30" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3489.png" alt="$ \log \ensuremath{\mathtt{n}}$"></span> steps.
+</p><p>
+</p><h2><a name="SECTION001212000000000000000">
+<span class="arabic">9</span>.<span class="arabic">1</span>.<span class="arabic">2</span> Removing a Leaf</a>
+</h2>
+<p>
+Removing a leaf from a 2-4 tree is a little more tricky (see
+Figure&nbsp;<a href="http://opendatastructures.org/ods-java/9_1_2_4_Trees.html#fig:twofour-remove">9.3</a>).  To remove a leaf <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3490.png" alt="$ \mathtt{u}$"></span> from its parent <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3491.png" alt="$ \mathtt{w}$"></span>, we
+just remove it.  If <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3492.png" alt="$ \mathtt{w}$"></span> had only two children prior to the removal of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3493.png" alt="$ \mathtt{u}$"></span>,
+then <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3494.png" alt="$ \mathtt{w}$"></span> is left with only one child and violates the degree property.
+</p><p>
+</p><div align="CENTER"><a name="fig:twofour-remove"></a><a name="26001"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 9.3:</strong>
+Removing a leaf from a
+    2-4 Tree.  This process goes all the way to the root because each of
+    <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3500.png" alt="$ \mathtt{u}$"></span>'s ancestors and their siblings have only two children.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table cellpadding="3" align="CENTER">
+<tbody><tr><td align="CENTER"><img width="392" height="187" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3495.png" alt="\includegraphics[height=.2\textheight ]{figs/24tree-remove-1}"></td>
+</tr>
+<tr><td align="CENTER"><img width="392" height="187" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3496.png" alt="\includegraphics[height=.2\textheight ]{figs/24tree-remove-2}"></td>
+</tr>
+<tr><td align="CENTER"><img width="392" height="187" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3497.png" alt="\includegraphics[height=.2\textheight ]{figs/24tree-remove-3}"></td>
+</tr>
+<tr><td align="CENTER"><img width="392" height="187" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3498.png" alt="\includegraphics[height=.2\textheight ]{figs/24tree-remove-4}"></td>
+</tr>
+<tr><td align="CENTER"><img width="392" height="129" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3499.png" alt="\includegraphics[height=.2\textheight ]{figs/24tree-remove-5}"></td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+To correct this, we look at <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3501.png" alt="$ \mathtt{w}$"></span>'s sibling, <!-- MATH
+ $\mathtt{w'}$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3502.png" alt="$ \mathtt{w&#39;}$"></span>.  The node <!-- MATH
+ $\mathtt{w'}$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3503.png" alt="$ \mathtt{w&#39;}$"></span> is
+sure to exist since <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3504.png" alt="$ \mathtt{w}$"></span>'s parent had at least two children.  If <!-- MATH
+ $\mathtt{w'}$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3505.png" alt="$ \mathtt{w&#39;}$"></span>
+has three or four children, then we take one of these children from <!-- MATH
+ $\mathtt{w'}$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3506.png" alt="$ \mathtt{w&#39;}$"></span>
+and give it to <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3507.png" alt="$ \mathtt{w}$"></span>. Now <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3508.png" alt="$ \mathtt{w}$"></span> has two children and <!-- MATH
+ $\mathtt{w'}$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3509.png" alt="$ \mathtt{w&#39;}$"></span> has two or three
+children and we are done.
+</p><p>
+On the other hand, if <!-- MATH
+ $\mathtt{w'}$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3510.png" alt="$ \mathtt{w&#39;}$"></span> has only two children, then we <span class="textit">merge</span>
+<a name="25167"></a><!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3511.png" alt="$ \mathtt{w}$"></span> and <!-- MATH
+ $\mathtt{w'}$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3512.png" alt="$ \mathtt{w&#39;}$"></span> into a single node, <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3513.png" alt="$ \mathtt{w}$"></span>, that has three children.  Next we
+recursively remove <!-- MATH
+ $\mathtt{w'}$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3514.png" alt="$ \mathtt{w&#39;}$"></span> from the parent of <!-- MATH
+ $\mathtt{w'}$
+ -->
+<span class="MATH"><img width="17" height="15" align="BOTTOM" border="0" src="static/9.1 2-4 Trees_files/img3515.png" alt="$ \mathtt{w&#39;}$"></span>.  This process ends
+when we reach a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3516.png" alt="$ \mathtt{u}$"></span>, where <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3517.png" alt="$ \mathtt{u}$"></span> or its sibling has more than two
+children, or when we reach the root.  In the latter case, if the root
+is left with only one child, then we delete the root and make its child
+the new root.  Again, this simultaneously decreases the height of every
+leaf and therefore maintains the height property.
+</p><p>
+Again, since the height of the tree is never more than <!-- MATH
+ $\log \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="36" height="30" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3518.png" alt="$ \log \ensuremath{\mathtt{n}}$"></span>,
+the process of removing a leaf finishes after at most <!-- MATH
+ $\log \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="36" height="30" align="MIDDLE" border="0" src="static/9.1 2-4 Trees_files/img3519.png" alt="$ \log \ensuremath{\mathtt{n}}$"></span> steps.
+</p><p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/9.1 2-4 Trees_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

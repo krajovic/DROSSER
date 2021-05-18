@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0065)http://opendatastructures.org/ods-python/1_1_Need_Efficiency.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>1.1 The Need for Efficiency</title>
+<meta content="1.1 The Need for Efficiency" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/1.1 The Need for Efficiency_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/1_2_Interfaces.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/1_Introduction.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/1_Introduction.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/1_2_Interfaces.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<h1><a name="SECTION00410000000000000000">
+<span class="arabic">1</span>.<span class="arabic">1</span> The Need for Efficiency</a>
+</h1>
+<p>
+In the next section, we look at the operations supported by the most
+commonly used data structures.  Anyone with a bit of programming
+experience will see that these operations are not hard to implement
+correctly.  We can store the data in an array or a linked list and each
+operation can be implemented by iterating over all the elements of the
+array or list and possibly adding or removing an element.
+</p><p>
+This kind of implementation is easy, but not very efficient.  Does this
+really matter?  Computers are becoming faster and faster. Maybe the
+obvious implementation is good enough. Let's do some rough calculations
+to find out.
+</p><p>
+</p><h4><a name="SECTION00410010000000000000">
+<span class="arabic">1</span>.<span class="arabic">1</span>.<span class="arabic">0</span>.<span class="arabic">0</span>.<span class="arabic">1</span> Number of operations:</a>
+</h4>  Imagine an application with a
+moderately-sized data set, say of one million (<span class="MATH"><img align="MIDDLE" alt="$ 10^6$" border="0" height="35" src="static/1.1 The Need for Efficiency_files/img43.png" width="29"/></span>), items.  It is
+reasonable, in most applications, to assume that the application will
+want to look up each item at least once.  This means we can expect to do
+at least one million (<span class="MATH"><img align="MIDDLE" alt="$ 10^6$" border="0" height="35" src="static/1.1 The Need for Efficiency_files/img44.png" width="29"/></span>) searches in this data.  If each of these
+<span class="MATH"><img align="MIDDLE" alt="$ 10^6$" border="0" height="35" src="static/1.1 The Need for Efficiency_files/img45.png" width="29"/></span> searches inspects  each of the <span class="MATH"><img align="MIDDLE" alt="$ 10^6$" border="0" height="35" src="static/1.1 The Need for Efficiency_files/img46.png" width="29"/></span> items, this gives a total
+of <!-- MATH
+ $10^6\times 10^6=10^{12}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 10^6\times 10^6=10^{12}$" border="0" height="35" src="static/1.1 The Need for Efficiency_files/img47.png" width="118"/></span> (one thousand billion) inspections.
+<p>
+</p><h4><a name="SECTION00410020000000000000">
+<span class="arabic">1</span>.<span class="arabic">1</span>.<span class="arabic">0</span>.<span class="arabic">0</span>.<span class="arabic">2</span> Processor speeds:</a>
+</h4> At the time of writing, even a very fast
+desktop computer can not do more than one billion (<span class="MATH"><img align="MIDDLE" alt="$ 10^9$" border="0" height="35" src="static/1.1 The Need for Efficiency_files/img48.png" width="29"/></span>) operations per
+second.<a href="http://opendatastructures.org/ods-python/1_1_Need_Efficiency.html#foot605" name="tex2html6"><sup><span class="arabic">1</span>.<span class="arabic">1</span></sup></a>This means that this application will take at least <!-- MATH
+ $10^{12}/10^9 = 1000$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 10^{12}/10^9 = 1000$" border="0" height="35" src="static/1.1 The Need for Efficiency_files/img49.png" width="119"/></span>
+seconds, or roughly 16 minutes and 40 seconds.  Sixteen minutes is an
+eon in computer time, but a person might be willing to put up with it
+(if he or she were headed out for a coffee break).
+<p>
+</p><h4><a name="SECTION00410030000000000000">
+<span class="arabic">1</span>.<span class="arabic">1</span>.<span class="arabic">0</span>.<span class="arabic">0</span>.<span class="arabic">3</span> Bigger data sets:</a>
+</h4> Now consider a company like Google,
+<a name="608"></a>that
+indexes over 8.5 billion web pages.  By our calculations, doing any kind
+of query over this data would take at least 8.5 seconds.  We already
+know that this isn't the case; web searches complete in much less than
+8.5 seconds, and they do much more complicated queries than just asking
+if a particular page is in their list of indexed pages.  At the time
+of writing, Google receives approximately <span class="MATH"><img align="MIDDLE" alt="$ 4,500$" border="0" height="29" src="static/1.1 The Need for Efficiency_files/img50.png" width="45"/></span> queries per second,
+meaning that they would require at least <!-- MATH
+ $4,500\times 8.5=38,250$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 4,500\times 8.5=38,250$" border="0" height="29" src="static/1.1 The Need for Efficiency_files/img51.png" width="147"/></span> very
+fast servers just to keep up.
+<p>
+</p><h4><a name="SECTION00410040000000000000">
+<span class="arabic">1</span>.<span class="arabic">1</span>.<span class="arabic">0</span>.<span class="arabic">0</span>.<span class="arabic">4</span> The solution:</a>
+</h4> 
+These examples tell us that the obvious implementations of data structures
+do not scale well when the number of items, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/1.1 The Need for Efficiency_files/img52.png" width="13"/></span>, in the data structure
+and the number of operations, <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/1.1 The Need for Efficiency_files/img53.png" width="17"/></span>, performed on the data structure
+are both large.  In these cases, the time (measured in, say, machine
+instructions) is roughly <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\times m$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\times m$" border="0" height="29" src="static/1.1 The Need for Efficiency_files/img54.png" width="41"/></span>.
+<p>
+The solution, of course, is to carefully organize data within the data
+structure so that not every operation requires every data item to be
+inspected.  Although it sounds impossible at first, we will see data
+structures where a search requires looking at only two items on average,
+independent of the number of items stored in the data structure.  In our
+billion instruction per second computer it takes only <!-- MATH
+ $0.000000002$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 0.000000002$" border="0" height="29" src="static/1.1 The Need for Efficiency_files/img55.png" width="95"/></span>
+seconds to search in a data structure containing a billion items (or a
+trillion, or a quadrillion, or even a quintillion items).
+</p><p>
+We will also see implementations of data structures that keep the
+items in sorted order, where the number of items inspected during an
+operation grows very slowly as a function of the number of items in
+the data structure.  For example, we can maintain a sorted set of one
+billion items while inspecting at most 60 items during any operation.
+In our billion instruction per second computer, these operations take
+<!-- MATH
+ $0.00000006$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 0.00000006$" border="0" height="29" src="static/1.1 The Need for Efficiency_files/img56.png" width="86"/></span> seconds each.
+</p><p>
+The remainder of this chapter briefly reviews some of the main concepts
+used throughout the rest of the book.   Section <a href="http://opendatastructures.org/ods-python/1_2_Interfaces.html#sec:interfaces">1.2</a> describes
+the interfaces implemented by all of the data structures described in
+this book and should be considered required reading.  The remaining
+sections discuss:
+</p><ul>
+<li>some mathematical review including exponentials, logarithms,
+  factorials, asymptotic (big-Oh) notation, probability, and randomization;
+</li>
+<li>the model of computation; 
+</li>
+<li>correctness, running time, and space;
+</li>
+<li>an overview of the rest of the chapters; and
+</li>
+<li>the sample code and typesetting conventions.
+</li>
+</ul>
+A reader with or without a background in these areas can easily skip
+them now and come back to them later if necessary.
+<p>
+<br/></p><hr/><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot605">...
+second.</a><a href="http://opendatastructures.org/ods-python/1_1_Need_Efficiency.html#tex2html6"><sup><span class="arabic">1</span>.<span class="arabic">1</span></sup></a></dt>
+<dd>Computer speeds are at most a few gigahertz (billions
+of cycles per second), and each operation typically takes a few cycles.
+</dd>
+</dl>
+</body></html>

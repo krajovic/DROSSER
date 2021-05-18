@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0070)http://opendatastructures.org/ods-python/1_7_List_Data_Structures.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>1.7 List of Data Structures</title>
+<meta content="1.7 List of Data Structures" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/1.7 List of Data Structures_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/1_8_Discussion_Exercises.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/1_6_Code_Samples.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/1_Introduction.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/1_8_Discussion_Exercises.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION00470000000000000000">
+<span class="arabic">1</span>.<span class="arabic">7</span> List of Data Structures</a>
+</h1>
+<p>
+Tables <a href="http://opendatastructures.org/ods-python/1_7_List_Data_Structures.html#tab:summary-i">1.1</a> and <a href="http://opendatastructures.org/ods-python/1_7_List_Data_Structures.html#tab:summary-ii">1.2</a> summarize the
+performance of data structures in this book that implement each of the
+interfaces, List, USet, and SSet, described in Section <a href="http://opendatastructures.org/ods-python/1_2_Interfaces.html#sec:interfaces">1.2</a>.
+Figure <a href="http://opendatastructures.org/ods-python/1_7_List_Data_Structures.html#fig:dependencies">1.6</a> shows the dependencies between various chapters in
+this book.
+<a name="2775"></a>A dashed arrow indicates only a weak dependency, in which
+only a small part of the chapter depends on a previous chapter or only
+the main results of the previous chapter.
+</p><p>
+<br/></p><p></p>
+<div align="CENTER"><a name="2863"></a>
+<table>
+<caption><strong>Table 1.1:</strong>
+Summary of List and USet implementations.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<!-- MATH
+ $\resizebox{.98\textwidth}{!}{
+\begin{threeparttable}
+\begin{tabular}{|l|l|l|l|} \hline
+\multicolumn{4}{|c|}{List implementations} \\\hline
+& \ensuremath{\ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}}/\ensuremath{\ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}} & \ensuremath{\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}}/\ensuremath{\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}} & \\\hline
+ArrayStack & $O(1)$\  & $O(1+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}})$\tnote{A} & \textsection~\ref{sec:arraystack} \\
+ArrayDeque & $O(1)$\  & $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$\tnote{A} & \textsection~\ref{sec:arraydeque} \\
+DualArrayDeque & $O(1)$\  & $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$\tnote{A} & \textsection~\ref{sec:dualarraydeque}\\
+RootishArrayStack & $O(1)$\  & $O(1+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}})$\tnote{A}  & \textsection~\ref{sec:rootisharraystack} \\
+DLList & $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$\  & $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\})$\   & \textsection~\ref{sec:dllist} \\
+SEList & $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$\  & $O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$\tnote{A}  & \textsection~\ref{sec:selist} \\
+SkiplistList & $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$\tnote{E} & $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$\tnote{E}  & \textsection~\ref{sec:skiplistlist} \\\hline
+\multicolumn{4}{c}{} \\[2ex] \hline
+\multicolumn{4}{|c|}{USet implementations} \\\hline
+& \ensuremath{\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}} & \ensuremath{\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}}/\ensuremath{\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}} & \\\hline
+ChainedHashTable & $O(1)$\tnote{E} & $O(1)$\tnote{A,E} & \textsection~\ref{sec:hashtable} \\
+LinearHashTable & $O(1)$\tnote{E} & $O(1)$\tnote{A,E} & \textsection~\ref{sec:linearhashtable} \\\hline
+\end{tabular}
+\begin{tablenotes}
+\item[A]{Denotes an \emph{amortized} running time.}
+\item[E]{Denotes an \emph{expected} running time.}
+\end{tablenotes}
+\end{threeparttable}}$
+ -->
+<img align="BOTTOM" alt="% latex2html id marker 4421
+\resizebox{.98\textwidth}{!}{
+\begin{threeparttable...
+...{Denotes an \emph{expected} running time.}
+\end{tablenotes}\end{threeparttable}}" border="0" height="338" src="static/1.7 List of Data Structures_files/img419.png" width="525"/>
+</div>
+<a name="tab:summary-i"></a></td></tr>
+</tbody></table>
+</div><p></p>
+<br/>
+<p>
+<br/></p><p></p>
+<div align="CENTER"><a name="2944"></a>
+<table>
+<caption><strong>Table 1.2:</strong>
+Summary of SSet and priority Queue implementations.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<br/>
+<img alt="\begin{threeparttable}
+% latex2html id marker 2868\begin{tabular}{\vert l\vert...
+...nsuremath{\mathit{w}}}}-bit integer data.}\end{tablenotes}\end{threeparttable}" border="0" height="315" src="static/1.7 List of Data Structures_files/img420.png" width="420"/>
+<br/>
+</div>
+<a name="tab:summary-ii"></a></td></tr>
+</tbody></table>
+</div><p></p>
+<br/>
+<p>
+</p><div align="CENTER"><a name="fig:dependencies"></a><a name="2951"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 1.6:</strong>
+The dependencies between chapters in this book.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/dependencies}" border="0" height="494" src="static/1.7 List of Data Structures_files/img421.png" width="555"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+<br/></p><hr/>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/1.7 List of Data Structures_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

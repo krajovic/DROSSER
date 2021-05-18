@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DROSSER</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main4.css')}}">
+</head>
+<body>
+<div class="titlebar">
+<h2 style="font-family:Times New Roman"><img src="static/css/Drosser.png" alt="DROSSER" style="float:left; width:200px; height:180px">Welcome to DROSSER</h2>
+<form action="{{ url_for('display_section') }}" name="ask" method="post">
+    <label style="font-size:20px" for="query">Ask a question:</label>
+    <input type="text" id="query" name="query" size=45>
+    <input type="submit" value="Go!">
+</form>
+</div>
+</body>
+</html>

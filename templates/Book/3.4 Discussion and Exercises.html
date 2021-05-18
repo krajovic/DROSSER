@@ -1,0 +1,554 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0068)http://opendatastructures.org/ods-java/3_4_Discussion_Exercises.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>3.4 Discussion and Exercises</title>
+<meta name="description" content="3.4 Discussion and Exercises">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/3.4 Discussion and Exercises_files/ods-book.css">
+<link rel="previous" href="http://opendatastructures.org/ods-java/3_3_SEList_Space_Efficient_.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/3_Linked_Lists.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/4_Skiplists.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<h1><a name="SECTION00640000000000000000">
+<span class="arabic">3</span>.<span class="arabic">4</span> Discussion and Exercises</a>
+</h1>
+<p>
+Both singly-linked and doubly-linked lists are established techniques,
+having been used in programs for over 40 years.  They are discussed,
+for example, by Knuth [<a href="http://opendatastructures.org/ods-java/Bibliography.html#k97v1">46</a>, Sections&nbsp;2.2.3-2.2.5].  Even the
+<tt>SEList</tt> data structure seems to be a well-known data structures exercise.
+The <tt>SEList</tt> is sometimes referred to as an <span class="textit">unrolled linked list</span>
+[<a href="http://opendatastructures.org/ods-java/Bibliography.html#sra94">69</a>].
+<a name="10217"></a><a name="10218"></a>
+</p><p>
+Another way to save space in a doubly-linked list is to use 
+so-called XOR-lists.
+<a name="9505"></a>In an XOR-list, each node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1487.png" alt="$ \mathtt{u}$"></span>, contains only one
+pointer, called <!-- MATH
+ $\mathtt{u.nextprev}$
+ -->
+<span class="MATH"><img width="84" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1488.png" alt="$ \mathtt{u.nextprev}$"></span>, that holds the bitwise exclusive-or of <!-- MATH
+ $\mathtt{u.prev}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1489.png" alt="$ \mathtt{u.prev}$"></span>
+and <!-- MATH
+ $\mathtt{u.next}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1490.png" alt="$ \mathtt{u.next}$"></span>.  The list itself needs to store two pointers, one to the <!-- MATH
+ $\mathtt{dummy}$
+ -->
+<span class="MATH"><img width="46" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1491.png" alt="$ \mathtt{dummy}$"></span>
+node and one to <!-- MATH
+ $\mathtt{dummy.next}$
+ -->
+<span class="MATH"><img width="84" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1492.png" alt="$ \mathtt{dummy.next}$"></span> (the first node, or <!-- MATH
+ $\mathtt{dummy}$
+ -->
+<span class="MATH"><img width="46" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1493.png" alt="$ \mathtt{dummy}$"></span> if the list is
+empty). This technique uses the fact that, if we have pointers to <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1494.png" alt="$ \mathtt{u}$"></span>
+and <!-- MATH
+ $\mathtt{u.prev}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1495.png" alt="$ \mathtt{u.prev}$"></span>, then we can extract <!-- MATH
+ $\mathtt{u.next}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1496.png" alt="$ \mathtt{u.next}$"></span> using the formula
+</p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\mathtt{u.next}} = \ensuremath{\mathtt{u.prev}} \verb+^+ \ensuremath{\mathtt{u.nextprev}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="214" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1497.png" alt="$\displaystyle \ensuremath{\mathtt{u.next}} = \ensuremath{\mathtt{u.prev}} \verb+^+ \ensuremath{\mathtt{u.nextprev}} \enspace .
+$">
+</div><p></p>
+(Here <code>^</code> computes the bitwise exclusive-or of its two arguments.)
+This technique complicates the code a little and is not possible in
+some languages, like Java and Python, that have garbage collection but gives a
+doubly-linked list implementation that requires only one pointer per node.
+See Sinha's magazine article [<a href="http://opendatastructures.org/ods-java/Bibliography.html#s04">70</a>] for a detailed discussion of
+XOR-lists.
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">1</span></b> &nbsp; 
+Why is it not possible to use a dummy node in an <tt>SLList</tt> to avoid
+  all the special cases that occur in the operations <!-- MATH
+ $\mathtt{push(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1498.png" alt="$ \mathtt{push(x)}$"></span>, <!-- MATH
+ $\mathtt{pop()}$
+ -->
+<span class="MATH"><img width="40" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1499.png" alt="$ \mathtt{pop()}$"></span>,
+  <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1500.png" alt="$ \mathtt{add(x)}$"></span>, and <!-- MATH
+ $\mathtt{remove()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1501.png" alt="$ \mathtt{remove()}$"></span>?</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">2</span></b> &nbsp; 
+Design and implement an <tt>SLList</tt> method, <!-- MATH
+ $\mathtt{secondLast()}$
+ -->
+<span class="MATH"><img width="99" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1502.png" alt="$ \mathtt{secondLast()}$"></span>, that returns
+  the second-last element of an <tt>SLList</tt>.  Do this without using the
+  member variable, <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1503.png" alt="$ \mathtt{n}$"></span>, that keeps track of the size of the list.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">3</span></b> &nbsp; 
+Implement the <tt>List</tt> operations <!-- MATH
+ $\mathtt{get(i)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1504.png" alt="$ \mathtt{get(i)}$"></span>, <!-- MATH
+ $\mathtt{set(i,x)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1505.png" alt="$ \mathtt{set(i,x)}$"></span>,
+  <!-- MATH
+ $\mathtt{add(i,x)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1506.png" alt="$ \mathtt{add(i,x)}$"></span> and <!-- MATH
+ $\mathtt{remove(i)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1507.png" alt="$ \mathtt{remove(i)}$"></span> on an <tt>SLList</tt>.  Each of these operations
+  should run in <!-- MATH
+ $O(1+\ensuremath{\mathtt{i}})$
+ -->
+<span class="MATH"><img width="60" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1508.png" alt="$ O(1+\ensuremath{\mathtt{i}})$"></span> time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">4</span></b> &nbsp; 
+Design and implement an <tt>SLList</tt> method, <!-- MATH
+ $\mathtt{reverse()}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1509.png" alt="$ \mathtt{reverse()}$"></span> that reverses the
+  order of elements in an <tt>SLList</tt>.  This method should run in <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1510.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span>
+  time, should not use recursion, should not use any secondary data
+  structures, and should not create any new nodes.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">5</span></b> &nbsp; 
+Design and implement <tt>SLList</tt> and <tt>DLList</tt> methods called <!-- MATH
+ $\mathtt{checkSize()}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1511.png" alt="$ \mathtt{checkSize()}$"></span>.
+  These methods walk through the list and count the number of nodes to
+  see if this matches the value, <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1512.png" alt="$ \mathtt{n}$"></span>, stored in the list.  These methods
+  return nothing, but throw an exception if the size they compute does
+  not match the value of <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1513.png" alt="$ \mathtt{n}$"></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">6</span></b> &nbsp; 
+Try to recreate the code for the <!-- MATH
+ $\mathtt{addBefore(w)}$
+ -->
+<span class="MATH"><img width="99" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1514.png" alt="$ \mathtt{addBefore(w)}$"></span> operation that creates a
+  node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1515.png" alt="$ \mathtt{u}$"></span>, and adds it in a <tt>DLList</tt> just before the node <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1516.png" alt="$ \mathtt{w}$"></span>.  Do not
+  refer to this chapter.  Even if your code does not exactly match the
+  code given in this book it may still be correct.  Test it and see if
+  it works.</div><p></p>
+<p>
+The next few exercises involve performing manipulations on <tt>DLList</tt>s.
+You should complete them without allocating any new nodes or temporary
+arrays.  They can all be done only by changing the <!-- MATH
+ $\mathtt{prev}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1517.png" alt="$ \mathtt{prev}$"></span> and <!-- MATH
+ $\mathtt{next}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1518.png" alt="$ \mathtt{next}$"></span>
+values of existing nodes.
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">7</span></b> &nbsp; 
+Write a <tt>DLList</tt> method <!-- MATH
+ $\mathtt{isPalindrome()}$
+ -->
+<span class="MATH"><img width="116" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1519.png" alt="$ \mathtt{isPalindrome()}$"></span> that returns <!-- MATH
+ $\mathtt{true}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1520.png" alt="$ \mathtt{true}$"></span> if the
+  list is a <span class="textit">palindrome</span>,
+  <a name="9569"></a>i.e., the element at position <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1521.png" alt="$ \mathtt{i}$"></span> is equal to
+  the element at position <!-- MATH
+ $\ensuremath{\mathtt{n}}-i-1$
+ -->
+<span class="MATH"><img width="57" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1522.png" alt="$ \ensuremath{\mathtt{n}}-i-1$"></span> for all <!-- MATH
+ $i\in\{0,\ldots,\ensuremath{\mathtt{n}}-1\}$
+ -->
+<span class="MATH"><img width="106" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1523.png" alt="$ i\in\{0,\ldots,\ensuremath{\mathtt{n}}-1\}$"></span>.
+  Your code should run in <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1524.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span> time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">8</span></b> &nbsp; 
+Implement a method <!-- MATH
+ $\mathtt{rotate(r)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1525.png" alt="$ \mathtt{rotate(r)}$"></span> that ``rotates'' a <tt>DLList</tt> so that list
+  item <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1526.png" alt="$ \mathtt{i}$"></span> becomes list item <!-- MATH
+ $(\ensuremath{\mathtt{i}}+\ensuremath{\mathtt{r}})\bmod \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1527.png" alt="$ (\ensuremath{\mathtt{i}}+\ensuremath{\mathtt{r}})\bmod \ensuremath{\mathtt{n}}$"></span>.  This method should
+  run in <!-- MATH
+ $O(1+\min\{\ensuremath{\mathtt{r}},\ensuremath{\mathtt{n}}-\ensuremath{\mathtt{r}}\})$
+ -->
+<span class="MATH"><img width="136" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1528.png" alt="$ O(1+\min\{\ensuremath{\mathtt{r}},\ensuremath{\mathtt{n}}-\ensuremath{\mathtt{r}}\})$"></span> time and should not modify any nodes in
+  the list.</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:linkedlist-truncate"><b>Exercise  <span class="arabic">3</span>..<span class="arabic">9</span></b></a> &nbsp; 
+Write a method, <!-- MATH
+ $\mathtt{truncate(i)}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1529.png" alt="$ \mathtt{truncate(i)}$"></span>, that truncates a <tt>DLList</tt> at position
+  <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1530.png" alt="$ \mathtt{i}$"></span>.  After executing this method, the size of the list will be <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1531.png" alt="$ \mathtt{i}$"></span> and
+  it should contain only the elements at indices <!-- MATH
+ $0,\ldots,\ensuremath{\mathtt{i}}-1$
+ -->
+<span class="MATH"><img width="73" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1532.png" alt="$ 0,\ldots,\ensuremath{\mathtt{i}}-1$"></span>.  The
+  return value is another <tt>DLList</tt> that contains the elements at indices
+  <!-- MATH
+ $\ensuremath{\mathtt{i}},\ldots,\ensuremath{\mathtt{n}}-1$
+ -->
+<span class="MATH"><img width="73" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1533.png" alt="$ \ensuremath{\mathtt{i}},\ldots,\ensuremath{\mathtt{n}}-1$"></span>.  This method should run in <!-- MATH
+ $O(\min\{\ensuremath{\mathtt{i}},\ensuremath{\mathtt{n}}-\ensuremath{\mathtt{i}}\})$
+ -->
+<span class="MATH"><img width="112" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1534.png" alt="$ O(\min\{\ensuremath{\mathtt{i}},\ensuremath{\mathtt{n}}-\ensuremath{\mathtt{i}}\})$"></span>
+  time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">10</span></b> &nbsp; 
+Write a <tt>DLList</tt> method, <!-- MATH
+ $\mathtt{absorb(l2)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1535.png" alt="$ \mathtt{absorb(l2)}$"></span>, that takes as an argument
+  a <tt>DLList</tt>, <!-- MATH
+ $\mathtt{l2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1536.png" alt="$ \mathtt{l2}$"></span>, empties it and appends its contents, in order,
+  to the receiver.  For example, if <!-- MATH
+ $\mathtt{l1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1537.png" alt="$ \mathtt{l1}$"></span> contains <span class="MATH"><img width="38" height="30" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1538.png" alt="$ a,b,c$"></span> and <!-- MATH
+ $\mathtt{l2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1539.png" alt="$ \mathtt{l2}$"></span>
+  contains <span class="MATH"><img width="42" height="30" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1540.png" alt="$ d,e,f$"></span>, then after calling <!-- MATH
+ $\mathtt{l1.absorb(l2)}$
+ -->
+<span class="MATH"><img width="103" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1541.png" alt="$ \mathtt{l1.absorb(l2)}$"></span>, <!-- MATH
+ $\mathtt{l1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1542.png" alt="$ \mathtt{l1}$"></span> will contain
+  <!-- MATH
+ $a,b,c,d,e,f$
+ -->
+<span class="MATH"><img width="82" height="30" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1543.png" alt="$ a,b,c,d,e,f$"></span> and <!-- MATH
+ $\mathtt{l2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1544.png" alt="$ \mathtt{l2}$"></span> will be empty.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">11</span></b> &nbsp; 
+Write a method <!-- MATH
+ $\mathtt{deal()}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1545.png" alt="$ \mathtt{deal()}$"></span> that removes all the elements with odd-numbered
+  indices from a <tt>DLList</tt> and return a <tt>DLList</tt> containing these elements.
+  For example, if <!-- MATH
+ $\mathtt{l1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1546.png" alt="$ \mathtt{l1}$"></span>, contains the elements <!-- MATH
+ $a,b,c,d,e,f$
+ -->
+<span class="MATH"><img width="82" height="30" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1547.png" alt="$ a,b,c,d,e,f$"></span>, then after
+  calling <!-- MATH
+ $\mathtt{l1.deal()}$
+ -->
+<span class="MATH"><img width="69" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1548.png" alt="$ \mathtt{l1.deal()}$"></span>, <!-- MATH
+ $\mathtt{l1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1549.png" alt="$ \mathtt{l1}$"></span> should contain <span class="MATH"><img width="37" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1550.png" alt="$ a,c,e$"></span> and a list containing
+  <span class="MATH"><img width="43" height="30" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1551.png" alt="$ b,d,f$"></span> should be returned.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">12</span></b> &nbsp; 
+Write a method, <!-- MATH
+ $\mathtt{reverse()}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1552.png" alt="$ \mathtt{reverse()}$"></span>, that reverses the order of elements in
+  a <tt>DLList</tt>.  </div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:dllist-sort"><b>Exercise  <span class="arabic">3</span>..<span class="arabic">13</span></b></a> &nbsp; 
+<a name="9625"></a>This exercise walks you through an implementation of the merge-sort
+  algorithm for sorting a <tt>DLList</tt>, as discussed in Section&nbsp;<a href="http://opendatastructures.org/ods-java/11_1_Comparison_Based_Sorti.html#sec:merge-sort">11.1.1</a>.
+  In your implementation, perform comparisons between elements
+  using the <!-- MATH
+ $\mathtt{compareTo(x)}$
+ -->
+<span class="MATH"><img width="99" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1553.png" alt="$ \mathtt{compareTo(x)}$"></span> method so that the resulting implementation can
+  sort any <tt>DLList</tt> containing elements that implement the <tt>Comparable</tt>
+  interface.
+  
+<ol>
+<li>Write a <tt>DLList</tt> method called <!-- MATH
+ $\mathtt{takeFirst(l2)}$
+ -->
+<span class="MATH"><img width="108" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1554.png" alt="$ \mathtt{takeFirst(l2)}$"></span>.
+       This method takes the first node from <!-- MATH
+ $\mathtt{l2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1555.png" alt="$ \mathtt{l2}$"></span> and appends it to the the
+       receiving list.  This is equivalent to <!-- MATH
+ $\mathtt{add(size(),l2.remove(0))}$
+ -->
+<span class="MATH"><img width="180" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1556.png" alt="$ \mathtt{add(size(),l2.remove(0))}$"></span>,
+       except that it should not create a new node.
+</li>
+<li>Write a <tt>DLList</tt> static method, <!-- MATH
+ $\mathtt{merge(l1,l2)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1557.png" alt="$ \mathtt{merge(l1,l2)}$"></span>, that takes two
+       sorted lists <!-- MATH
+ $\mathtt{l1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1558.png" alt="$ \mathtt{l1}$"></span> and <!-- MATH
+ $\mathtt{l2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1559.png" alt="$ \mathtt{l2}$"></span>, merges them, and returns a new sorted
+       list containing the result.  This causes <!-- MATH
+ $\mathtt{l1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1560.png" alt="$ \mathtt{l1}$"></span> and <!-- MATH
+ $\mathtt{l2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1561.png" alt="$ \mathtt{l2}$"></span> to be emptied
+       in the proces.  For example, if <!-- MATH
+ $\mathtt{l1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1562.png" alt="$ \mathtt{l1}$"></span> contains <span class="MATH"><img width="40" height="30" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1563.png" alt="$ a,c,d$"></span> and <!-- MATH
+ $\mathtt{l2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1564.png" alt="$ \mathtt{l2}$"></span> contains
+       <span class="MATH"><img width="41" height="30" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1565.png" alt="$ b,e,f$"></span>, then this method returns a new list containing <!-- MATH
+ $a,b,c,d,e,f$
+ -->
+<span class="MATH"><img width="82" height="30" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1566.png" alt="$ a,b,c,d,e,f$"></span>.
+</li>
+<li>Write a <tt>DLList</tt> method <!-- MATH
+ $\mathtt{sort()}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1567.png" alt="$ \mathtt{sort()}$"></span> that sorts the elements
+       contained in the list using the merge sort algorithm.
+       This recursive algorithm works in the following way:
+       
+<ol>
+<li>If the list contains 0 or 1 elements then there is
+            nothing to do.  Otherwise,
+</li>
+<li>Using the <!-- MATH
+ $\mathtt{truncate(size()/2)}$
+ -->
+<span class="MATH"><img width="141" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1568.png" alt="$ \mathtt{truncate(size()/2)}$"></span> method, split the list
+            into two lists of approximately equal length, <!-- MATH
+ $\mathtt{l1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1569.png" alt="$ \mathtt{l1}$"></span> and <!-- MATH
+ $\mathtt{l2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1570.png" alt="$ \mathtt{l2}$"></span>;
+</li>
+<li>Recursively sort <!-- MATH
+ $\mathtt{l1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1571.png" alt="$ \mathtt{l1}$"></span>;
+</li>
+<li>Recursively sort <!-- MATH
+ $\mathtt{l2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1572.png" alt="$ \mathtt{l2}$"></span>; and, finally,
+</li>
+<li>Merge <!-- MATH
+ $\mathtt{l1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1573.png" alt="$ \mathtt{l1}$"></span> and <!-- MATH
+ $\mathtt{l2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/3.4 Discussion and Exercises_files/img1574.png" alt="$ \mathtt{l2}$"></span> into a single sorted list.
+       
+</li>
+</ol>
+</li>
+</ol></div><p></p>
+<p>
+The next few exercises are more advanced and require a clear
+understanding of what happens to the minimum value stored in a <tt>Stack</tt>
+or <tt>Queue</tt> as items are added and removed.
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">14</span></b> &nbsp; 
+<a name="10178"></a>Design and implement a <tt>MinStack</tt> data structure that can store
+  comparable elements and supports the stack operations <!-- MATH
+ $\mathtt{push(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1575.png" alt="$ \mathtt{push(x)}$"></span>,
+  <!-- MATH
+ $\mathtt{pop()}$
+ -->
+<span class="MATH"><img width="40" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1576.png" alt="$ \mathtt{pop()}$"></span>, and <!-- MATH
+ $\mathtt{size()}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1577.png" alt="$ \mathtt{size()}$"></span>, as well as the <!-- MATH
+ $\mathtt{min()}$
+ -->
+<span class="MATH"><img width="40" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1578.png" alt="$ \mathtt{min()}$"></span> operation, which
+  returns the minimum value currently stored in the data structure.
+  All operations should run in constant time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">15</span></b> &nbsp; 
+<a name="10183"></a>Design and implement a <tt>MinQueue</tt> data structure that can store
+  comparable elements and supports the queue operations <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1579.png" alt="$ \mathtt{add(x)}$"></span>,
+  <!-- MATH
+ $\mathtt{remove()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1580.png" alt="$ \mathtt{remove()}$"></span>, and <!-- MATH
+ $\mathtt{size()}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1581.png" alt="$ \mathtt{size()}$"></span>, as well as the <!-- MATH
+ $\mathtt{min()}$
+ -->
+<span class="MATH"><img width="40" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1582.png" alt="$ \mathtt{min()}$"></span> operation, which
+  returns the minimum value currently stored in the data structure.
+  All operations should run in constant amortized time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">16</span></b> &nbsp; 
+<a name="10188"></a>Design and implement a <tt>MinDeque</tt> data structure that can store
+  comparable elements and supports all the deque operations <!-- MATH
+ $\mathtt{addFirst(x)}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1583.png" alt="$ \mathtt{addFirst(x)}$"></span>,
+  <!-- MATH
+ $\mathtt{addLast(x)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1584.png" alt="$ \mathtt{addLast(x)}$"></span> <!-- MATH
+ $\mathtt{removeFirst()}$
+ -->
+<span class="MATH"><img width="108" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1585.png" alt="$ \mathtt{removeFirst()}$"></span>, <!-- MATH
+ $\mathtt{removeLast()}$
+ -->
+<span class="MATH"><img width="99" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1586.png" alt="$ \mathtt{removeLast()}$"></span> and <!-- MATH
+ $\mathtt{size()}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1587.png" alt="$ \mathtt{size()}$"></span>, and the
+  <!-- MATH
+ $\mathtt{min()}$
+ -->
+<span class="MATH"><img width="40" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1588.png" alt="$ \mathtt{min()}$"></span> operation, which returns the minimum value currently stored in
+  the data structure.  All operations should run in constant amortized
+  time.</div><p></p>
+<p>
+The next exercises are designed to test the reader's understanding of
+the implementation and analysis of the space-efficient <tt>SEList</tt>:
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">17</span></b> &nbsp; 
+Prove that, if an <tt>SEList</tt> is used like a <tt>Stack</tt> (so that the
+  only modifications to the <tt>SEList</tt> are done using <!-- MATH
+ $\ensuremath{\mathtt{push(x)}}\equiv
+  \ensuremath{\mathtt{add(size(),x)}}$
+ -->
+<span class="MATH"><img width="169" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1589.png" alt="$ \ensuremath{\mathtt{push(x)}}\equiv
+\ensuremath{\mathtt{add(size(),x)}}$"></span> and <!-- MATH
+ $\ensuremath{\mathtt{pop()}}\equiv \ensuremath{\mathtt{remove(size()-1)}}$
+ -->
+<span class="MATH"><img width="187" height="31" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1590.png" alt="$ \ensuremath{\mathtt{pop()}}\equiv \ensuremath{\mathtt{remove(size()-1)}}$"></span>), then these
+  operations run in constant amortized time, independent of the value
+  of <!-- MATH
+ $\mathtt{b}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1591.png" alt="$ \mathtt{b}$"></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">18</span></b> &nbsp; 
+Design and implement of a version of an <tt>SEList</tt> that supports all
+  the <tt>Deque</tt> operations in constant amortized time per operation,
+  independent of the value of <!-- MATH
+ $\mathtt{b}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1592.png" alt="$ \mathtt{b}$"></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">3</span>..<span class="arabic">19</span></b> &nbsp; 
+Explain how to use the bitwise exclusive-or operator, <code>^</code>, to
+  swap the values of two <!-- MATH
+ $\mathtt{int}$
+ -->
+<span class="MATH"><img width="29" height="29" align="MIDDLE" border="0" src="static/3.4 Discussion and Exercises_files/img1593.png" alt="$ \mathtt{int}$"></span> variables without using a third variable.</div><p></p>
+<p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/3.4 Discussion and Exercises_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

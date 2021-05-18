@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0062)http://opendatastructures.org/ods-python/14_1_Block_Store.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>14.1 The Block Store</title>
+<meta content="14.1 The Block Store" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/14.1 The Block Store_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/14_2_B_Trees.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/14_External_Memory_Searchin.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/14_External_Memory_Searchin.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/14_2_B_Trees.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION001710000000000000000">
+<span class="arabic">14</span>.<span class="arabic">1</span> The Block Store</a>
+</h1>
+<p>
+<a name="63774"></a><a name="63775"></a>The notion of external memory includes a large number of possible
+different devices, each of which has its own block size and is
+accessed with its own collection of system calls.  To simplify the
+exposition of this chapter so that we can focus on the common ideas, we
+encapsulate external memory devices with an object called a BlockStore.
+A BlockStore stores a collection of memory blocks, each of size <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.1 The Block Store_files/img5337.png" width="14"/></span>.
+Each block is uniquely identified by its integer index.  A BlockStore
+supports these operations:
+</p><p>
+</p><ol>
+<li><!-- MATH
+ $\ensuremath{\mathrm{read\_block}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{read\_block}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/14.1 The Block Store_files/img5338.png" width="95"/></span>: Return the contents of the block whose index is <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/14.1 The Block Store_files/img5339.png" width="9"/></span>.
+<p>
+</p></li>
+<li><!-- MATH
+ $\ensuremath{\mathrm{write\_block}(\ensuremath{\mathit{i}},\ensuremath{\mathit{b}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{write\_block}(\ensuremath{\mathit{i}},\ensuremath{\mathit{b}})}$" border="0" height="31" src="static/14.1 The Block Store_files/img5340.png" width="114"/></span>: Write contents of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/14.1 The Block Store_files/img5341.png" width="12"/></span> to the block whose
+    index is <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/14.1 The Block Store_files/img5342.png" width="9"/></span>.
+<p>
+</p></li>
+<li><!-- MATH
+ $\ensuremath{\mathrm{place\_block}(\ensuremath{\mathit{b}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{place\_block}(\ensuremath{\mathit{b}})}$" border="0" height="31" src="static/14.1 The Block Store_files/img5343.png" width="104"/></span>: Return a new index and store the contents of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/14.1 The Block Store_files/img5344.png" width="12"/></span>
+    at this index.
+<p>
+</p></li>
+<li><!-- MATH
+ $\ensuremath{\mathrm{free\_block}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{free\_block}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/14.1 The Block Store_files/img5345.png" width="91"/></span>: Free the block whose index is <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/14.1 The Block Store_files/img5346.png" width="9"/></span>.  This indicates
+    that the contents of this block are no longer used so the external
+    memory allocated by this block may be reused.
+</li>
+</ol>
+<p>
+The easiest way to imagine a BlockStore is to imagine it as storing a
+file on disk that is partitioned into blocks, each containing <span class="MATH"><img align="MIDDLE" alt="$ B$" border="0" height="29" src="static/14.1 The Block Store_files/img5347.png" width="14"/></span> bytes.
+In this way, <!-- MATH
+ $\ensuremath{\mathrm{read\_block}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{read\_block}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/14.1 The Block Store_files/img5348.png" width="95"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{write\_block}(\ensuremath{\mathit{i}},\ensuremath{\mathit{b}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{write\_block}(\ensuremath{\mathit{i}},\ensuremath{\mathit{b}})}$" border="0" height="31" src="static/14.1 The Block Store_files/img5349.png" width="114"/></span> simply read and write
+bytes <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}B,\ldots,(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1)B-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}B,\ldots,(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1)B-1$" border="0" height="31" src="static/14.1 The Block Store_files/img5350.png" width="120"/></span> of this file.  In addition, a simple
+BlockStore could keep a <span class="textit">free list</span> of blocks that are available
+for use. Blocks freed with <!-- MATH
+ $\ensuremath{\mathrm{free\_block}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{free\_block}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/14.1 The Block Store_files/img5351.png" width="91"/></span> are added to the free list.
+In this way, <!-- MATH
+ $\ensuremath{\mathrm{place\_block}(\ensuremath{\mathit{b}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{place\_block}(\ensuremath{\mathit{b}})}$" border="0" height="31" src="static/14.1 The Block Store_files/img5352.png" width="104"/></span> can use a block from the free list or,
+if none is available, append a new block to the end of the file.
+</p><p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/14.1 The Block Store_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

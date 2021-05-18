@@ -1,0 +1,432 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0068)http://opendatastructures.org/ods-java/8_2_Discussion_Exercises.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>8.2 Discussion and Exercises</title>
+<meta name="description" content="8.2 Discussion and Exercises">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/8.2 Discussion and Exercises_files/ods-book.css">
+<link rel="previous" href="http://opendatastructures.org/ods-java/8_1_ScapegoatTree_Binary_Se.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/8_Scapegoat_Trees.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/9_Red_Black_Trees.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<h1><a name="SECTION001120000000000000000">
+<span class="arabic">8</span>.<span class="arabic">2</span> Discussion and Exercises</a>
+</h1>
+<p>
+The term <span class="textit">scapegoat tree</span> is due to Galperin and Rivest [<a href="http://opendatastructures.org/ods-java/Bibliography.html#gr93">33</a>],
+who define and analyze these trees.  However, the same structure
+was discovered earlier by Andersson [<a href="http://opendatastructures.org/ods-java/Bibliography.html#a89">5</a>,<a href="http://opendatastructures.org/ods-java/Bibliography.html#a99">7</a>], who called them
+<span class="textit">general balanced trees</span>
+<a name="23730"></a>since they can have any shape as long as
+their height is small.
+</p><p>
+Experimenting with the <tt>ScapegoatTree</tt> implementation will reveal that
+it is often considerably slower than the other <tt>SSet</tt> implementations
+in this book. This may be somewhat surprising, since height bound of
+</p><p><!-- MATH
+ \begin{displaymath}
+\log_{3/2}\ensuremath{\mathtt{q}} \approx 1.709\log \ensuremath{\mathtt{n}} + O(1)
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="192" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3365.png" alt="$\displaystyle \log_{3/2}\ensuremath{\mathtt{q}} \approx 1.709\log \ensuremath{\mathtt{n}} + O(1)
+$">
+</div><p></p>
+is better than the expected length of a search path in a <tt>Skiplist</tt> and
+not too far from that of a <tt>Treap</tt>.  The implementation could be optimized
+by storing the sizes of subtrees explicitly at each node or by reusing
+already computed subtree sizes (Exercises&nbsp;<a href="http://opendatastructures.org/ods-java/8_2_Discussion_Exercises.html#exc:scapegoat-quicksize">8.5</a>
+and <a href="http://opendatastructures.org/ods-java/8_2_Discussion_Exercises.html#exc:scapegoat-explicitsize">8.6</a>).  Even with these optimizations,
+there will always be sequences of <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3366.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{delete(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3367.png" alt="$ \mathtt{delete(x)}$"></span> operation for
+which a <tt>ScapegoatTree</tt> takes longer than other <tt>SSet</tt> implementations.
+<p>
+This gap in performance is due to the fact that, unlike the other <tt>SSet</tt>
+implementations discussed in this book, a <tt>ScapegoatTree</tt> can spend a lot
+of time restructuring itself.  Exercise&nbsp;<a href="http://opendatastructures.org/ods-java/8_2_Discussion_Exercises.html#exc:scapegoat-nlogn">8.3</a> asks you to prove
+that there are sequences of <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/8.2 Discussion and Exercises_files/img3368.png" alt="$ \mathtt{n}$"></span> operations in which a <tt>ScapegoatTree</tt>
+will spend on the order of <!-- MATH
+ $\ensuremath{\mathtt{n}}\log \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="46" height="30" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3369.png" alt="$ \ensuremath{\mathtt{n}}\log \ensuremath{\mathtt{n}}$"></span> time in calls to <!-- MATH
+ $\mathtt{rebuild(u)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3370.png" alt="$ \mathtt{rebuild(u)}$"></span>.
+This is in contrast to other <tt>SSet</tt> implementations discussed in this
+book, which only make <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3371.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span> structural changes during a sequence
+of <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/8.2 Discussion and Exercises_files/img3372.png" alt="$ \mathtt{n}$"></span> operations.  This is, unfortunately, a necessary consequence of
+the fact that a <tt>ScapegoatTree</tt> does all its restructuring by calls to
+<!-- MATH
+ $\mathtt{rebuild(u)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3373.png" alt="$ \mathtt{rebuild(u)}$"></span> [<a href="http://opendatastructures.org/ods-java/Bibliography.html#d90">20</a>].
+</p><p>
+Despite their lack of performance, there are applications in which a
+<tt>ScapegoatTree</tt> could be the right choice.  This would occur any time
+there is additional data associated with nodes that cannot be updated
+in constant time when a rotation is performed, but that can be updated
+during a <!-- MATH
+ $\mathtt{rebuild(u)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3374.png" alt="$ \mathtt{rebuild(u)}$"></span> operation.  In such cases, the <tt>ScapegoatTree</tt>
+and related structures based on partial rebuilding may work.  An example of such an application is outlined in Exercise&nbsp;<a href="http://opendatastructures.org/ods-java/8_2_Discussion_Exercises.html#exc:list-order-maintenance">8.11</a>.
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">8</span>..<span class="arabic">1</span></b> &nbsp; 
+Illustrate the addition of the values 1.5 and then 1.6 on the
+  <tt>ScapegoatTree</tt> in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/8_1_ScapegoatTree_Binary_Se.html#fig:scapegoat-example">8.1</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">8</span>..<span class="arabic">2</span></b> &nbsp; 
+Illustrate what happens when the sequence <span class="MATH"><img width="70" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3375.png" alt="$ 1,5,2,4,3$"></span> is added to an
+  empty <tt>ScapegoatTree</tt>, and show where the credits described in the
+  proof of Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/8_1_ScapegoatTree_Binary_Se.html#lem:scapegoat-amortized">8.3</a> go, and how they are used during
+  this sequence of additions.</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:scapegoat-nlogn"><b>Exercise  <span class="arabic">8</span>..<span class="arabic">3</span></b></a> &nbsp; 
+Show that, if we start with an empty <tt>ScapegoatTree</tt> and call <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3376.png" alt="$ \mathtt{add(x)}$"></span>
+  for <!-- MATH
+ $\ensuremath{\mathtt{x}}=1,2,3,\ldots,\ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="104" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3377.png" alt="$ \ensuremath{\mathtt{x}}=1,2,3,\ldots,\ensuremath{\mathtt{n}}$"></span>, then the total time spent during calls to
+  <!-- MATH
+ $\mathtt{rebuild(u)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3378.png" alt="$ \mathtt{rebuild(u)}$"></span> is at least <!-- MATH
+ $c\ensuremath{\mathtt{n}}\log \ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="53" height="30" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3379.png" alt="$ c\ensuremath{\mathtt{n}}\log \ensuremath{\mathtt{n}}$"></span> for some constant <span class="MATH"><img width="37" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3380.png" alt="$ c&gt;0$"></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">8</span>..<span class="arabic">4</span></b> &nbsp; 
+The <tt>ScapegoatTree</tt>, as described in this chapter, guarantees that the
+  length of the search path does not exceed <!-- MATH
+ $\log_{3/2}\ensuremath{\mathtt{q}}$
+ -->
+<span class="MATH"><img width="55" height="30" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3381.png" alt="$ \log_{3/2}\ensuremath{\mathtt{q}}$"></span>.
+  
+<ol>
+<li>Design, analyze, and implement a modified version of
+      <tt>ScapegoatTree</tt> where the length of the search path does not exceed
+      <!-- MATH
+ $\log_{\ensuremath{\mathtt{b}}} \ensuremath{\mathtt{q}}$
+ -->
+<span class="MATH"><img width="43" height="30" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3382.png" alt="$ \log_{\ensuremath{\mathtt{b}}} \ensuremath{\mathtt{q}}$"></span>, where <!-- MATH
+ $\mathtt{b}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3383.png" alt="$ \mathtt{b}$"></span> is a parameter with <!-- MATH
+ $1<\ensuremath{\mathtt{b}}<2$
+ -->
+<span class="MATH"><img width="64" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3384.png" alt="$ 1&lt;\ensuremath{\mathtt{b}}&lt;2$"></span>.
+</li>
+<li>What does your analysis and/or your experiments say about the
+      amortized cost of <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3385.png" alt="$ \mathtt{find(x)}$"></span>, <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3386.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3387.png" alt="$ \mathtt{remove(x)}$"></span> as a function
+      of <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/8.2 Discussion and Exercises_files/img3388.png" alt="$ \mathtt{n}$"></span> and <!-- MATH
+ $\mathtt{b}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3389.png" alt="$ \mathtt{b}$"></span>?
+  
+</li>
+</ol></div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:scapegoat-quicksize"><b>Exercise  <span class="arabic">8</span>..<span class="arabic">5</span></b></a> &nbsp; 
+Modify the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3390.png" alt="$ \mathtt{add(x)}$"></span> method of the <tt>ScapegoatTree</tt> so that it does not
+  waste any time recomputing the sizes of subtrees that have already
+  been computed.  This is possible because, by the time the method
+  wants to compute <!-- MATH
+ $\mathtt{size(w)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3391.png" alt="$ \mathtt{size(w)}$"></span>, it has already computed one of <!-- MATH
+ $\mathtt{size(w.left)}$
+ -->
+<span class="MATH"><img width="95" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3392.png" alt="$ \mathtt{size(w.left)}$"></span>
+  or <!-- MATH
+ $\mathtt{size(w.right)}$
+ -->
+<span class="MATH"><img width="103" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3393.png" alt="$ \mathtt{size(w.right)}$"></span>.  Compare the performance of your modified
+  implementation with the implementation given here.</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:scapegoat-explicitsize"><b>Exercise  <span class="arabic">8</span>..<span class="arabic">6</span></b></a> &nbsp; 
+Implement a second version of the <tt>ScapegoatTree</tt> data structure that
+  explicitly stores and maintains the sizes of the subtree rooted at
+  each node.  Compare the performance of the resulting implementation
+  with that of the original <tt>ScapegoatTree</tt> implementation as well as
+  the implementation from Exercise&nbsp;<a href="http://opendatastructures.org/ods-java/8_2_Discussion_Exercises.html#exc:scapegoat-quicksize">8.5</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">8</span>..<span class="arabic">7</span></b> &nbsp; 
+Reimplement the <!-- MATH
+ $\mathtt{rebuild(u)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3394.png" alt="$ \mathtt{rebuild(u)}$"></span> method discussed at the beginning of this
+  chapter so that it does not require the use of an array to store the
+  nodes of the subtree being rebuilt.  Instead, it should use recursion
+  to first connect the nodes into a linked list and then convert this
+  linked list into a perfectly balanced binary tree.  (There are
+  very elegant recursive implementations of both steps.)</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">8</span>..<span class="arabic">8</span></b> &nbsp; 
+<a name="24131"></a>Analyze and implement a <tt>WeightBalancedTree</tt>. This is a tree in
+  which each node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3395.png" alt="$ \mathtt{u}$"></span>, except the root, maintains the <span class="textit">balance
+  invariant</span> that <!-- MATH
+ $\ensuremath{\mathtt{size(u)}} \le (2/3)\ensuremath{\mathtt{size(u.parent)}}$
+ -->
+<span class="MATH"><img width="216" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3396.png" alt="$ \ensuremath{\mathtt{size(u)}} \le (2/3)\ensuremath{\mathtt{size(u.parent)}}$"></span>.  The <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3397.png" alt="$ \mathtt{add(x)}$"></span> and
+  <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3398.png" alt="$ \mathtt{remove(x)}$"></span> operations are identical to the standard <tt>BinarySearchTree</tt>
+  operations, except that any time the balance invariant is violated at
+  a node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3399.png" alt="$ \mathtt{u}$"></span>, the subtree rooted at <!-- MATH
+ $\mathtt{u.parent}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3400.png" alt="$ \mathtt{u.parent}$"></span> is rebuilt.
+  Your analysis should show that operations on a <tt>WeightBalancedTree</tt>
+  run in <!-- MATH
+ $O(\log\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3401.png" alt="$ O(\log\ensuremath{\mathtt{n}})$"></span> amortized time.  </div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">8</span>..<span class="arabic">9</span></b> &nbsp; 
+<a name="24140"></a>Analyze and implement a <tt>CountdownTree</tt>.  In a <tt>CountdownTree</tt> each
+  node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3402.png" alt="$ \mathtt{u}$"></span> keeps a <span class="textit">timer</span> <!-- MATH
+ $\mathtt{u.t}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3403.png" alt="$ \mathtt{u.t}$"></span>.  The <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3404.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3405.png" alt="$ \mathtt{remove(x)}$"></span>
+  operations are exactly the same as in a standard <tt>BinarySearchTree</tt>
+  except that, whenever one of these operations affects <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3406.png" alt="$ \mathtt{u}$"></span>'s subtree,
+  <!-- MATH
+ $\mathtt{u.t}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3407.png" alt="$ \mathtt{u.t}$"></span> is decremented.  When <!-- MATH
+ $\ensuremath{\mathtt{u.t}}=0$
+ -->
+<span class="MATH"><img width="51" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3408.png" alt="$ \ensuremath{\mathtt{u.t}}=0$"></span> the entire subtree rooted at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3409.png" alt="$ \mathtt{u}$"></span>
+  is rebuilt into a perfectly balanced binary search tree.  When a node
+  <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3410.png" alt="$ \mathtt{u}$"></span> is involved in a rebuilding operation (either because <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3411.png" alt="$ \mathtt{u}$"></span> is rebuilt
+  or one of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3412.png" alt="$ \mathtt{u}$"></span>'s ancestors is rebuilt) <!-- MATH
+ $\mathtt{u.t}$
+ -->
+<span class="MATH"><img width="25" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3413.png" alt="$ \mathtt{u.t}$"></span> is reset to <!-- MATH
+ $\ensuremath{\mathtt{size(u)}}/3$
+ -->
+<span class="MATH"><img width="72" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3414.png" alt="$ \ensuremath{\mathtt{size(u)}}/3$"></span>.
+<p>
+Your analysis should show that operations on a <tt>CountdownTree</tt> run
+  in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3415.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> amortized time.  (Hint: First show that each node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3416.png" alt="$ \mathtt{u}$"></span>
+  satisfies some version of a balance invariant.)</p></div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">8</span>..<span class="arabic">10</span></b> &nbsp; 
+<a name="24156"></a>Analyze and implement a <tt>DynamiteTree</tt>.  In a <tt>DynamiteTree</tt> each
+  node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3417.png" alt="$ \mathtt{u}$"></span> keeps tracks of the size of the subtree rooted at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3418.png" alt="$ \mathtt{u}$"></span> in a
+  variable <!-- MATH
+ $\mathtt{u.size}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3419.png" alt="$ \mathtt{u.size}$"></span>.  The <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3420.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3421.png" alt="$ \mathtt{remove(x)}$"></span> operations are exactly
+  the same as in a standard <tt>BinarySearchTree</tt> except that, whenever one
+  of these operations affects a node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3422.png" alt="$ \mathtt{u}$"></span>'s subtree, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3423.png" alt="$ \mathtt{u}$"></span> <span class="textit">explodes</span>
+  with probability <!-- MATH
+ $1/\ensuremath{\mathtt{u.size}}$
+ -->
+<span class="MATH"><img width="65" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3424.png" alt="$ 1/\ensuremath{\mathtt{u.size}}$"></span>.  When <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3425.png" alt="$ \mathtt{u}$"></span> explodes, its entire subtree
+  is rebuilt into a perfectly balanced binary search tree.
+<p>
+Your analysis should show that operations on a <tt>DynamiteTree</tt> run
+  in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3426.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> expected time. </p></div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:list-order-maintenance"><b>Exercise  <span class="arabic">8</span>..<span class="arabic">11</span></b></a> &nbsp; 
+<a name="24167"></a>Design and implement a <tt>Sequence</tt> data structure that maintains a
+  sequence (list) of elements.  It supports these operations:
+  
+<ul>
+<li><!-- MATH
+ $\mathtt{addAfter(e)}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3427.png" alt="$ \mathtt{addAfter(e)}$"></span>: Add a new element after the element <!-- MATH
+ $\mathtt{e}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3428.png" alt="$ \mathtt{e}$"></span> in the
+    sequence.  Return the newly added element.  (If <!-- MATH
+ $\mathtt{e}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3429.png" alt="$ \mathtt{e}$"></span> is null,
+    the new element is added at the beginning of the sequence.)
+</li>
+<li><!-- MATH
+ $\mathtt{remove(e)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3430.png" alt="$ \mathtt{remove(e)}$"></span>: Remove <!-- MATH
+ $\mathtt{e}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3431.png" alt="$ \mathtt{e}$"></span> from the sequence.
+</li>
+<li><!-- MATH
+ $\mathtt{testBefore(e1,e2)}$
+ -->
+<span class="MATH"><img width="138" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3432.png" alt="$ \mathtt{testBefore(e1,e2)}$"></span>: return <!-- MATH
+ $\mathtt{true}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3433.png" alt="$ \mathtt{true}$"></span> if and only if <!-- MATH
+ $\mathtt{e1}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3434.png" alt="$ \mathtt{e1}$"></span> comes
+    before <!-- MATH
+ $\mathtt{e2}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3435.png" alt="$ \mathtt{e2}$"></span> in the sequence.
+  
+</li>
+</ul>
+  The first two operations should run in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3436.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> amortized time.
+  The third operation should run in constant time.
+<p>
+The <tt>Sequence</tt> data structure can be implemented by storing the elements
+  in something like a <tt>ScapegoatTree</tt>, in the same order that they occur
+  in the sequence.  To implement <!-- MATH
+ $\mathtt{testBefore(e1,e2)}$
+ -->
+<span class="MATH"><img width="138" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3437.png" alt="$ \mathtt{testBefore(e1,e2)}$"></span> in constant time,
+  each element <!-- MATH
+ $\mathtt{e}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3438.png" alt="$ \mathtt{e}$"></span> is labelled with an integer that encodes the path from
+  the root to <!-- MATH
+ $\mathtt{e}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3439.png" alt="$ \mathtt{e}$"></span>.  In this way, <!-- MATH
+ $\mathtt{testBefore(e1,e2)}$
+ -->
+<span class="MATH"><img width="138" height="31" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3440.png" alt="$ \mathtt{testBefore(e1,e2)}$"></span> can be implemented
+  by comparing the labels of <!-- MATH
+ $\mathtt{e1}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3441.png" alt="$ \mathtt{e1}$"></span> and <!-- MATH
+ $\mathtt{e2}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/8.2 Discussion and Exercises_files/img3442.png" alt="$ \mathtt{e2}$"></span>.</p></div><p></p>
+<div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/8.2 Discussion and Exercises_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

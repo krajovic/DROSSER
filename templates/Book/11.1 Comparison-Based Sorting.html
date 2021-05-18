@@ -1,0 +1,1398 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>11.1 Comparison-Based Sorting</title>
+<meta content="11.1 Comparison-Based Sorting" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/11.1 Comparison-Based Sorting_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/11_2_Counting_Sort_Radix_So.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/11_Sorting_Algorithms.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/11_Sorting_Algorithms.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/11_2_Counting_Sort_Radix_So.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<hr/>
+<h1><a name="SECTION001410000000000000000">
+<span class="arabic">11</span>.<span class="arabic">1</span> Comparison-Based Sorting</a>
+</h1>
+<p>
+<a name="49389"></a><a name="49390"></a>In this section, we present three sorting algorithms: merge-sort,
+quicksort, and heap-sort.  Each of these algorithms takes an input array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4079.png" width="12"/></span>
+and sorts the elements of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4080.png" width="12"/></span> into non-decreasing order in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4081.png" width="71"/></span>
+(expected) time.  These algorithms are all <span class="textit">comparison-based</span>.
+  These algorithms don't care what type
+of data is being sorted; the only operation they do on the data is
+comparisons using the <!-- MATH
+ $\ensuremath{\mathrm{compare}(\ensuremath{\mathit{a}},\ensuremath{\mathit{b}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{compare}(\ensuremath{\mathit{a}},\ensuremath{\mathit{b}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4082.png" width="97"/></span> method. Recall, from Section <a href="http://opendatastructures.org/ods-python/1_2_Interfaces.html#sec:sset">1.2.4</a>,
+that <!-- MATH
+ $\ensuremath{\mathrm{compare}(\ensuremath{\mathit{a}},\ensuremath{\mathit{b}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{compare}(\ensuremath{\mathit{a}},\ensuremath{\mathit{b}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4083.png" width="97"/></span> returns a negative value if <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}<\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}&lt;\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4084.png" width="36"/></span>, a positive
+value if <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}>\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}&gt;\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4085.png" width="36"/></span>, and zero if <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4086.png" width="37"/></span>.
+</p><p>
+</p><h2><a name="SECTION001411000000000000000"></a>
+<a name="sec:merge-sort"></a>
+<br/>
+<span class="arabic">11</span>.<span class="arabic">1</span>.<span class="arabic">1</span> Merge-Sort
+</h2>
+<p>
+<a name="49419"></a>The <span class="textit">merge-sort</span> algorithm is a classic example of recursive divide
+and conquer: 
+<a name="49421"></a>If the length of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4087.png" width="12"/></span> is at most 1, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4088.png" width="12"/></span> is already
+sorted, so we do nothing.  Otherwise, we split <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4089.png" width="12"/></span> into two halves,
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a_0}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}/2-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a_0}}}}=\ensuremath{\ensuremath{\e...
+...,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}/2-1]}}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4090.png" width="157"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a_1}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}/2]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a_1}}}}=\ensuremath{\ensuremath{\e...
+...ts,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4091.png" width="158"/></span>.
+We recursively sort <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_0}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_0}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4092.png" width="19"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_1}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4093.png" width="19"/></span>, and then we merge (the now sorted)
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_0}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_0}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4094.png" width="19"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_1}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4095.png" width="19"/></span> to get our fully sorted array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4096.png" width="12"/></span>:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{merge\_sort}...
+...bf{return}} \ensuremath{\ensuremath{\mathit{a}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="178" src="static/11.1 Comparison-Based Sorting_files/img4097.png" width="216"/>
+<br/>
+An example is shown in Figure <a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#fig:merge-sort">11.1</a>.
+</p><div align="CENTER"><a name="fig:merge-sort"></a><a name="53014"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 11.1:</strong>
+The execution of <!-- MATH
+ $\ensuremath{\mathrm{merge\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{merge\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4099.png" width="111"/></span></caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/mergesort}" border="0" height="291" src="static/11.1 Comparison-Based Sorting_files/img4098.png" width="551"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Compared to sorting, merging the two sorted arrays <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_0}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_0}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4100.png" width="19"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_1}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4101.png" width="19"/></span> is
+fairly easy.  We add elements to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4102.png" width="12"/></span> one at a time.  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_0}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_0}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4103.png" width="19"/></span> or <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_1}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4104.png" width="19"/></span>
+is empty, then we add the next elements from the other (non-empty)
+array. Otherwise, we take the minimum of the next element in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_0}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_0}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4105.png" width="19"/></span> and
+the next element in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_1}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4106.png" width="19"/></span> and add it to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4107.png" width="12"/></span>:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{merge}(\ensu...
+...\ensuremath{\mathit{i_1}} \gets \ensuremath{i2}}\\
+\end{flushleft}\end{leftbar}" border="0" height="315" src="static/11.1 Comparison-Based Sorting_files/img4108.png" width="290"/>
+<br/>
+Notice that the <!-- MATH
+ $\ensuremath{\mathrm{merge}(\ensuremath{\mathit{a_0}},\ensuremath{\mathit{a_1}},\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{merge}(\ensuremath{\mathit{a_0}},\ensuremath{\mathit{a_1}},\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4109.png" width="120"/></span> algorithm performs at most <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4110.png" width="37"/></span>
+comparisons before running out of elements in one of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_0}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_0}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4111.png" width="19"/></span> or <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a_1}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4112.png" width="19"/></span>.
+</p><p>
+To understand the running-time of merge-sort, it is easiest to think
+of it in terms of its recursion tree.  Suppose for now that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4113.png" width="13"/></span> is a
+power of two, so that <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=2^{\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=2^{\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}$" border="0" height="36" src="static/11.1 Comparison-Based Sorting_files/img4114.png" width="65"/></span>, and <!-- MATH
+ $\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4115.png" width="37"/></span> is an integer.
+Refer to Figure <a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#fig:mergesort-recursion">11.2</a>. Merge-sort turns the problem of
+sorting <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4116.png" width="13"/></span> elements into two problems, each of sorting <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4117.png" width="28"/></span> elements.
+These two subproblem are then turned into two problems each, for a total
+of four subproblems, each of size <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4118.png" width="28"/></span>. These four subproblems become eight
+subproblems, each of size <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/8$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/8$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4119.png" width="28"/></span>, and so on.  At the bottom of this process,
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4120.png" width="28"/></span> subproblems, each of size two, are converted into <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4121.png" width="13"/></span> problems,
+each of size one.  For each subproblem of size <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2^{i}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2^{i}$" border="0" height="36" src="static/11.1 Comparison-Based Sorting_files/img4122.png" width="33"/></span>, the time
+spent merging and copying data is <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2^i)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2^i)$" border="0" height="36" src="static/11.1 Comparison-Based Sorting_files/img4123.png" width="57"/></span>.  Since there are <span class="MATH"><img align="MIDDLE" alt="$ 2^i$" border="0" height="36" src="static/11.1 Comparison-Based Sorting_files/img4124.png" width="18"/></span>
+subproblems of size <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2^i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2^i$" border="0" height="36" src="static/11.1 Comparison-Based Sorting_files/img4125.png" width="33"/></span>, the total time spent working on problems
+of size <span class="MATH"><img align="MIDDLE" alt="$ 2^i$" border="0" height="36" src="static/11.1 Comparison-Based Sorting_files/img4126.png" width="18"/></span>, not counting recursive calls, is
+</p><p><!-- MATH
+ \begin{displaymath}
+2^i\times O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2^i) = O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle 2^i\times O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2^i) = O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) \enspace .
+$" border="0" height="37" src="static/11.1 Comparison-Based Sorting_files/img4127.png" width="147"/>
+</div><p></p>
+Therefore, the total amount of time taken by merge-sort is
+<p><!-- MATH
+ \begin{displaymath}
+\sum_{i=0}^{\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}} O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) = O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \sum_{i=0}^{\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}...
+...mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) \enspace .
+$" border="0" height="71" src="static/11.1 Comparison-Based Sorting_files/img4128.png" width="159"/>
+</div><p></p>
+<p>
+</p><div align="CENTER"><a name="fig:mergesort-recursion"></a><a name="49656"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 11.2:</strong>
+The merge-sort recursion tree.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/mergesort-recursion}" border="0" height="262" src="static/11.1 Comparison-Based Sorting_files/img4129.png" width="545"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The proof of the following theorem is based on preceding analysis,
+but has to be a little more careful to deal with the cases where <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4130.png" width="13"/></span>
+is not a power of 2.
+</p><p>
+</p><div><b>Theorem  <span class="arabic">11</span>..<span class="arabic">1</span></b>   
+<i>The merge_sort(a) algorithm runs in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4131.png" width="71"/></span> time and
+  performs at most <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4132.png" width="47"/></span> comparisons.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+The proof is by induction on <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4134.png" width="13"/></span>.  The base case, in which <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=1$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4135.png" width="39"/></span>,
+is trivial; when presented with an array of length 0 or 1 the algorithm
+simply returns without performing any comparisons.
+<p>
+Merging two sorted lists of total length <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4136.png" width="13"/></span> requires at most <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4137.png" width="37"/></span>
+comparisons. Let <!-- MATH
+ $C(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ C(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4138.png" width="36"/></span> denote the maximum number of comparisons performed by
+<!-- MATH
+ $\ensuremath{\mathrm{merge\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{merge\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4139.png" width="111"/></span> on an array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4140.png" width="12"/></span> of length <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4141.png" width="13"/></span>.  If <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4142.png" width="13"/></span> is even, then we apply the inductive hypothesis to
+the two subproblems and obtain
+</p><p></p>
+<div align="CENTER" class="mathdisplay"><table align="CENTER" cellpadding="0" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="RIGHT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle C(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4143.png" width="36"/></span></td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1 + 2C(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4144.png" width="121"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1 + 2((\ens...
+...math{\mathit{n}}}}/2)\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2))$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4145.png" width="178"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1 + \ensurema...
+...suremath{\mathit{n}}}}\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4146.png" width="133"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1 + \ensurema...
+...ath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4147.png" width="133"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle &lt; \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \enspace .$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4148.png" width="73"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+The case where <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4149.png" width="13"/></span> is odd is slightly more complicated.  For this case,
+we use two inequalities that are easy to verify:
+<p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:log-ineq-a"></a><!-- MATH
+ \begin{equation}
+\log(x+1) \le \log(x) + 1 \enspace ,
+\end{equation}
+ -->
+<table align="CENTER" cellpadding="0" class="equation" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="CENTER" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \log(x+1) \le \log(x) + 1 \enspace ,$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4150.png" width="163"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+(<span class="arabic">11</span>.<span class="arabic">1</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+for all <span class="MATH"><img align="MIDDLE" alt="$ x\ge 1$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4151.png" width="39"/></span> and
+<p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:log-ineq-b"></a><!-- MATH
+ \begin{equation}
+\log(x+1/2) + \log(x-1/2) \le 2\log(x) \enspace ,
+\end{equation}
+ -->
+<table align="CENTER" cellpadding="0" class="equation" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="CENTER" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \log(x+1/2) + \log(x-1/2) \le 2\log(x) \enspace ,$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4152.png" width="259"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+(<span class="arabic">11</span>.<span class="arabic">2</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+for all <span class="MATH"><img align="MIDDLE" alt="$ x\ge 1/2$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4153.png" width="54"/></span>.  Inequality (<a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#eq:log-ineq-a">11.1</a>) comes from the fact that <!-- MATH
+ $\log(x)+1 = \log(2x)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log(x)+1 = \log(2x)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4154.png" width="136"/></span> while (<a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#eq:log-ineq-b">11.2</a>) follows from the fact that <span class="MATH"><img align="MIDDLE" alt="$ \log$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4155.png" width="26"/></span> is a concave function.  With these tools in hand we have, for odd <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4156.png" width="13"/></span>,
+<p></p>
+<div align="CENTER" class="mathdisplay"><table align="CENTER" cellpadding="0" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="RIGHT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle C(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4157.png" width="36"/></span></td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1 + C(\lcei...
+...rceil) + C(\lfloor \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2 \rfloor)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4158.png" width="199"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1 + \lceil ...
+...\rfloor\log \lfloor \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2 \rfloor$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4159.png" width="273"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1 + (\ensurem...
+...t{n}}}}/2 - 1/2) \log (\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2-1/2)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4160.png" width="420"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1 + \ensure...
+...{n}}}}/2+1/2) - \log (\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2-1/2))$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4161.png" width="398"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1 + \ensure...
+...th{\mathit{n}}}}\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2) + 1/2$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4162.png" width="172"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle &lt; \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} + \ensuremath...
+...suremath{\mathit{n}}}}\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4163.png" width="109"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} + \ensuremath...
+...suremath{\mathit{n}}}}(\log\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4164.png" width="118"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \enspace . \qedhere$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4165.png" width="73"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p> <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/11.1 Comparison-Based Sorting_files/img4133.png" width="17"/>
+</div><p></p>
+<p>
+</p><h2><a name="SECTION001412000000000000000">
+<span class="arabic">11</span>.<span class="arabic">1</span>.<span class="arabic">2</span> Quicksort</a>
+</h2>
+<p>
+<a name="49745"></a>The <span class="textit">quicksort</span> algorithm is another classic divide and conquer
+algorithm.  Unlike merge-sort, which does merging after solving the two
+subproblems, quicksort does all of its work upfront.
+</p><p>
+Quicksort is simple to describe:  Pick a random <span class="textit">pivot</span> element,
+<a name="49748"></a><!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4166.png" width="12"/></span>, from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4167.png" width="12"/></span>; partition <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4168.png" width="12"/></span> into the set of elements less than <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4169.png" width="12"/></span>, the
+set of elements equal to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4170.png" width="12"/></span>, and the set of elements greater than <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4171.png" width="12"/></span>;
+and, finally, recursively sort the first and third sets in this partition.
+An example is shown in Figure <a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#fig:quicksort">11.3</a>.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{quick\_sort}...
+...nsuremath{\mathit{q}}-\ensuremath{\mathit{i}})})\\
+\end{flushleft}\end{leftbar}" border="0" height="392" src="static/11.1 Comparison-Based Sorting_files/img4172.png" width="234"/>
+<br/>
+</p><div align="CENTER"><a name="fig:quicksort"></a><a name="53055"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 11.3:</strong>
+An example execution of <!-- MATH
+ $\ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},0,14)}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},0,14)}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4173.png" width="132"/></span></caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/quicksort}" border="0" height="194" src="static/11.1 Comparison-Based Sorting_files/img4174.png" width="334"/>
+</div></td></tr>
+</tbody></table>
+</div>
+All of this is done in place, so that instead of making copies of
+subarrays being sorted, the <!-- MATH
+ $\ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4175.png" width="132"/></span> method only sorts the
+subarray <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}+\ensuremath{\mathit{n}}-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}},\ld...
+...th{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}+\ensuremath{\mathit{n}}-1]}}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4176.png" width="126"/></span>.  Initially, this method is invoked
+with the arguments
+<!-- MATH
+ $\ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},0,\mathrm{length}(\ensuremath{\mathit{a}}),c})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},0,\mathrm{length}(\ensuremath{\mathit{a}}),c})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4177.png" width="191"/></span>.
+<p>
+At the heart of the quicksort algorithm is the in-place partitioning
+algorithm.  This algorithm, without using any extra space, swaps elements
+in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4178.png" width="12"/></span> and computes indices <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{p}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{p}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4179.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4180.png" width="12"/></span> so that
+</p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}} \begin{cases}
+         {}< \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}} & \text{if $0\le \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\le \ensuremath{\ensuremath{\ensuremath{\mathit{p}}}}$} \\
+         {}= \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}} & \text{if $\ensuremath{\ensuremath{\ensuremath{\mathit{p}}}}< \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}} < \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$} \\
+         {}> \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}} & \text{if $\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}\le \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}} \le \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$}
+     \end{cases}
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\math...
+...it{i}}}} \le \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$}
+\end{cases}$" border="0" height="84" src="static/11.1 Comparison-Based Sorting_files/img4181.png" width="177"/>
+</div><p></p>
+This partitioning, which is done by the <!-- MATH
+ ${\color{black} \textbf{while}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ {\color{black} \textbf{while}}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4182.png" width="45"/></span> loop in the code, works
+by iteratively increasing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{p}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{p}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4183.png" width="12"/></span> and decreasing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4184.png" width="12"/></span> while maintaining the
+first and last of these conditions.  At each step, the element at position
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{j}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{j}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4185.png" width="9"/></span> is either moved to the front, left where it is, or moved to the back.
+In the first two cases, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{j}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{j}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4186.png" width="9"/></span> is incremented, while in the last case, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{j}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{j}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4187.png" width="9"/></span>
+is not incremented since the new element at position <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{j}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{j}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4188.png" width="9"/></span> has not yet been
+processed.
+<p>
+Quicksort is very closely related to the random binary search trees
+studied in Section <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#sec:rbst">7.1</a>.  In fact, if the input to quicksort consists
+of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4189.png" width="13"/></span> distinct elements, then the quicksort recursion tree is a random
+binary search tree.  To see this, recall that when constructing a random
+binary search tree the first thing we do is pick a random element <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4190.png" width="12"/></span> and
+make it the root of the tree.  After this, every element will eventually
+be compared to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4191.png" width="12"/></span>, with smaller elements going into the left subtree
+and larger elements into the right.
+</p><p>
+In quicksort, we select a random element <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4192.png" width="12"/></span> and immediately compare
+everything to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4193.png" width="12"/></span>, putting the smaller elements at the beginning of
+the array and larger elements at the end of the array.  Quicksort then
+recursively sorts the beginning of the array and the end of the array,
+while the random binary search tree recursively inserts smaller elements
+in the left subtree of the root and larger elements in the right subtree
+of the root.
+</p><p>
+The above correspondence between random binary search trees and quicksort
+means that we can translate Lemma <a href="http://opendatastructures.org/ods-python/7_1_Random_Binary_Search_Tr.html#lem:rbs">7.1</a> to a statement about quicksort:
+</p><p>
+</p><p>
+</p><div><a name="lem:quicksort"><b>Lemma  <span class="arabic">11</span>..<span class="arabic">1</span></b></a>   
+<i>When quicksort is called to sort an array containing the integers
+  <!-- MATH
+ $0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4194.png" width="74"/></span>, the expected number of times element <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4195.png" width="9"/></span> is compared
+  to a pivot element is at most <!-- MATH
+ $H_{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1} + H_{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ H_{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1} + H_{\ensuremath{\ensu...
+...th{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4196.png" width="81"/></span>.</i></div><p></p>
+<p>
+A little summing up of harmonic numbers gives us the following theorem
+about the running time of quicksort:
+</p><p>
+</p><p>
+</p><div><a name="thm:quicksort-i"><b>Theorem  <span class="arabic">11</span>..<span class="arabic">2</span></b></a>   
+<i>When quicksort is called to sort an array containing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4197.png" width="13"/></span> distinct
+  elements, the expected number of comparisons performed is at most
+  <!-- MATH
+ $2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\ln \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} + O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\ln \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} + O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4198.png" width="96"/></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+Let <span class="MATH"><img align="MIDDLE" alt="$ T$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4200.png" width="16"/></span> be the number of comparisons performed by quicksort when sorting
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4201.png" width="13"/></span> distinct elements.  Using Lemma <a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#lem:quicksort">11.1</a> and linearity of
+expectation, we have:
+<p></p>
+<div align="CENTER" class="mathdisplay"><table align="CENTER" cellpadding="0" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="RIGHT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \mathrm{E}[T]$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4202.png" width="36"/></span></td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \sum_{i=0}^{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1...
+...h{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}})$" border="0" height="67" src="static/11.1 Comparison-Based Sorting_files/img4203.png" width="129"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = 2\sum_{i=1}^{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}H_i$" border="0" height="62" src="static/11.1 Comparison-Based Sorting_files/img4204.png" width="71"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le 2\sum_{i=1}^{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}H_{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}$" border="0" height="62" src="static/11.1 Comparison-Based Sorting_files/img4205.png" width="73"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\ln\ensurem...
+...h{\mathit{n}}}} + O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) \qedhere$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4206.png" width="206"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p> <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/11.1 Comparison-Based Sorting_files/img4199.png" width="17"/>
+</div><p></p>
+<p>
+Theorem <a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#thm:quicksort">11.3</a> describes the case where the elements being sorted are
+all distinct.  When the input array, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4207.png" width="12"/></span>, contains duplicate elements,
+the expected running time of quicksort is no worse, and can be even
+better; any time a duplicate element <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4208.png" width="12"/></span> is chosen as a pivot, all
+occurrences of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4209.png" width="12"/></span> get grouped together and do not take part in either
+of the two subproblems.
+</p><p>
+</p><p>
+</p><div><a name="thm:quicksort"><b>Theorem  <span class="arabic">11</span>..<span class="arabic">3</span></b></a>   
+<i>The  
+  <!-- MATH
+ $\ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4210.png" width="107"/></span> method runs in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4211.png" width="71"/></span> expected
+  time and the expected number of comparisons it performs is at most
+  <!-- MATH
+ $2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\ln \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} +O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\ln \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} +O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4212.png" width="96"/></span>.</i></div><p></p>
+<p>
+</p><h2><a name="SECTION001413000000000000000"></a>
+<a name="sec:heapsort"></a>
+<br/>
+<span class="arabic">11</span>.<span class="arabic">1</span>.<span class="arabic">3</span> Heap-sort
+</h2>
+<p>
+<a name="50013"></a>The <span class="textit">heap-sort</span> algorithm is another in-place sorting algorithm.
+Heap-sort uses the binary heaps discussed in Section <a href="http://opendatastructures.org/ods-python/10_1_BinaryHeap_Implicit_Bi.html#sec:binaryheap">10.1</a>.
+Recall that the BinaryHeap data structure represents a heap using
+a single array.  The heap-sort algorithm converts the input array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4213.png" width="12"/></span>
+into a heap and then repeatedly extracts the minimum value.
+</p><p>
+More specifically, a heap stores <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4214.png" width="13"/></span> elements in an array, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4215.png" width="12"/></span>, at array locations
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4216.png" width="110"/></span> with the smallest value stored at the root,
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[0]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[0]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4217.png" width="31"/></span>.  After transforming <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4218.png" width="12"/></span> into a BinaryHeap, the heap-sort
+algorithm repeatedly swaps <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[0]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[0]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4219.png" width="31"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4220.png" width="55"/></span>, decrements <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4221.png" width="13"/></span>, and
+calls <!-- MATH
+ $\ensuremath{\mathrm{trickle\_down}(0)}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{trickle\_down}(0)}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4222.png" width="114"/></span> so that <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-2]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-2]}}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4223.png" width="110"/></span> once again are
+a valid heap representation. When this process ends (because <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=0$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4224.png" width="39"/></span>)
+the elements of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4225.png" width="12"/></span> are stored in decreasing order, so <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4226.png" width="12"/></span> is reversed
+to obtain the final sorted order.<a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#foot53035" name="tex2html90"><sup><span class="arabic">11</span>.<span class="arabic">1</span></sup></a>Figure <a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#fig:heapsort">11.4</a> shows an example of the execution of <!-- MATH
+ $\ensuremath{\mathrm{heap\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{heap\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4228.png" width="102"/></span>.
+</p><p>
+</p><div align="CENTER"><a name="fig:heapsort"></a><a name="53036"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 11.4:</strong>
+A snapshot of the execution of <!-- MATH
+ $\ensuremath{\mathrm{heap\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{heap\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4230.png" width="102"/></span>.
+      The shaded part of the
+      array is already sorted.  The unshaded part is a BinaryHeap.
+      During the next iteration, element <span class="MATH"><img align="MIDDLE" alt="$ 5$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4231.png" width="13"/></span> will be placed into array
+      location <span class="MATH"><img align="MIDDLE" alt="$ 8$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4232.png" width="13"/></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/heapsort}" border="0" height="201" src="static/11.1 Comparison-Based Sorting_files/img4229.png" width="327"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{heap\_sort}(...
+...math{\ensuremath{\mathit{a}}.\mathrm{reverse}()}\\
+\end{flushleft}\end{leftbar}" border="0" height="258" src="static/11.1 Comparison-Based Sorting_files/img4233.png" width="295"/>
+<br/>
+</p><p>
+A key subroutine in heap sort is the constructor for turning
+an unsorted array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4234.png" width="12"/></span> into a heap.  It would be easy to do this
+in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4235.png" width="71"/></span> time by repeatedly calling the BinaryHeap
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4236.png" width="50"/></span> method, but we can do better by using a bottom-up algorithm.
+Recall that, in a binary heap, the children of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4237.png" width="27"/></span> are stored at
+positions <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[2i+1]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[2i+1]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4238.png" width="61"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[2i+2]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[2i+2]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4239.png" width="61"/></span>.  This implies that the elements
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2\rfloor],\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[\lfloor\ensuremath{\ensurema...
+...ts,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4240.png" width="137"/></span> have no children. In other
+words, each of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[\lfloor\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2\rfloor],\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}}}[\lfloor\ensuremath{\ensurema...
+...ts,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4241.png" width="137"/></span> is a sub-heap
+of size 1.  Now, working backwards, we can call <!-- MATH
+ $\ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4242.png" width="111"/></span> for
+each <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\in\{\lfloor \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2\rfloor-1,\ldots,0\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\in\{\lfloor \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2\rfloor-1,\ldots,0\}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4243.png" width="133"/></span>. This works, because by
+the time we call <!-- MATH
+ $\ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4244.png" width="111"/></span>, each of the two children of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4245.png" width="27"/></span>
+are the root of a sub-heap, so calling <!-- MATH
+ $\ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4246.png" width="111"/></span> makes <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4247.png" width="27"/></span>
+into the root of its own subheap.
+</p><p>
+The interesting thing about this bottom-up strategy is that it is more
+efficient than calling <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4248.png" width="50"/></span> <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4249.png" width="13"/></span> times.  To see this, notice that,
+for <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4250.png" width="28"/></span> elements, we do no work at all, for <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/4$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4251.png" width="28"/></span> elements, we call
+<!-- MATH
+ $\ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4252.png" width="111"/></span> on a subheap rooted at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4253.png" width="27"/></span> and whose height is one, for
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/8$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/8$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4254.png" width="28"/></span> elements, we call <!-- MATH
+ $\ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4255.png" width="111"/></span> on a subheap whose height is two,
+and so on.  Since the work done by <!-- MATH
+ $\ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4256.png" width="111"/></span> is proportional to
+the height of the sub-heap rooted at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4257.png" width="27"/></span>, this means that the total
+work done is at most
+</p><p><!-- MATH
+ \begin{displaymath}
+\sum_{i=1}^{\log\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}} O((i-1)\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2^{i})
+    \le \sum_{i=1}^{\infty} O(i\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/2^{i})
+    = O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})\sum_{i=1}^{\infty} i/2^{i}
+    =  O(2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) = O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \sum_{i=1}^{\log\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}...
+...athit{n}}}}) = O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}) \enspace .
+$" border="0" height="71" src="static/11.1 Comparison-Based Sorting_files/img4258.png" width="446"/>
+</div><p></p>
+The second-last equality follows by recognizing that the sum
+<!-- MATH
+ $\sum_{i=1}^{\infty} i/2^{i}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \sum_{i=1}^{\infty} i/2^{i}$" border="0" height="36" src="static/11.1 Comparison-Based Sorting_files/img4259.png" width="65"/></span> is equal, by definition of expected value,
+to the expected number of times we toss a coin up to and including the
+first time the coin comes up as heads and applying Lemma <a href="http://opendatastructures.org/ods-python/4_4_Analysis_Skiplists.html#lem:coin-tosses">4.2</a>.
+<p>
+The following theorem describes the performance of <!-- MATH
+ $\ensuremath{\mathrm{heap\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{heap\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4260.png" width="102"/></span>.
+</p><p>
+</p><div><b>Theorem  <span class="arabic">11</span>..<span class="arabic">4</span></b>   
+<i>The <!-- MATH
+ $\ensuremath{\mathrm{heap\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{heap\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4261.png" width="102"/></span> method runs in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4262.png" width="71"/></span> time and performs at
+  most <!-- MATH
+ $2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} + O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} + O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4263.png" width="104"/></span> comparisons.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+The algorithm runs in three steps:  (1) transforming <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4265.png" width="12"/></span> into a heap,
+(2) repeatedly extracting the minimum element from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4266.png" width="12"/></span>, and (3) reversing
+the elements in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4267.png" width="12"/></span>.  We have just argued that step 1 takes <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4268.png" width="36"/></span>
+time and performs <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4269.png" width="36"/></span> comparisons.  Step 3 takes <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4270.png" width="36"/></span> time and
+performs no comparisons.  Step 2 performs <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4271.png" width="13"/></span> calls to <!-- MATH
+ $\ensuremath{\mathrm{trickle\_down}(0)}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{trickle\_down}(0)}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4272.png" width="114"/></span>.
+The <span class="MATH"><img align="MIDDLE" alt="$ i$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4273.png" width="10"/></span>th such call operates on a heap of size <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-i$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-i$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4274.png" width="34"/></span> and performs
+at most <!-- MATH
+ $2\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-i)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-i)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4275.png" width="77"/></span> comparisons.  Summing this over <span class="MATH"><img align="MIDDLE" alt="$ i$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4276.png" width="10"/></span> gives
+<p><!-- MATH
+ \begin{displaymath}
+\sum_{i=0}^{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-i} 2\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-i)
+   \le \sum_{i=0}^{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-i} 2\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}
+   =  2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \sum_{i=0}^{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-i} ...
+...ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}
+$" border="0" height="67" src="static/11.1 Comparison-Based Sorting_files/img4277.png" width="256"/>
+</div><p></p>
+Adding the number of comparisons performed in each of the three steps
+completes the proof.
+ <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/11.1 Comparison-Based Sorting_files/img4264.png" width="17"/>
+</div><p></p>
+<p>
+</p><h2><a name="SECTION001414000000000000000">
+<span class="arabic">11</span>.<span class="arabic">1</span>.<span class="arabic">4</span> A Lower-Bound for Comparison-Based Sorting</a>
+</h2>
+<p>
+<a name="50232"></a><a name="50233"></a>We have now seen three comparison-based sorting algorithms that each run
+in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4278.png" width="71"/></span> time.  By now, we should be wondering if faster
+algorithms exist.  The short answer to this question is no.  If the
+only operations allowed on the elements of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4279.png" width="12"/></span> are comparisons, then no
+algorithm can avoid doing roughly <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4280.png" width="47"/></span> comparisons.  This is
+not difficult to prove, but requires a little imagination.  Ultimately,
+it follows from the fact that
+</p><p><!-- MATH
+ \begin{displaymath}
+\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!)
+     = \log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} + \log (\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1) + \dots + \log(1) 
+     = \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} - O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})
+    \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!)
+= \log...
+...athit{n}}}} - O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})
+\enspace .
+$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4281.png" width="387"/>
+</div><p></p>
+(Proving this fact is left as Exercise <a href="http://opendatastructures.org/ods-python/11_3_Discussion_Exercises.html#exc:log-factorial">11.10</a>.)
+<p>
+We will start by focusing our attention on deterministic algorithms like
+merge-sort and heap-sort and on a particular fixed value of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4282.png" width="13"/></span>.  Imagine
+such an algorithm is being used to sort <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4283.png" width="13"/></span> distinct elements.  The key
+to proving the lower-bound is to observe that, for a deterministic
+algorithm with a fixed value of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4284.png" width="13"/></span>, the first pair of elements that are
+compared is always the same.  For example, in <!-- MATH
+ $\ensuremath{\mathrm{heap\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{heap\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4285.png" width="102"/></span>, when <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4286.png" width="13"/></span>
+is even, the first call to <!-- MATH
+ $\ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{trickle\_down}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4287.png" width="111"/></span> is with <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}\gets \ensuremath{\ensuremath{\mathit{n}}/2-1}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}\gets \ensuremath{\ensuremath{\mathit{n}}/2-1}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4288.png" width="80"/></span> and the
+first comparison is between elements <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}/2-1]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}/2-1]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4289.png" width="70"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{n}}-1]}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4290.png" width="55"/></span>.
+</p><p>
+Since all input elements are distinct, this first comparison has only
+two possible outcomes.  The second comparison done by the algorithm may
+depend on the outcome of the first comparison.  The third comparison
+may depend on the results of the first two, and so on.  In this way,
+any deterministic comparison-based sorting algorithm can be viewed
+as a rooted binary <span class="textit">comparison tree</span>.
+<a name="50262"></a>Each internal node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4291.png" width="13"/></span>,
+of this tree is labelled with a pair of indices <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4292.png" width="22"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{j}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{j}}}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4293.png" width="22"/></span>.
+If <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{u}}.\ensuremath{\mathit{i}}]}}<\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{u}}.\ensuremath{\mathit{j}}]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{u}}.\ensur...
+...math{\ensuremath{\mathit{a}}[\ensuremath{\mathit{u}}.\ensuremath{\mathit{j}}]}}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4294.png" width="92"/></span> the algorithm proceeds to the left subtree,
+otherwise it proceeds to the right subtree.  Each leaf <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4295.png" width="16"/></span> of this
+tree is labelled with a permutation <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{p}}[0]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{p}}[\ensuremath{\mathit{n}}-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{p}}[0]}},\...
+...th{\ensuremath{\mathit{w}}.\ensuremath{\mathit{p}}[\ensuremath{\mathit{n}}-1]}}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4296.png" width="142"/></span> of
+<!-- MATH
+ $0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-1$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4297.png" width="74"/></span>.  This permutation represents the one that is
+required to sort <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4298.png" width="12"/></span> if the comparison tree reaches this leaf.  That is,
+</p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{w}}.\ensuremath{\mathit{p}}[0]}]}<\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{w}}.\ensuremath{\mathit{p}}[1]}]}<\cdots<\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{w}}.\ensuremath{\mathit{p}}[\ensuremath{\mathit{n}}-1]}]} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\math...
+...h{\mathit{w}}.\ensuremath{\mathit{p}}[\ensuremath{\mathit{n}}-1]}]} \enspace .
+$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4299.png" width="289"/>
+</div><p></p>
+An example of a comparison tree for an array of size <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}\gets \ensuremath{3}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}\gets \ensuremath{3}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4300.png" width="45"/></span> is shown in
+Figure <a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#fig:comparison-tree">11.5</a>.
+<div align="CENTER"><a name="fig:comparison-tree"></a><a name="53041"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 11.5:</strong>
+A comparison tree for sorting an array <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}},\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[1]}},\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[2]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}},\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[1]}},\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[2]}}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4302.png" width="96"/></span> of length <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}\gets \ensuremath{3}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}\gets \ensuremath{3}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4303.png" width="45"/></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/comparison-tree}" border="0" height="144" src="static/11.1 Comparison-Based Sorting_files/img4301.png" width="555"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The comparison tree for a sorting algorithm tells us everything about
+the algorithm.  It tells us exactly the sequence of comparisons that
+will be performed for any input array, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4304.png" width="12"/></span>, having <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4305.png" width="13"/></span> distinct elements
+and it tells us how the algorithm will reorder <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4306.png" width="12"/></span> in order to sort it.
+Consequently, the comparison tree must have at least <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4307.png" width="18"/></span> leaves;
+if not, then there are two distinct permutations that lead to the same
+leaf; therefore, the algorithm does not correctly sort at least one of
+these permutations.
+</p><p>
+For example, the comparison tree in Figure <a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#fig:comparison-tree-2">11.6</a> has only
+<span class="MATH"><img align="MIDDLE" alt="$ 4&lt; 3!=6$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4308.png" width="69"/></span> leaves. Inspecting this tree, we see that the two input arrays
+<span class="MATH"><img align="MIDDLE" alt="$ 3,1,2$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4309.png" width="41"/></span> and <span class="MATH"><img align="MIDDLE" alt="$ 3,2,1$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4310.png" width="41"/></span> both lead to the rightmost leaf.  On the input <span class="MATH"><img align="MIDDLE" alt="$ 3,1,2$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4311.png" width="41"/></span>
+this leaf correctly outputs <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[1]}}=1,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[2]}}=2,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}}=3$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[1]}}=1,\ensuremath{\ensuremath...
+...emath{\mathit{a}}[2]}}=2,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}}=3$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4312.png" width="174"/></span>.  However, on the
+input <span class="MATH"><img align="MIDDLE" alt="$ 3,2,1$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4313.png" width="41"/></span>, this node incorrectly outputs <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[1]}}=2,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[2]}}=1,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}}=3$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[1]}}=2,\ensuremath{\ensuremath...
+...emath{\mathit{a}}[2]}}=1,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[0]}}=3$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4314.png" width="174"/></span>.
+This discussion leads to the primary lower-bound for comparison-based
+algorithms.
+</p><p>
+</p><div align="CENTER"><a name="fig:comparison-tree-2"></a><a name="50321"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 11.6:</strong>
+A comparison tree that does not correctly sort every input
+  permutation.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/comparison-tree-b}" border="0" height="114" src="static/11.1 Comparison-Based Sorting_files/img4315.png" width="554"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><p>
+</p><div><a name="thm:deterministic-sorting-lower-bound"><b>Theorem  <span class="arabic">11</span>..<span class="arabic">5</span></b></a>   
+<i>For any deterministic comparison-based sorting algorithm <!-- MATH
+ $\mathcal{A}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{A}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4316.png" width="17"/></span>
+  and any integer <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\ge 1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\ge 1$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4317.png" width="40"/></span>, there exists an input array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4318.png" width="12"/></span> of
+  length <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4319.png" width="13"/></span> such that <!-- MATH
+ $\mathcal{A}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{A}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4320.png" width="17"/></span> performs at least <!-- MATH
+ $\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!) =
+  \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!) =
+\ensuremath{\ensur...
+...{\ensuremath{\mathit{n}}}}-O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4321.png" width="158"/></span> comparisons when sorting <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4322.png" width="12"/></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  By the preceding discussion, the comparison tree defined by <!-- MATH
+ $\mathcal{A}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{A}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4324.png" width="17"/></span>
+  must have at least <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4325.png" width="18"/></span> leaves.  An easy inductive proof shows that
+  any binary tree with <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4326.png" width="13"/></span> leaves has a height of at least <span class="MATH"><img align="MIDDLE" alt="$ \log k$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4327.png" width="36"/></span>.
+  Therefore, the comparison tree for <!-- MATH
+ $\mathcal{A}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{A}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4328.png" width="17"/></span> has a leaf, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4329.png" width="16"/></span>,
+  with a depth of at least <!-- MATH
+ $\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4330.png" width="50"/></span> and there is an input array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4331.png" width="12"/></span>
+  that leads to this leaf.  The input array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4332.png" width="12"/></span> is an input for which
+  <!-- MATH
+ $\mathcal{A}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{A}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4333.png" width="17"/></span> does at least <!-- MATH
+ $\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4334.png" width="50"/></span> comparisons.
+ <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/11.1 Comparison-Based Sorting_files/img4323.png" width="17"/>
+</div><p></p>
+<p>
+Theorem <a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#thm:deterministic-sorting-lower-bound">11.5</a> deals with deterministic
+algorithms like merge-sort and heap-sort, but doesn't tell us anything
+about randomized algorithms like quicksort.  Could a randomized algorithm
+beat the <!-- MATH
+ $\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4335.png" width="50"/></span> lower bound on the number of comparisons?
+The answer, again, is no.  Again, the way to prove it is to think
+differently about what a randomized algorithm is.
+</p><p>
+In the following discussion, we will assume that our decision
+trees have been ``cleaned up'' in the following way: Any node that can not
+be reached by some input array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4336.png" width="12"/></span> is removed.  This cleaning up implies
+that the tree has exactly <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4337.png" width="18"/></span> leaves.  It has at least <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4338.png" width="18"/></span> leaves
+because, otherwise, it could not sort correctly.  It has at most <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4339.png" width="18"/></span>
+leaves since each of the possible <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4340.png" width="18"/></span> permutation of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4341.png" width="13"/></span> distinct
+elements follows exactly one root to leaf path in the decision tree.
+</p><p>
+We can think of a randomized sorting algorithm, <!-- MATH
+ $\mathcal{R}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{R}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4342.png" width="17"/></span>, as a
+deterministic algorithm that takes two inputs: The input array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4343.png" width="12"/></span>
+that should be sorted and a long sequence <!-- MATH
+ $b=b_1,b_2,b_3,\ldots,b_m$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ b=b_1,b_2,b_3,\ldots,b_m$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4344.png" width="134"/></span>
+of random real numbers in the range <span class="MATH"><img align="MIDDLE" alt="$ [0,1]$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4345.png" width="38"/></span>.  The random numbers provide
+the randomization for the algorithm.  When the algorithm wants to toss a
+coin or make a random choice, it does so by using some element from <span class="MATH"><img align="MIDDLE" alt="$ b$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4346.png" width="12"/></span>.
+For example, to compute the index of the first pivot in quicksort,
+the algorithm could use the formula <!-- MATH
+ $\lfloor n b_1\rfloor$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \lfloor n b_1\rfloor$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4347.png" width="41"/></span>.
+</p><p>
+Now, notice that if we fix <span class="MATH"><img align="MIDDLE" alt="$ b$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4348.png" width="12"/></span> to some particular sequence <span class="MATH"><img align="MIDDLE" alt="$ \hat{b}$" border="0" height="37" src="static/11.1 Comparison-Based Sorting_files/img4349.png" width="12"/></span>
+then <!-- MATH
+ $\mathcal{R}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{R}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4350.png" width="17"/></span> becomes a deterministic sorting algorithm,
+<!-- MATH
+ $\mathcal{R}(\hat{b})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{R}(\hat{b})$" border="0" height="37" src="static/11.1 Comparison-Based Sorting_files/img4351.png" width="36"/></span>, that has an associated comparison tree,
+<!-- MATH
+ $\mathcal{T}(\hat{b})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{T}(\hat{b})$" border="0" height="37" src="static/11.1 Comparison-Based Sorting_files/img4352.png" width="36"/></span>.  Next, notice that if we select <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4353.png" width="12"/></span> to be a random
+permutation of <!-- MATH
+ $\{1,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{1,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4354.png" width="61"/></span>, then this is equivalent to selecting
+a random leaf, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4355.png" width="16"/></span>, from the <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4356.png" width="18"/></span> leaves of <!-- MATH
+ $\mathcal{T}(\hat{b})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{T}(\hat{b})$" border="0" height="37" src="static/11.1 Comparison-Based Sorting_files/img4357.png" width="36"/></span>.
+</p><p>
+Exercise <a href="http://opendatastructures.org/ods-python/11_3_Discussion_Exercises.html#exc:randomized-lower-bound">11.12</a> asks you to prove that, if we select
+a random leaf from any binary tree with <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4358.png" width="13"/></span> leaves, then the expected
+depth of that leaf is at least <span class="MATH"><img align="MIDDLE" alt="$ \log k$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4359.png" width="36"/></span>.  Therefore, the expected
+number of comparisons performed by the (deterministic) algorithm
+<!-- MATH
+ $\mathcal{R}(\hat{b})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{R}(\hat{b})$" border="0" height="37" src="static/11.1 Comparison-Based Sorting_files/img4360.png" width="36"/></span> when given an input array containing a random
+permutation of <!-- MATH
+ $\{1,\ldots,n\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{1,\ldots,n\}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4361.png" width="61"/></span> is at least <!-- MATH
+ $\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!)$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4362.png" width="50"/></span>.  Finally,
+notice that this is true for every choice of <span class="MATH"><img align="MIDDLE" alt="$ \hat{b}$" border="0" height="37" src="static/11.1 Comparison-Based Sorting_files/img4363.png" width="12"/></span>, therefore it holds even for <!-- MATH
+ $\mathcal{R}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{R}$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4364.png" width="17"/></span>.  This completes the proof of the lower-bound for randomized algorithms.
+</p><p>
+</p><p>
+</p><div><a name="thm:randomized-sorting-lower-bound"><b>Theorem  <span class="arabic">11</span>..<span class="arabic">6</span></b></a>   
+<i>For any integer <span class="MATH"><img align="MIDDLE" alt="$ n\ge 1$" border="0" height="29" src="static/11.1 Comparison-Based Sorting_files/img4365.png" width="40"/></span> and any  (deterministic or randomized)
+  comparison-based sorting algorithm <!-- MATH
+ $\mathcal{A}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{A}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4366.png" width="17"/></span>, the expected number
+  of comparisons done by <!-- MATH
+ $\mathcal{A}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \mathcal{A}$" border="0" height="30" src="static/11.1 Comparison-Based Sorting_files/img4367.png" width="17"/></span> when sorting a random permutation
+  of <!-- MATH
+ $\{1,\ldots,n\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{1,\ldots,n\}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4368.png" width="61"/></span> is at least <!-- MATH
+ $\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!) = \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}!) = \ensuremath{\ensure...
+...{\ensuremath{\mathit{n}}}}-O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4369.png" width="158"/></span>.</i></div><p></p>
+<p>
+<br/></p><hr/><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot53035">... order.</a><a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#tex2html90"><sup><span class="arabic">11</span>.<span class="arabic">1</span></sup></a></dt>
+<dd>The algorithm
+could alternatively redefine the <!-- MATH
+ $\ensuremath{\mathrm{compare}(\ensuremath{\mathit{x}},\ensuremath{\mathit{y}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{compare}(\ensuremath{\mathit{x}},\ensuremath{\mathit{y}})}$" border="0" height="31" src="static/11.1 Comparison-Based Sorting_files/img4227.png" width="97"/></span> function so that the
+heap sort algorithm stores the elements directly in ascending order.
+</dd>
+</dl>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/11.1 Comparison-Based Sorting_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

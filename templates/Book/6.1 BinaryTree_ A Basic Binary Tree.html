@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-java/6_1_BinaryTree_Basic_Binary.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>6.1 BinaryTree: A Basic Binary Tree</title>
+<meta name="description" content="6.1 BinaryTree: A Basic Binary Tree">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/6.1 BinaryTree_ A Basic Binary Tree_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/6_Binary_Trees.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/6_Binary_Trees.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/6_2_BinarySearchTree_Unbala.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<hr>
+<h1><a name="SECTION00910000000000000000">
+<span class="arabic">6</span>.<span class="arabic">1</span> <tt>BinaryTree</tt>: A Basic Binary Tree</a>
+</h1>
+<p>
+<a name="20132"></a>The simplest way to represent a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2614.png" alt="$ \mathtt{u}$"></span>, in a binary tree is to
+explicitly store the (at most three) neighbours of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2615.png" alt="$ \mathtt{u}$"></span>:
+</p><pre>    class BTNode&lt;Node extends BTNode&lt;Node&gt;&gt; {
+        Node left;
+        Node right;
+        Node parent;    
+    }
+</pre>
+When one of these three neighbours is not present, we set it to <!-- MATH
+ $\mathtt{nil}$
+ -->
+<span class="MATH"><img width="29" height="14" align="BOTTOM" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2616.png" alt="$ \mathtt{nil}$"></span>.
+In this way, both external nodes of the tree and the parent of the root
+correspond to the value <!-- MATH
+ $\mathtt{nil}$
+ -->
+<span class="MATH"><img width="29" height="14" align="BOTTOM" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2617.png" alt="$ \mathtt{nil}$"></span>.
+<p>
+The binary tree itself can then be represented by a
+reference to its root node, <!-- MATH
+ $\mathtt{r}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2618.png" alt="$ \mathtt{r}$"></span>:
+</p><pre>    Node r;
+</pre>
+<p>
+We can compute the depth of a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2619.png" alt="$ \mathtt{u}$"></span>, in a binary tree by counting
+the number of steps on the path from <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2620.png" alt="$ \mathtt{u}$"></span> to the root:
+</p><pre>    int depth(Node u) {
+        int d = 0;
+        while (u != r) {
+            u = u.parent;
+            d++;
+        }
+        return d;
+    }
+</pre>
+<p>
+</p><h2><a name="SECTION00911000000000000000">
+<span class="arabic">6</span>.<span class="arabic">1</span>.<span class="arabic">1</span> Recursive Algorithms</a>
+</h2>
+<p>
+<a name="19673"></a>Using recursive algorithms makes it very easy to compute facts about
+binary trees. For example, to compute the size of (number of nodes in)
+a binary tree rooted at node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2621.png" alt="$ \mathtt{u}$"></span>, we recursively compute the sizes of the
+two subtrees rooted at the children of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2622.png" alt="$ \mathtt{u}$"></span>, sum up these sizes, and add one:
+</p><p>
+</p><pre>    int size(Node u) {
+        if (u == nil) return 0;
+        return 1 + size(u.left) + size(u.right);
+    }
+</pre>
+<p>
+To compute the height of a node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2623.png" alt="$ \mathtt{u}$"></span>, we can compute the height of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2624.png" alt="$ \mathtt{u}$"></span>'s
+two subtrees, take the maximum, and add one:
+</p><p>
+</p><pre>    int height(Node u) {
+        if (u == nil) return -1;
+        return 1 + Math.max(height(u.left), height(u.right));
+    }
+</pre>
+<p>
+</p><h2><a name="SECTION00912000000000000000"></a>
+<a name="sec:bintree:traversal"></a>
+<br>
+<span class="arabic">6</span>.<span class="arabic">1</span>.<span class="arabic">2</span> Traversing Binary Trees
+</h2>
+<p>
+<a name="19684"></a><a name="19685"></a><a name="19686"></a>The two algorithms from the previous section both use recursion to visit
+all the nodes in a binary tree.  Each of them visits the nodes of the
+binary tree in the same order as the following code:
+</p><pre>    void traverse(Node u) {
+        if (u == nil) return;
+        traverse(u.left);
+        traverse(u.right);
+    }
+</pre>
+<p>
+Using recursion this way produces very short, simple code, but it can
+also be problematic.  The maximum depth of the recursion is given by
+the maximum depth of a node in the binary tree, i.e., the tree's height.
+If the height of the tree is very large, then this recursion could very
+well use more stack space than is available, causing a crash.
+</p><p>
+To traverse a binary tree without recursion, you can use an algorithm that
+relies on where it came from to determine where it will go next.  See
+Figure&nbsp;<a href="http://opendatastructures.org/ods-java/6_1_BinaryTree_Basic_Binary.html#fig:bintree-traverse">6.3</a>.  If we arrive at a node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2625.png" alt="$ \mathtt{u}$"></span> from <!-- MATH
+ $\mathtt{u.parent}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2626.png" alt="$ \mathtt{u.parent}$"></span>,
+then the next thing to do is to visit <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2627.png" alt="$ \mathtt{u.left}$"></span>.  If we arrive at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2628.png" alt="$ \mathtt{u}$"></span>
+from <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2629.png" alt="$ \mathtt{u.left}$"></span>, then the next thing to do is to visit <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2630.png" alt="$ \mathtt{u.right}$"></span>.  If we
+arrive at <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2631.png" alt="$ \mathtt{u}$"></span> from <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2632.png" alt="$ \mathtt{u.right}$"></span>, then we are done visiting <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2633.png" alt="$ \mathtt{u}$"></span>'s subtree,
+and so we return to <!-- MATH
+ $\mathtt{u.parent}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2634.png" alt="$ \mathtt{u.parent}$"></span>.  The following code implements this
+idea, with code included for handling the cases where any of <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2635.png" alt="$ \mathtt{u.left}$"></span>,
+<!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2636.png" alt="$ \mathtt{u.right}$"></span>, or <!-- MATH
+ $\mathtt{u.parent}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2637.png" alt="$ \mathtt{u.parent}$"></span> is <!-- MATH
+ $\mathtt{nil}$
+ -->
+<span class="MATH"><img width="29" height="14" align="BOTTOM" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2638.png" alt="$ \mathtt{nil}$"></span>:
+</p><pre>    void traverse2() {
+        Node u = r, prev = nil, next;
+        while (u != nil) {
+            if (prev == u.parent) {
+                if (u.left != nil) next = u.left;
+                else if (u.right != nil) next = u.right;
+                else next = u.parent;
+            } else if (prev == u.left) {
+                if (u.right != nil) next = u.right;
+                else next = u.parent;
+            } else {
+                next = u.parent;
+            }
+            prev = u;
+            u = next;
+        }
+    }
+</pre>
+<p>
+</p><div align="CENTER"><a name="fig:bintree-traverse"></a><a name="20339"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 6.3:</strong>
+The three cases that occur at node
+    <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2641.png" alt="$ \mathtt{u}$"></span> when traversing a binary tree non-recursively, and the resultant
+    traversal of the tree.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table cellpadding="3" align="CENTER">
+<tbody><tr><td align="CENTER"><img width="114" height="160" align="BOTTOM" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2639.png" alt="\includegraphics[scale=0.90909]{figs/bintree-traverse-2}">
+      <img width="240" height="141" align="BOTTOM" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2640.png" alt="\includegraphics[scale=0.90909]{figs/bintree-3}"></td>
+<td align="CENTER">&nbsp;</td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The same facts that can be computed with recursive algorithms can also be
+computed in this way, without recursion. For example, to compute the size
+of the tree we keep a counter, <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2642.png" alt="$ \mathtt{n}$"></span>, and increment <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2643.png" alt="$ \mathtt{n}$"></span> whenever visiting
+a node for the first time:
+</p><pre>    int size2() {
+        Node u = r, prev = nil, next;
+        int n = 0;
+        while (u != nil) {
+            if (prev == u.parent) {
+                n++;
+                if (u.left != nil) next = u.left;
+                else if (u.right != nil) next = u.right;
+                else next = u.parent;
+            } else if (prev == u.left) {
+                if (u.right != nil) next = u.right;
+                else next = u.parent;
+            } else {
+                next = u.parent;
+            }
+            prev = u;
+            u = next;
+        }
+        return n;
+    }
+</pre>
+<p>
+In some implementations of binary trees, the <!-- MATH
+ $\mathtt{parent}$
+ -->
+<span class="MATH"><img width="55" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2644.png" alt="$ \mathtt{parent}$"></span> field is not used.
+When this is the case, a non-recursive implementation is still possible,
+but the implementation has to use a <tt>List</tt> (or <tt>Stack</tt>) to keep track
+of the path from the current node to the root.
+</p><p>
+A special kind of traversal that does not fit the pattern of the above
+functions is the <span class="textit">breadth-first traversal</span>.
+<a name="19725"></a><a name="19726"></a>In a breadth-first
+traversal, the nodes are visited level-by-level starting at the root and
+moving down, visiting the nodes at each level from left to right (see
+Figure&nbsp;<a href="http://opendatastructures.org/ods-java/6_1_BinaryTree_Basic_Binary.html#fig:bintree-bfs">6.4</a>). This is similar to the way that we would read a
+page of English text.   Breadth-first traversal is implemented using a
+queue, <!-- MATH
+ $\mathtt{q}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2645.png" alt="$ \mathtt{q}$"></span>, that initially contains only the root, <!-- MATH
+ $\mathtt{r}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2646.png" alt="$ \mathtt{r}$"></span>.  At each step,
+we extract the next node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2647.png" alt="$ \mathtt{u}$"></span>, from <!-- MATH
+ $\mathtt{q}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2648.png" alt="$ \mathtt{q}$"></span>, process <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2649.png" alt="$ \mathtt{u}$"></span> and add <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2650.png" alt="$ \mathtt{u.left}$"></span>
+and <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2651.png" alt="$ \mathtt{u.right}$"></span> (if they are non-<!-- MATH
+ $\mathtt{nil}$
+ -->
+<span class="MATH"><img width="29" height="14" align="BOTTOM" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2652.png" alt="$ \mathtt{nil}$"></span>) to <!-- MATH
+ $\mathtt{q}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2653.png" alt="$ \mathtt{q}$"></span>:
+</p><pre>    void bfTraverse() {
+        Queue&lt;Node&gt; q = new LinkedList&lt;Node&gt;();
+        if (r != nil) q.add(r);
+        while (!q.isEmpty()) {
+            Node u = q.remove();
+            if (u.left != nil) q.add(u.left);
+            if (u.right != nil) q.add(u.right);
+        }
+    }
+</pre>
+<p>
+</p><div align="CENTER"><a name="fig:bintree-bfs"></a><a name="19743"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 6.4:</strong>
+During a breadth-first traversal, the nodes of a binary tree
+  are visited
+level-by-level, and left-to-right within each level.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="255" height="136" align="BOTTOM" border="0" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/img2654.png" alt="\includegraphics[scale=0.90909]{figs/bintree-4}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/6.1 BinaryTree_ A Basic Binary Tree_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

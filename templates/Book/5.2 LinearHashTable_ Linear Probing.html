@@ -1,0 +1,1097 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>5.2 LinearHashTable: Linear Probing</title>
+<meta content="5.2 LinearHashTable: Linear Probing" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/5.2 LinearHashTable_ Linear Probing_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/5_3_Hash_Codes.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/5_1_ChainedHashTable_Hashin.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/5_Hash_Tables.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/5_3_Hash_Codes.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<hr/>
+<h1><a name="SECTION00820000000000000000"></a>
+<a name="sec:linearhashtable"></a>
+<br/>
+<span class="arabic">5</span>.<span class="arabic">2</span> LinearHashTable: Linear Probing
+</h1>
+<p>
+<a name="23838"></a>The ChainedHashTable data structure uses an array of lists, where the <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2093.png" width="9"/></span>th
+list stores all elements <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2094.png" width="12"/></span> such that <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}=\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}=\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2095.png" width="78"/></span>.  An alternative,
+called <span class="textit">open addressing</span>
+<a name="23845"></a>is to store the elements directly in an
+array, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2096.png" width="10"/></span>, with each array location in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2097.png" width="10"/></span> storing at most one value.
+This approach is taken by the LinearHashTable described in this
+section.  In some places, this data structure is described as <span class="textit">open
+addressing with linear probing</span>.
+<a name="23849"></a>
+</p><p>
+The main idea behind a LinearHashTable is that we would, ideally, like
+to store the element <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2098.png" width="12"/></span> with hash value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}\gets \ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}\gets \ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2099.png" width="84"/></span> in the table location
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2100.png" width="25"/></span>.  If we cannot do this (because some element is already stored
+there) then we try to store it at location <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1)\bmod\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\en...
+...}}}}+1)\bmod\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2101.png" width="161"/></span>;
+if that's not possible, then we try <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+2)\bmod\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\en...
+...}}}}+2)\bmod\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2102.png" width="161"/></span>,
+and so on, until we find a place for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2103.png" width="12"/></span>.
+</p><p>
+There are three types of entries stored in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2104.png" width="10"/></span>: 
+</p><ol>
+<li>data values: actual values in the USet that we are representing;
+</li>
+<li><!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2105.png" width="22"/></span> values: at array locations where no data has ever been
+  stored; and
+</li>
+<li><!-- MATH
+ $\ensuremath{\ensuremath{\mathit{del}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{del}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2106.png" width="24"/></span> values: at array locations where data was once stored but that
+   has since been deleted.
+</li>
+</ol>
+In addition to the counter, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2107.png" width="13"/></span>, that keeps track of the number of elements
+in the LinearHashTable, a counter, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2108.png" width="12"/></span>, keeps track of the number of
+elements of Types 1 and 3.  That is, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2109.png" width="12"/></span> is equal to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2110.png" width="13"/></span> plus the number
+of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{del}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{del}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2111.png" width="24"/></span> values in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2112.png" width="10"/></span>.  To make this work efficiently, we need
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2113.png" width="10"/></span> to be considerably larger than <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2114.png" width="12"/></span>, so that there are lots of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2115.png" width="22"/></span>
+values in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2116.png" width="10"/></span>.  The operations on a LinearHashTable therefore maintain
+the invariant that <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}\ge 2\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}\ge 2\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2117.png" width="100"/></span>.
+<p>
+To summarize, a LinearHashTable contains an array, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2118.png" width="10"/></span>, that stores
+data elements, and integers <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2119.png" width="13"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2120.png" width="12"/></span> that keep track of the number of
+data elements and non-<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2121.png" width="22"/></span> values of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2122.png" width="10"/></span>, respectively.  Because many
+hash functions only work for table sizes that are a power of 2, we also
+keep an integer <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{d}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{d}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2123.png" width="13"/></span> and maintain the invariant that <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}=2^\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}=2^\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}$" border="0" height="36" src="static/5.2 LinearHashTable_ Linear Probing_files/img2124.png" width="99"/></span>.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{initialize}(...
+...th{\ensuremath{\mathit{n}} \gets \ensuremath{0}}\\
+\end{flushleft}\end{leftbar}" border="0" height="178" src="static/5.2 LinearHashTable_ Linear Probing_files/img2125.png" width="187"/>
+<br/>
+</p><p>
+The <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2126.png" width="52"/></span> operation in a LinearHashTable is simple.  We start
+at array entry <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2127.png" width="25"/></span> where <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}=\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}=\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2128.png" width="78"/></span> and search entries <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2129.png" width="25"/></span>,
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1)\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\en...
+...}}}+1)\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2130.png" width="161"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+2)\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\en...
+...}}}+2)\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2131.png" width="161"/></span>, and so on,
+until we find an index <!-- MATH
+ $\ensuremath{i}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{i}'$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2132.png" width="15"/></span> such that, either, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{x}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{x}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2133.png" width="62"/></span>, or <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{nil}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{nil}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2134.png" width="74"/></span>.
+In the former case we return <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}']}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}']}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2135.png" width="29"/></span>. In the latter case, we conclude
+that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2136.png" width="12"/></span> is not contained in the hash table and return <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2137.png" width="22"/></span>.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{find}(\ensur...
+...\bmod \mathrm{length}(\ensuremath{\mathit{t}})}}\\
+\end{flushleft}\end{leftbar}" border="0" height="144" src="static/5.2 LinearHashTable_ Linear Probing_files/img2138.png" width="272"/>
+<br/>
+</p><p>
+The <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2139.png" width="50"/></span> operation is also fairly easy to implement. After checking
+that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2140.png" width="12"/></span> is not already stored in the table (using <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2141.png" width="52"/></span>), we search
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2142.png" width="25"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1)\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\en...
+...}}}+1)\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2143.png" width="161"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+2)\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\en...
+...}}}+2)\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2144.png" width="161"/></span>,
+and so on, until we find a <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2145.png" width="22"/></span> or <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{del}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{del}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2146.png" width="24"/></span> and store <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2147.png" width="12"/></span> at that location,
+increment <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2148.png" width="13"/></span>, and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2149.png" width="12"/></span>, if appropriate.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{add}(\ensure...
+...return}} \ensuremath{\ensuremath{\mathit{true}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="216" src="static/5.2 LinearHashTable_ Linear Probing_files/img2150.png" width="307"/>
+<br/>
+</p><p>
+By now, the implementation of the <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2151.png" width="75"/></span> operation should be obvious.
+We search <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2152.png" width="25"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+1)\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\en...
+...}}}+1)\bmod \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2153.png" width="161"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+2)\bmod
+\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[(\ensuremath{\ensuremath{\en...
+...}}}+2)\bmod
+\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2154.png" width="161"/></span>, and so on until we find an index <!-- MATH
+ $\ensuremath{i}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{i}'$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2155.png" width="15"/></span> such that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{x}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{x}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2156.png" width="62"/></span>
+or <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{nil}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{nil}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2157.png" width="74"/></span>.  In the former case, we set <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{del}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{del}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2158.png" width="76"/></span> and return
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{true}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{true}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2159.png" width="31"/></span>.  In the latter case we conclude that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2160.png" width="12"/></span> was not stored in the
+table (and therefore cannot be deleted) and return <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{false}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{false}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2161.png" width="34"/></span>.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove}(\ens...
+...{return}} \ensuremath{\ensuremath{\mathit{nil}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="235" src="static/5.2 LinearHashTable_ Linear Probing_files/img2162.png" width="313"/>
+<br/>
+</p><p>
+The correctness of the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2163.png" width="52"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2164.png" width="50"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2165.png" width="75"/></span> methods is
+easy to verify, though it relies on the use of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{del}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{del}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2166.png" width="24"/></span> values.  Notice
+that none of these operations ever sets a non-<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2167.png" width="22"/></span> entry to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2168.png" width="22"/></span>.
+Therefore, when we reach an index <!-- MATH
+ $\ensuremath{i}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{i}'$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2169.png" width="15"/></span> such that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{nil}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{i}']\gets \ensuremath{nil}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2170.png" width="74"/></span>, this is
+a proof that the element, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2171.png" width="12"/></span>, that we are searching for is not stored
+in the table; <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}']}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}']}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2172.png" width="29"/></span> has always been <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2173.png" width="22"/></span>, so there is no reason that
+a previous <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2174.png" width="50"/></span> operation would have proceeded beyond index <!-- MATH
+ $\ensuremath{i}'$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{i}'$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2175.png" width="15"/></span>.
+</p><p>
+The <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2176.png" width="55"/></span> method is called by <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2177.png" width="50"/></span> when the number of non-<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2178.png" width="22"/></span>
+entries exceeds <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}/2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}/2$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2179.png" width="80"/></span> or by <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2180.png" width="75"/></span> when the number of
+data entries is less than <!-- MATH
+ $\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})/8}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})/8}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2181.png" width="80"/></span>.  The <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2182.png" width="55"/></span> method works
+like the <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2183.png" width="55"/></span> methods in other array-based data structures.
+We find the smallest non-negative integer <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{d}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{d}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2184.png" width="13"/></span> such that <!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}
+\ge 3\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}
+\ge 3\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="36" src="static/5.2 LinearHashTable_ Linear Probing_files/img2185.png" width="55"/></span>.  We reallocate the array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2186.png" width="10"/></span> so that it has size <!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}$" border="0" height="36" src="static/5.2 LinearHashTable_ Linear Probing_files/img2187.png" width="20"/></span>,
+and then we insert all the elements in the old version of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2188.png" width="10"/></span> into the
+newly-resized copy of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2189.png" width="10"/></span>.  While doing this, we reset <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2190.png" width="12"/></span> equal to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2191.png" width="13"/></span>
+since the newly-allocated <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2192.png" width="10"/></span> contains no <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{del}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{del}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2193.png" width="24"/></span> values.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{resize}()}\\...
+...mathit{t}}[\ensuremath{i}] \gets \ensuremath{x}}\\
+\end{flushleft}\end{leftbar}" border="0" height="258" src="static/5.2 LinearHashTable_ Linear Probing_files/img2194.png" width="289"/>
+<br/>
+</p><p>
+</p><h2><a name="SECTION00821000000000000000">
+<span class="arabic">5</span>.<span class="arabic">2</span>.<span class="arabic">1</span> Analysis of Linear Probing</a>
+</h2>
+<p>
+Notice that each operation, <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2195.png" width="50"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2196.png" width="75"/></span>, or <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2197.png" width="52"/></span>, finishes
+as soon as (or before) it discovers the first <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2198.png" width="22"/></span> entry in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2199.png" width="10"/></span>.
+The intuition behind the analysis of linear probing is that, since at
+least half the elements in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2200.png" width="10"/></span> are equal to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2201.png" width="22"/></span>, an operation should
+not take long to complete because it will very quickly come across a
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2202.png" width="22"/></span> entry.  We shouldn't rely too heavily on this intuition, though,
+because it would lead us to (the incorrect) conclusion that the expected
+number of locations in <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2203.png" width="10"/></span> examined by an operation is at most 2.
+</p><p>
+For the rest of this section, we will assume that all hash values are
+independently and uniformly distributed in <!-- MATH
+ $\{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2204.png" width="137"/></span>.
+This is not a realistic assumption, but it will make it possible for
+us to analyze linear probing.  Later in this section we will describe a
+method, called tabulation hashing, that produces a hash function that is
+``good enough'' for linear probing.  We will also assume that all indices
+into the positions of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2205.png" width="10"/></span> are taken modulo <!-- MATH
+ $\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2206.png" width="65"/></span>, so that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2207.png" width="25"/></span>
+is really a shorthand for <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\bmod\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[\ensuremath{\ensuremath{\ens...
+...t{i}}}}\bmod\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}]$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2208.png" width="127"/></span>.
+</p><p>
+<a name="24357"></a>We say that a <span class="textit">run of length <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2209.png" width="13"/></span> that starts at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2210.png" width="9"/></span></span> occurs when all
+the table entries <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}}, \ensuremath{\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}+1]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+k-1]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}}, \e...
+...ensuremath{\mathit{t}}}}[\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+k-1]$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2211.png" width="171"/></span> are non-<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2212.png" width="22"/></span>
+and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1]=\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+k]=\ensuremath{\ensuremath{\ensuremath{\mathit{nil}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[\ensuremath{\ensuremath{\ens...
+...ensuremath{\mathit{i}}}}+k]=\ensuremath{\ensuremath{\ensuremath{\mathit{nil}}}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2213.png" width="146"/></span>.  The number of non-<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2214.png" width="22"/></span> elements of
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2215.png" width="10"/></span> is exactly <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2216.png" width="12"/></span> and the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2217.png" width="50"/></span> method ensures that, at all times,
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}\le\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}/2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}\le\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}/2$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2218.png" width="106"/></span>.  There are <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2219.png" width="12"/></span> elements <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_1,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_1,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2220.png" width="63"/></span>
+that have been inserted into <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2221.png" width="10"/></span> since the last <!-- MATH
+ $\ensuremath{\mathrm{rebuild}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}()}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2222.png" width="66"/></span> operation.
+By our assumption, each of these has a hash value, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{hash}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_j)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{hash}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_j)$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2223.png" width="59"/></span>,
+that is uniform and independent of the rest.  With this setup, we can
+prove the main lemma required to analyze linear probing.
+</p><p>
+</p><p>
+</p><div><a name="lem:linear-probing"><b>Lemma  <span class="arabic">5</span>..<span class="arabic">4</span></b></a>   
+<i>Fix a value <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\in\{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\in\{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2224.png" width="158"/></span>.  Then the probability that
+a run of length <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2225.png" width="13"/></span> starts at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2226.png" width="9"/></span> is <span class="MATH"><img align="MIDDLE" alt="$ O(c^k)$" border="0" height="36" src="static/5.2 LinearHashTable_ Linear Probing_files/img2227.png" width="42"/></span> for some constant <span class="MATH"><img align="MIDDLE" alt="$ 0&lt;c&lt;1$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2228.png" width="62"/></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+If a run of length <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2230.png" width="13"/></span> starts at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2231.png" width="9"/></span>, then there are exactly <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2232.png" width="13"/></span>
+elements <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_j$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_j$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2233.png" width="18"/></span> such that <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{hash}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_j)\in\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+k-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{hash}}}}(\ensuremath{\ensuremath{\...
+...th{\mathit{i}}}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+k-1\}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2234.png" width="171"/></span>.
+The probability that this occurs is exactly
+<p><!-- MATH
+ \begin{displaymath}
+p_k  = \binom{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}}{k}\left(\frac{k}{\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}}\right)^k\left(\frac{\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-k}{\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}}\right)^{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-k} \enspace ,
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle p_k = \binom{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}}{k...
+...}})}}}\right)^{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-k} \enspace ,
+$" border="0" height="64" src="static/5.2 LinearHashTable_ Linear Probing_files/img2235.png" width="284"/>
+</div><p></p>
+since, for each choice of <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2236.png" width="13"/></span> elements, these <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2237.png" width="13"/></span> elements must hash to
+one of the <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2238.png" width="13"/></span> locations and the remaining <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-k$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2239.png" width="35"/></span> elements must hash to
+the other <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-k$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-k$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2240.png" width="89"/></span> table locations.<a href="http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html#foot28917" name="tex2html45"><sup><span class="arabic">5</span>.<span class="arabic">2</span></sup></a>
+<p>
+In the following derivation we will cheat a little and replace <span class="MATH"><img align="MIDDLE" alt="$ r!$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2246.png" width="16"/></span> with
+<span class="MATH"><img align="MIDDLE" alt="$ (r/e)^r$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2247.png" width="41"/></span>. Stirling's Approximation (Section <a href="http://opendatastructures.org/ods-python/1_3_Mathematical_Background.html#sec:factorials">1.3.2</a>) shows that this
+is only a factor of <!-- MATH
+ $O(\sqrt{r})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\sqrt{r})$" border="0" height="35" src="static/5.2 LinearHashTable_ Linear Probing_files/img2248.png" width="46"/></span> from the truth.  This is just done to
+make the derivation simpler; Exercise <a href="http://opendatastructures.org/ods-python/5_4_Discussion_Exercises.html#exc:linear-probing">5.4</a> asks the reader to
+redo the calculation more rigorously using Stirling's Approximation in
+its entirety.
+</p><p>
+The value of <span class="MATH"><img align="MIDDLE" alt="$ p_k$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2249.png" width="20"/></span> is maximized when <!-- MATH
+ $\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2250.png" width="65"/></span> is minimum, and the data
+structure maintains the invariant that <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}} \ge 2\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}} \ge 2\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2251.png" width="100"/></span>, so
+</p><p></p>
+<div align="CENTER" class="mathdisplay"><table align="CENTER" cellpadding="0" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="RIGHT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle p_k$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2252.png" width="20"/></span></td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le \binom{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}}{k}\...
+...ath{\mathit{q}}}}}\right)^{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-k}$" border="0" height="64" src="static/5.2 LinearHashTable_ Linear Probing_files/img2253.png" width="162"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \left(\frac{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}!}...
+...ath{\mathit{q}}}}}\right)^{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-k}$" border="0" height="64" src="static/5.2 LinearHashTable_ Linear Probing_files/img2254.png" width="216"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \approx \left(\frac{\ensuremath{\ensuremath{\ensuremath{\mathit{q...
+...ath{\mathit{q}}}}}\right)^{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-k}$" border="0" height="64" src="static/5.2 LinearHashTable_ Linear Probing_files/img2255.png" width="235"/></span></td>
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH">[Stirling's approximation]</span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \left(\frac{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}^{...
+...ath{\mathit{q}}}}}\right)^{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-k}$" border="0" height="64" src="static/5.2 LinearHashTable_ Linear Probing_files/img2256.png" width="235"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \left(\frac{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}k}...
+...{\mathit{q}}}}-k)}\right)^{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-k}$" border="0" height="64" src="static/5.2 LinearHashTable_ Linear Probing_files/img2257.png" width="165"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \left(\frac{1}{2}\right)^k \left(\frac{(2\ensuremath{\ensuremat...
+...{\mathit{q}}}}-k)}\right)^{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-k}$" border="0" height="64" src="static/5.2 LinearHashTable_ Linear Probing_files/img2258.png" width="141"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = \left(\frac{1}{2}\right)^k \left(1+\frac{k}{2(\ensuremath{\ensu...
+...{\mathit{q}}}}-k)}\right)^{\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-k}$" border="0" height="64" src="static/5.2 LinearHashTable_ Linear Probing_files/img2259.png" width="165"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le \left(\frac{\sqrt{e}}{2}\right)^k \enspace .$" border="0" height="64" src="static/5.2 LinearHashTable_ Linear Probing_files/img2260.png" width="75"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+(In the last step, we use the inequality <!-- MATH
+ $(1+1/x)^x \le e$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ (1+1/x)^x \le e$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2261.png" width="94"/></span>, which holds
+for all <span class="MATH"><img align="MIDDLE" alt="$ x&gt;0$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2262.png" width="38"/></span>.)  Since <!-- MATH
+ $\sqrt{e}/{2}< 0.824360636 < 1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \sqrt{e}/{2}&lt; 0.824360636 &lt; 1$" border="0" height="35" src="static/5.2 LinearHashTable_ Linear Probing_files/img2263.png" width="171"/></span>, this completes
+the proof.
+ <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/5.2 LinearHashTable_ Linear Probing_files/img2229.png" width="17"/>
+</div><p></p>
+<p>
+Using Lemma <a href="http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html#lem:linear-probing">5.4</a> to prove upper-bounds on the expected
+running time of <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2264.png" width="52"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2265.png" width="50"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2266.png" width="75"/></span> is now fairly
+straightforward.  Consider the simplest case, where we execute
+<!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2267.png" width="52"/></span> for some value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2268.png" width="12"/></span> that has never been stored in the
+LinearHashTable.  In this case, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}=\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}=\ensuremath{\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2269.png" width="78"/></span> is a random value in
+<!-- MATH
+ $\{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2270.png" width="137"/></span> independent of the contents of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2271.png" width="10"/></span>.  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2272.png" width="9"/></span>
+is part of a run of length <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2273.png" width="13"/></span>, then the time it takes to execute the
+<!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2274.png" width="52"/></span> operation is at most <span class="MATH"><img align="MIDDLE" alt="$ O(1+k)$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2275.png" width="60"/></span>.  Thus, the expected running time
+can be upper-bounded by
+</p><p><!-- MATH
+ \begin{displaymath}
+O\left(1 + \left(\frac{1}{\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}}\right)\sum_{i=1}^{\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}}\sum_{k=0}^{\infty} k\Pr\{\text{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}} is part of a run of length $k$}\}\right) \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle O\left(1 + \left(\frac{1}{\ensuremath{\ensuremath{\mathrm{length}...
+...{\ensuremath{\mathit{i}}}} is part of a run of length $k$}\}\right) \enspace .
+$" border="0" height="72" src="static/5.2 LinearHashTable_ Linear Probing_files/img2276.png" width="453"/>
+</div><p></p>
+Note that each run of length <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2277.png" width="13"/></span> contributes to the inner sum <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2278.png" width="13"/></span> times for a total contribution of <span class="MATH"><img align="MIDDLE" alt="$ k^2$" border="0" height="35" src="static/5.2 LinearHashTable_ Linear Probing_files/img2279.png" width="20"/></span>,  so the above sum can be rewritten as
+<p></p>
+<div align="CENTER" class="mathdisplay"><table align="CENTER" cellpadding="0" width="100%">
+<tbody><tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle { } O\left(1 + \left(\frac{1}{\ensuremath{\ensuremath{\mathrm{len...
+...math{\ensuremath{\ensuremath{\mathit{i}}}} starts a run of length $k$}\}\right)$" border="0" height="72" src="static/5.2 LinearHashTable_ Linear Probing_files/img2280.png" width="423"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \le O\left(1 + \left(\frac{1}{\ensuremath{\ensuremath{\mathrm{len...
+...th{\mathrm{length}(\ensuremath{\mathit{t}})}}}\sum_{k=0}^{\infty} k^2p_k\right)$" border="0" height="72" src="static/5.2 LinearHashTable_ Linear Probing_files/img2281.png" width="255"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = O\left(1 + \sum_{k=0}^{\infty} k^2p_k\right)$" border="0" height="64" src="static/5.2 LinearHashTable_ Linear Probing_files/img2282.png" width="127"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = O\left(1 + \sum_{k=0}^{\infty} k^2\cdot O(c^k)\right)$" border="0" height="64" src="static/5.2 LinearHashTable_ Linear Probing_files/img2283.png" width="158"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+<tr valign="MIDDLE">
+<td> </td>
+<td align="LEFT" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle = O(1) \enspace .$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2284.png" width="62"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+   </td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+The last step in this derivation comes from the fact that
+<!-- MATH
+ $\sum_{k=0}^{\infty} k^2\cdot O(c^k)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \sum_{k=0}^{\infty} k^2\cdot O(c^k)$" border="0" height="36" src="static/5.2 LinearHashTable_ Linear Probing_files/img2285.png" width="104"/></span> is an exponentially decreasing
+series.<a href="http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html#foot27412" name="tex2html46"><sup><span class="arabic">5</span>.<span class="arabic">3</span></sup></a>Therefore, we conclude that the expected running time of the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2289.png" width="52"/></span> operation
+for a value <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2290.png" width="12"/></span> that is not contained in a LinearHashTable is <span class="MATH"><img align="MIDDLE" alt="$ O(1)$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2291.png" width="36"/></span>.
+<p>
+If we ignore the cost of the <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2292.png" width="55"/></span> operation, then the above
+analysis gives us all we need to analyze the cost of operations on a
+LinearHashTable.
+</p><p>
+First of all, the analysis of <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2293.png" width="52"/></span> given above applies to the
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2294.png" width="50"/></span> operation when <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2295.png" width="12"/></span> is not contained in the table.  To analyze
+the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2296.png" width="52"/></span> operation when <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2297.png" width="12"/></span> is contained in the table, we need only
+note that this is the same as the cost of the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2298.png" width="50"/></span> operation that
+previously added <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2299.png" width="12"/></span> to the table.  Finally, the cost of a <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2300.png" width="75"/></span>
+operation is the same as the cost of a <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2301.png" width="52"/></span> operation.
+</p><p>
+In summary, if we ignore the cost of calls to <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2302.png" width="55"/></span>, all operations
+on a LinearHashTable run in <span class="MATH"><img align="MIDDLE" alt="$ O(1)$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2303.png" width="36"/></span> expected time.  Accounting for the
+cost of resize can be done using the same type of amortized analysis
+performed for the ArrayStack data structure in Section <a href="http://opendatastructures.org/ods-python/2_1_ArrayStack_Fast_Stack_O.html#sec:arraystack">2.1</a>.
+</p><p>
+</p><h2><a name="SECTION00822000000000000000">
+<span class="arabic">5</span>.<span class="arabic">2</span>.<span class="arabic">2</span> Summary</a>
+</h2>
+<p>
+The following theorem summarizes the performance of the LinearHashTable
+data structure:
+</p><p>
+</p><p>
+</p><div><a name="thm:linear-probing"><b>Theorem  <span class="arabic">5</span>..<span class="arabic">2</span></b></a>   
+<i>A LinearHashTable implements the USet interface.  Ignoring the
+  cost of calls to <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2304.png" width="55"/></span>, a LinearHashTable supports the operations
+  <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2305.png" width="50"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2306.png" width="75"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2307.png" width="52"/></span> in <span class="MATH"><img align="MIDDLE" alt="$ O(1)$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2308.png" width="36"/></span> expected time per
+  operation.  
+</i>
+<p>
+<i>Furthermore, beginning with an empty LinearHashTable, any
+  sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2309.png" width="17"/></span> <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2310.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2311.png" width="75"/></span> operations results in a total
+  of <span class="MATH"><img align="MIDDLE" alt="$ O(m)$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2312.png" width="40"/></span> time spent during all calls to <!-- MATH
+ $\ensuremath{\mathrm{resize}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{resize}()}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2313.png" width="55"/></span>.</i></p></div><p></p>
+<p>
+</p><h2><a name="SECTION00823000000000000000"></a>
+<a name="sec:tabulation"></a>
+<br/>
+<span class="arabic">5</span>.<span class="arabic">2</span>.<span class="arabic">3</span> Tabulation Hashing
+</h2>
+<p>
+<a name="24582"></a>While analyzing the LinearHashTable structure, we made a very strong
+assumption:  That for any set of elements, <!-- MATH
+ $\{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_1,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_1,\ldots,\ensuremath{\ensu...
+...h{\ensuremath{\mathit{x}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2314.png" width="74"/></span>,
+the hash values <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{hash}}}}($
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{hash}}}}($" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2315.png" width="40"/></span>x<!-- MATH
+ $_1),\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{hash}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ _1),\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{hash}}}}(\ensuremath{\e...
+...th{\ensuremath{\mathit{x}}}}_\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2316.png" width="102"/></span> are independently and
+uniformly distributed over the set <!-- MATH
+ $\{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,\ensuremath{\ensuremath{\mathrm{length}(\ensuremath{\mathit{t}})}}-1\}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2317.png" width="137"/></span>.  One way to
+achieve this is to store a giant array, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{tab}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{tab}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2318.png" width="25"/></span>, of length <!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2319.png" width="22"/></span>,
+where each entry is a random <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2320.png" width="16"/></span>-bit integer, independent of all the
+other entries.  In this way, we could implement <!-- MATH
+ $\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2321.png" width="56"/></span> by extracting
+a <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{d}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{d}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2322.png" width="13"/></span>-bit integer from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{tab}}[\ensuremath{\mathit{x}}.\mathrm{hash\_code}()]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{tab}}[\ensuremath{\mathit{x}}.\mathrm{hash\_code}()]}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2323.png" width="129"/></span>:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{ideal\_hash}...
+...ensuremath{\mathit{w}}-\ensuremath{\mathit{d}}]}\\
+\end{flushleft}\end{leftbar}" border="0" height="67" src="static/5.2 LinearHashTable_ Linear Probing_files/img2324.png" width="293"/>
+<br/>
+Here, <!-- MATH
+ $\ensuremath{\gg}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\gg}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2325.png" width="20"/></span>, is the <span class="textit">bitwise right shift</span> operator, so
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}.\mathrm{hash\_code}() \ensuremath{\gg} \ensuremath{\mathit{w}}-\ensuremath{\mathit{d}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}.\mathrm{hash\_code}() \ensuremath{\gg} \ensuremath{\mathit{w}}-\ensuremath{\mathit{d}}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2326.png" width="156"/></span> extracts the <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{d}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{d}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2327.png" width="13"/></span> most significant bits of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2328.png" width="12"/></span>'s <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2329.png" width="16"/></span>-bit hash code.
+</p><p>
+Unfortunately, storing an array of size <!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2330.png" width="22"/></span> is prohibitive in terms
+of memory usage.  The approach used by <span class="textit">tabulation hashing</span> is to,
+instead, treat <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2331.png" width="16"/></span>-bit integers as being comprised of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2332.png" width="28"/></span>
+integers, each having only <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2333.png" width="10"/></span> bits.  In this way, tabulation hashing
+only needs <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2334.png" width="28"/></span> arrays each of length <!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2335.png" width="18"/></span>.  All the entries
+in these arrays are independent random <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2336.png" width="16"/></span>-bit integers.  To obtain the value
+of <!-- MATH
+ $\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2337.png" width="56"/></span> we split <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}.\mathrm{hash\_code}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}.\mathrm{hash\_code}()}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2338.png" width="98"/></span> up into <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2339.png" width="28"/></span> <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{r}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{r}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2340.png" width="10"/></span>-bit integers
+and use these as indices into these arrays.  We then combine all these
+values with the bitwise exclusive-or operator to obtain <!-- MATH
+ $\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2341.png" width="56"/></span>.
+The following code shows how this works when <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}=32$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}=32$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2342.png" width="51"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}=4$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}=4$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2343.png" width="37"/></span>:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{hash}(\ensur...
+...ensuremath{\mathit{w}}-\ensuremath{\mathit{d}})}\\
+\end{flushleft}\end{leftbar}" border="0" height="143" src="static/5.2 LinearHashTable_ Linear Probing_files/img2344.png" width="342"/>
+<br/>
+In this case, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{tab}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{tab}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2345.png" width="25"/></span> is a two-dimensional array with four columns and
+<!-- MATH
+ $2^{32/4}=256$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{32/4}=256$" border="0" height="36" src="static/5.2 LinearHashTable_ Linear Probing_files/img2346.png" width="82"/></span> rows.
+Quantities like <!-- MATH
+ $\ensuremath{\mathrm{ff}_{16}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{ff}_{16}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2347.png" width="28"/></span>, used above, are <span class="textit">hexadecimal numbers</span>
+<a name="29137"></a>whose digits have 16 possible values 0-9, which have their usual
+meaning and a-f, which denote 10-15.  The number <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{ff}_{16}}}=15\cdot 16 + 15 = 255$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{ff}_{16}}}=15\cdot 16 + 15 = 255$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2348.png" width="166"/></span>.
+The <span class="MATH"><img align="MIDDLE" alt="$ \wedge $" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2349.png" width="15"/></span> symbol is the <span class="textit">bitwise and</span> operator, so
+code like <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{h}} \ensuremath{\gg} 8  \wedge  \mathrm{ff}_{16}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{h}} \ensuremath{\gg} 8 \wedge \mathrm{ff}_{16}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2350.png" width="84"/></span> extracts bits with index 8 through 15 of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{h}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{h}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2351.png" width="13"/></span>.
+</p><p>
+One can easily verify that, for any <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2352.png" width="12"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{hash}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2353.png" width="56"/></span> is uniformly
+distributed over <!-- MATH
+ $\{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{d}}}}}-1\}$" border="0" height="36" src="static/5.2 LinearHashTable_ Linear Probing_files/img2354.png" width="91"/></span>.  With a little work, one
+can even verify that any pair of values have independent hash values.
+This implies tabulation hashing could be used in place of multiplicative
+hashing for the ChainedHashTable implementation.
+</p><p>
+However, it is not true that any set of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2355.png" width="13"/></span> distinct values gives a set
+of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2356.png" width="13"/></span> independent hash values.  Nevertheless, when tabulation hashing is
+used, the bound of Theorem <a href="http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html#thm:linear-probing">5.2</a> still holds.  References for
+this are provided at the end of this chapter.
+</p><p>
+<br/></p><hr/><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot28917">... locations.</a><a href="http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html#tex2html45"><sup><span class="arabic">5</span>.<span class="arabic">2</span></sup></a></dt>
+<dd>Note that <span class="MATH"><img align="MIDDLE" alt="$ p_k$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2241.png" width="20"/></span> is greater
+than the probability that a run of length <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2242.png" width="13"/></span> starts at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2243.png" width="9"/></span>, since the definition of <span class="MATH"><img align="MIDDLE" alt="$ p_k$" border="0" height="29" src="static/5.2 LinearHashTable_ Linear Probing_files/img2244.png" width="20"/></span> does not include the requirement <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}-1]=\ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}+k]=\ensuremath{\ensuremath{\ensuremath{\mathit{nil}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{t}}}}[\ensuremath{\ensuremath{\ens...
+...ensuremath{\mathit{i}}}}+k]=\ensuremath{\ensuremath{\ensuremath{\mathit{nil}}}}$" border="0" height="31" src="static/5.2 LinearHashTable_ Linear Probing_files/img2245.png" width="146"/></span>.
+</dd>
+<dt><a name="foot27412">...
+series.</a><a href="http://opendatastructures.org/ods-python/5_2_LinearHashTable_Linear_.html#tex2html46"><sup><span class="arabic">5</span>.<span class="arabic">3</span></sup></a></dt>
+<dd>In the terminology of many calculus texts, this sum
+passes the ratio test:  There exists a positive integer <span class="MATH"><img align="MIDDLE" alt="$ k_0$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2286.png" width="19"/></span> such
+that, for all <span class="MATH"><img align="MIDDLE" alt="$ k\ge k_0$" border="0" height="30" src="static/5.2 LinearHashTable_ Linear Probing_files/img2287.png" width="45"/></span>, <!-- MATH
+ $\frac{(k+1)^2c^{k+1}}{k^2c^k} < 1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \frac{(k+1)^2c^{k+1}}{k^2c^k} &lt; 1$" border="0" height="46" src="static/5.2 LinearHashTable_ Linear Probing_files/img2288.png" width="90"/></span>.
+</dd>
+</dl>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/5.2 LinearHashTable_ Linear Probing_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

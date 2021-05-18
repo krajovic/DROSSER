@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0067)http://opendatastructures.org/ods-python/11_Sorting_Algorithms.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>11. Sorting Algorithms</title>
+<meta content="11. Sorting Algorithms" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/11. Sorting Algorithms_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/12_Graphs.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/10_Heaps.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/ods-python-html.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION001400000000000000000"></a>
+<a name="chap:sorting"></a>
+<br/>
+<span class="arabic">11</span>. Sorting Algorithms
+</h1>
+<p>
+This chapter discusses algorithms for sorting a set of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11. Sorting Algorithms_files/img4065.png" width="13"/></span> items.
+This might seem like a strange topic for a book on data structures, but
+there are several good reasons for including it here.  The most obvious
+reason is that two of these sorting algorithms (quicksort and heap-sort)
+are intimately related to two of the data structures we have already
+studied (random binary search trees and heaps, respectively).
+</p><p>
+The first part of this chapter discusses algorithms that sort using only
+comparisons and presents three algorithms that run in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11. Sorting Algorithms_files/img4066.png" width="71"/></span>
+time.  As it turns out, all three algorithms are asymptotically optimal;
+no algorithm that uses only comparisons can avoid doing roughly <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/11. Sorting Algorithms_files/img4067.png" width="47"/></span> comparisons in the worst case and even the average case.
+</p><p>
+Before continuing, we should note that any of the SSet or priority
+Queue implementations presented in previous chapters can also
+be used to obtain an <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11. Sorting Algorithms_files/img4068.png" width="71"/></span> time sorting algorithm.
+For example, we can sort <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11. Sorting Algorithms_files/img4069.png" width="13"/></span> items by performing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11. Sorting Algorithms_files/img4070.png" width="13"/></span> <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/11. Sorting Algorithms_files/img4071.png" width="50"/></span>
+operations followed by <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11. Sorting Algorithms_files/img4072.png" width="13"/></span> <!-- MATH
+ $\ensuremath{\mathrm{remove}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}()}$" border="0" height="31" src="static/11. Sorting Algorithms_files/img4073.png" width="67"/></span> operations on a BinaryHeap
+or MeldableHeap. Alternatively, we can use <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11. Sorting Algorithms_files/img4074.png" width="13"/></span> <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/11. Sorting Algorithms_files/img4075.png" width="50"/></span> operations
+on any of the binary search tree data structures and then perform an
+in-order traversal (Exercise <a href="http://opendatastructures.org/ods-python/6_3_Discussion_Exercises.html#exc:tree-traversal">6.8</a>) to extract the elements in
+sorted order.  However, in both cases we go through a lot of overhead to
+build a structure that is never fully used.  Sorting is such an important
+problem that it is worthwhile developing direct methods that are as fast,
+simple, and space-efficient as possible.
+</p><p>
+The second part of this chapter shows that, if we allow other
+operations besides comparisons, then all bets are off.  Indeed, by using
+array-indexing, it is possible to sort a set of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11. Sorting Algorithms_files/img4076.png" width="13"/></span> integers in the range
+<!-- MATH
+ $\{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}^c-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}^c-1\}$" border="0" height="31" src="static/11. Sorting Algorithms_files/img4077.png" width="91"/></span> in <!-- MATH
+ $O(c\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(c\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11. Sorting Algorithms_files/img4078.png" width="43"/></span> time.
+</p><p>
+<br/></p><hr/>
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/11. Sorting Algorithms_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

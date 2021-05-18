@@ -1,0 +1,809 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/8_1_ScapegoatTree_Binary_Se.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>8.1 ScapegoatTree: A Binary Search Tree with Partial Rebuilding</title>
+<meta content="8.1 ScapegoatTree: A Binary Search Tree with Partial Rebuilding" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/8_2_Discussion_Exercises.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/8_Scapegoat_Trees.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/8_Scapegoat_Trees.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/8_2_Discussion_Exercises.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<hr/>
+<h1><a name="SECTION001110000000000000000"></a>
+<a name="sec:scapegoattree"></a>
+<br/>
+<span class="arabic">8</span>.<span class="arabic">1</span> ScapegoatTree: A Binary Search Tree with Partial Rebuilding
+</h1>
+<p>
+<a name="40068"></a>A ScapegoatTree is a BinarySearchTree that, in addition to keeping
+track of the number, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3231.png" width="13"/></span>, of  nodes in the tree also keeps a counter, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3232.png" width="12"/></span>,
+that maintains an upper-bound on the number of nodes. 
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{initialize}(...
+...th{\ensuremath{\mathit{q}} \gets \ensuremath{0}}\\
+\end{flushleft}\end{leftbar}" border="0" height="86" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3233.png" width="112"/>
+<br/>
+At all times, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3234.png" width="13"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3235.png" width="12"/></span> obey the following inequalities:
+</p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}/2 \le  \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \le \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}  \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}/2 \le \ensurema...
+...\mathit{n}}}} \le \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}} \enspace .
+$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3236.png" width="91"/>
+</div><p></p>
+In addition, a ScapegoatTree has logarithmic height; at all times, the height of the scapegoat tree does not exceed
+<p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:scapegoat-height"></a><!-- MATH
+ \begin{equation}
+\log_{3/2} \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}} \le \log_{3/2} 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} < \log_{3/2} \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} + 2\enspace .
+\end{equation}
+ -->
+<table align="CENTER" cellpadding="0" class="equation" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="CENTER" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \log_{3/2} \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}} \le ...
+...}} &lt; \log_{3/2} \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} + 2\enspace .$" border="0" height="30" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3237.png" width="235"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+(<span class="arabic">8</span>.<span class="arabic">1</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+Even with this constraint, a ScapegoatTree can look surprisingly unbalanced.  The tree in Figure <a href="http://opendatastructures.org/ods-python/8_1_ScapegoatTree_Binary_Se.html#fig:scapegoat-example">8.1</a> has <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=10$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}=10$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3238.png" width="73"/></span> and height <!-- MATH
+ $5<\log_{3/2}10 \approx 5.679$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 5&lt;\log_{3/2}10 \approx 5.679$" border="0" height="30" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3239.png" width="145"/></span>.
+<p>
+</p><div align="CENTER"><a name="fig:scapegoat-example"></a><a name="40107"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 8.1:</strong>
+A ScapegoatTree with 10 nodes and height 5.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/scapegoat-insert-1}" border="0" height="219" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3240.png" width="199"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Implementing the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3241.png" width="52"/></span> operation in a ScapegoatTree is done
+using the standard algorithm for searching in a BinarySearchTree
+(see Section <a href="http://opendatastructures.org/ods-python/6_2_BinarySearchTree_Unbala.html#sec:binarysearchtree">6.2</a>).  This takes time proportional to the
+height of the tree which, by (<a href="http://opendatastructures.org/ods-python/8_1_ScapegoatTree_Binary_Se.html#eq:scapegoat-height">8.1</a>) is <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3242.png" width="60"/></span>.
+</p><p>
+To implement the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3243.png" width="50"/></span> operation, we first increment <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3244.png" width="13"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3245.png" width="12"/></span>
+and then use the usual algorithm for adding <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3246.png" width="12"/></span> to a binary search
+tree; we search for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3247.png" width="12"/></span> and then add a new leaf <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3248.png" width="13"/></span> with <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{x}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{x}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3249.png" width="51"/></span>.
+At this point, we may get lucky and the depth of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3250.png" width="13"/></span> might not exceed
+<!-- MATH
+ $\log_{3/2}\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log_{3/2}\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$" border="0" height="30" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3251.png" width="54"/></span>. If so, then we leave well enough alone and don't do
+anything else.
+</p><p>
+Unfortunately, it will sometimes happen that <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{depth}(\ensuremath{\mathit{u}})}} > \log_{3/2}
+\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{depth}(\ensuremath{\mathit{u}})}} &gt; \log_{3/2}
+\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3252.png" width="132"/></span>.  In this case, we need to reduce the height.  This isn't a big
+job; there is only one node, namely <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3253.png" width="13"/></span>, whose depth exceeds <!-- MATH
+ $\log_{3/2}
+\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log_{3/2}
+\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$" border="0" height="30" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3254.png" width="54"/></span>.  To fix <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3255.png" width="13"/></span>, we walk from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3256.png" width="13"/></span> back up to the root looking for a
+<span class="textit">scapegoat</span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3257.png" width="16"/></span>.  The scapegoat, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3258.png" width="16"/></span>, is a very unbalanced node.
+It has the property that
+</p><p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:scapegoat"></a><!-- MATH
+ \begin{equation}
+\frac{\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}}.\ensuremath{\mathit{child}})}}}{\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}}} > \frac{2}{3} \enspace ,
+\end{equation}
+ -->
+<table align="CENTER" cellpadding="0" class="equation" width="100%">
+<tbody><tr valign="MIDDLE">
+<td align="CENTER" nowrap=""><span class="MATH"><img align="MIDDLE" alt="$\displaystyle \frac{\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w...
+...{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}}} &gt; \frac{2}{3} \enspace ,$" border="0" height="52" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3259.png" width="134"/></span></td>
+<td align="RIGHT" class="eqno" nowrap="" width="10">
+(<span class="arabic">8</span>.<span class="arabic">2</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"/><p></p>
+where <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{child}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{child}}}$" border="0" height="30" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3260.png" width="52"/></span> is the child of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3261.png" width="16"/></span> on the path from the root to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3262.png" width="13"/></span>.
+We'll very shortly prove that a scapegoat exists.  For now, we can
+take it for granted.  Once we've found the scapegoat <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3263.png" width="16"/></span>, we completely
+destroy the subtree rooted at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3264.png" width="16"/></span> and rebuild it into a perfectly balanced
+binary search tree.  We know, from (<a href="http://opendatastructures.org/ods-python/8_1_ScapegoatTree_Binary_Se.html#eq:scapegoat">8.2</a>), that, even before
+the addition of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3265.png" width="13"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3266.png" width="16"/></span>'s subtree was not a complete binary tree.
+Therefore, when we rebuild <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3267.png" width="16"/></span>, the height decreases by at least 1 so that the height of the ScapegoatTree is once again at most <!-- MATH
+ $\log_{3/2}\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log_{3/2}\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$" border="0" height="30" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3268.png" width="54"/></span>.
+<p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+% latex2html id marker 40162\begin{flushleft}
+\hspace*{1em} \e...
+...urn}} \ensuremath{\ensuremath{\mathit{d}} \ge 0}\\
+\end{flushleft}\end{leftbar}" border="0" height="198" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3269.png" width="346"/>
+<br/>
+</p><p>
+</p><div align="CENTER"><a name="40936"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 8.2:</strong>
+Inserting 3.5 into a ScapegoatTree increases its height to 6, which violates (<a href="http://opendatastructures.org/ods-python/8_1_ScapegoatTree_Binary_Se.html#eq:scapegoat-height">8.1</a>) since <!-- MATH
+ $6 > \log_{3/2} 11 \approx 5.914$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 6 &gt; \log_{3/2} 11 \approx 5.914$" border="0" height="30" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3272.png" width="145"/></span>.  A scapegoat is found at the node containing 5.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table align="CENTER" cellpadding="3">
+<tbody><tr><td align="CENTER"><img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/scapegoat-insert-3}" border="0" height="258" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3270.png" width="199"/></td>
+<td align="CENTER"><img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/scapegoat-insert-4}" border="0" height="179" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3271.png" width="160"/></td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+If we ignore the cost of finding the scapegoat <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3273.png" width="16"/></span> and rebuilding the
+subtree rooted at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3274.png" width="16"/></span>, then the running time of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3275.png" width="50"/></span> is dominated
+by the initial search, which takes <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}) = O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}) = O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3276.png" width="132"/></span> time.
+We will account for the cost of finding the scapegoat and rebuilding
+using amortized analysis in the next section.
+<p>
+The implementation of <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3277.png" width="75"/></span> in a ScapegoatTree is very simple.
+We search for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3278.png" width="12"/></span> and remove it using the usual algorithm for removing a
+node from a BinarySearchTree.  (Note that this can never increase the
+height of the tree.)  Next, we decrement <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3279.png" width="13"/></span>, but leave <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3280.png" width="12"/></span> unchanged.
+Finally, we check if <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}} > 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}} &gt; 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3281.png" width="46"/></span> and, if so, then we <span class="textit">rebuild the entire
+tree</span> into a perfectly balanced binary search tree and set <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3282.png" width="38"/></span>.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove}(\ens...
+...eturn}} \ensuremath{\ensuremath{\mathit{false}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="163" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3283.png" width="224"/>
+<br/>
+Again, if we ignore the cost of rebuilding, the running time of the
+<!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3284.png" width="75"/></span> operation is proportional to the height of the tree, and is
+therefore <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3285.png" width="60"/></span>.
+</p><p>
+</p><h2><a name="SECTION001111000000000000000">
+<span class="arabic">8</span>.<span class="arabic">1</span>.<span class="arabic">1</span> Analysis of Correctness and Running-Time</a>
+</h2>
+<p>
+In this section, we analyze the correctness and amortized running time
+of operations on a ScapegoatTree.  We first prove the correctness by
+showing that, when the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3286.png" width="50"/></span> operation results in a node that violates
+Condition (<a href="http://opendatastructures.org/ods-python/8_1_ScapegoatTree_Binary_Se.html#eq:scapegoat-height">8.1</a>), then we can always find a scapegoat:
+</p><p>
+</p><p>
+</p><div><b>Lemma  <span class="arabic">8</span>..<span class="arabic">1</span></b>   
+<i>Let <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3287.png" width="13"/></span> be a node of depth <!-- MATH
+ $h>\log_{3/2} \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ h&gt;\log_{3/2} \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}$" border="0" height="30" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3288.png" width="79"/></span> in a ScapegoatTree.
+  Then there exists a node <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3289.png" width="16"/></span> on the path from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3290.png" width="13"/></span> to the root
+  such that
+  </i><p><!-- MATH
+ \begin{displaymath}
+\frac{\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}}}{\ensuremath{\ensuremath{\mathrm{size}(\mathrm{parent}(\ensuremath{\mathit{w}})})}} > 2/3 \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \frac{\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w...
+...h{\mathrm{size}(\mathrm{parent}(\ensuremath{\mathit{w}})})}} &gt; 2/3 \enspace .
+$" border="0" height="52" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3291.png" width="166"/>
+</div><p></p></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  Suppose, for the sake of contradiction, that this is not the case, and
+  <p><!-- MATH
+ \begin{displaymath}
+\frac{\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}}}{\ensuremath{\ensuremath{\mathrm{size}(\mathrm{parent}(\ensuremath{\mathit{w}})})}} \le 2/3 \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \frac{\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w...
+...\mathrm{size}(\mathrm{parent}(\ensuremath{\mathit{w}})})}} \le 2/3 \enspace .
+$" border="0" height="52" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3293.png" width="167"/>
+</div><p></p>
+for all nodes <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3294.png" width="16"/></span> on the path from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3295.png" width="13"/></span> to the root.  Denote the path
+  from the root to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3296.png" width="13"/></span> as <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_h=\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{r}}}}=\ensuremath{\ensuremath{\ens...
+...h{\ensuremath{\mathit{u}}}}_h=\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3297.png" width="115"/></span>.  Then, we have
+  <!-- MATH
+ $\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_0\ensuremath{)}=\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_0\ensuremath{)}=\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3298.png" width="84"/></span>,
+  <!-- MATH
+ $\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_1\ensuremath{)}\le\frac{2}{3}\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_1\ensuremath{)}\le\frac{2}{3}\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="36" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3299.png" width="95"/></span>, 
+  <!-- MATH
+ $\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_2\ensuremath{)}\le\frac{4}{9}\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_2\ensuremath{)}\le\frac{4}{9}\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="36" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3300.png" width="95"/></span> and, more generally,
+  <p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_i\ensuremath{)}\le\left(\frac{2}{3}\right)^i\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}...
+...ac{2}{3}\right)^i\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \enspace .
+$" border="0" height="57" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3301.png" width="126"/>
+</div><p></p>
+But this gives a contradiction, since <!-- MATH
+ $\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}}\ge 1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}}\ge 1$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3302.png" width="77"/></span>, hence
+  <p><!-- MATH
+ \begin{displaymath}
+1 \le \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}} \le \left(\frac{2}{3}\right)^h\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}
+   < \left(\frac{2}{3}\right)^{\log_{3/2} \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}}\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}
+   \le \left(\frac{2}{3}\right)^{\log_{3/2} \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}
+   = \left(\frac{1}{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}\right) \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}
+   = 1 \enspace . \qedhere
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle 1 \le \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u...
+...t) \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}
+= 1 \enspace . \qedhere
+$" border="0" height="58" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3303.png" width="417"/>
+</div><p></p> <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3292.png" width="17"/>
+</div><p></p>
+<p>
+Next, we analyze the parts of the running time that are not yet
+accounted for.  There are two parts:  The cost of calls to <!-- MATH
+ $\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3304.png" width="50"/></span>
+when searching for scapegoat nodes, and the cost of calls to <!-- MATH
+ $\ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{w}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{w}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3305.png" width="78"/></span>
+when we find a scapegoat <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3306.png" width="16"/></span>.  The cost of calls to <!-- MATH
+ $\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3307.png" width="50"/></span> can be
+related to the cost of calls to <!-- MATH
+ $\ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{w}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{w}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3308.png" width="78"/></span>, as follows:
+</p><p>
+</p><div><b>Lemma  <span class="arabic">8</span>..<span class="arabic">2</span></b>   
+<i>During a call to <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3309.png" width="50"/></span> in a ScapegoatTree, the cost of finding the scapegoat <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3310.png" width="16"/></span> and rebuilding the subtree rooted at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3311.png" width="16"/></span> is <!-- MATH
+ $O(\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}})$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3312.png" width="76"/></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+The cost of rebuilding the scapegoat node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3314.png" width="16"/></span>, once we find it, is
+<!-- MATH
+ $O(\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}})$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3315.png" width="76"/></span>.  When searching for the scapegoat node, we call <!-- MATH
+ $\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3316.png" width="50"/></span>
+on a sequence of nodes <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_k$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_k$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3317.png" width="65"/></span> until we find the scapegoat
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_k=\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_k=\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3318.png" width="49"/></span>.  However, since <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_k$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_k$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3319.png" width="20"/></span> is the first node in this sequence
+that is a scapegoat, we know that
+<p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_{i}\ensuremath{)} < \frac{2}{3}\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_{i+1}\ensuremath{)}
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}...
+...th{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_{i+1}\ensuremath{)}
+$" border="0" height="50" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3320.png" width="150"/>
+</div><p></p>
+for all <!-- MATH
+ $i\in\{0,\ldots,k-2\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ i\in\{0,\ldots,k-2\}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3321.png" width="106"/></span>.  Therefore, the cost of all calls to <!-- MATH
+ $\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3322.png" width="50"/></span> is
+<br/>
+<div align="CENTER" class="mathdisplay">
+<!-- MATH
+ \begin{eqnarray*}
+O\left( \sum_{i=0}^k \ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_{k-i}\ensuremath{)} \right)
+ &=& O\left(
+  \ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_k\ensuremath{)}
+  + \sum_{i=0}^{k-1} \ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_{k-i-1}\ensuremath{)}
+  \right) \\
+ &=& O\left(
+  \ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_k\ensuremath{)} 
+  + \sum_{i=0}^{k-1} \left(\frac{2}{3}\right)^i\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_{k}\ensuremath{)}
+  \right) \\
+&=& O\left(
+  \ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_k\ensuremath{)}\left(1+ 
+   \sum_{i=0}^{k-1} \left(\frac{2}{3}\right)^i
+  \right)\right) \\
+&=& O(\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_k\ensuremath{)}) = O(\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}}) \enspace ,
+\end{eqnarray*}
+ -->
+<table align="CENTER" cellpadding="0" width="100%">
+<tbody><tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle O\left( \sum_{i=0}^k \ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_{k-i}\ensuremath{)} \right)$" border="0" height="68" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3323.png" width="122"/></td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle =$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3324.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle O\left(
+\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\ma...
+...emath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_{k-i-1}\ensuremath{)}
+\right)$" border="0" height="68" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3325.png" width="205"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle =$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3326.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle O\left(
+\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\ma...
+...nsuremath{size}(\ensuremath{\ensuremath{\mathit{u}}}}_{k}\ensuremath{)}
+\right)$" border="0" height="68" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3327.png" width="211"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle =$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3328.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle O\left(
+\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\ma...
+...nsuremath{)}\left(1+
+\sum_{i=0}^{k-1} \left(\frac{2}{3}\right)^i
+\right)\right)$" border="0" height="68" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3329.png" width="181"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+<tr valign="MIDDLE"><td align="RIGHT" nowrap="" width="50%"> </td>
+<td align="CENTER" nowrap="" width="10"><img align="MIDDLE" alt="$\displaystyle =$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3330.png" width="15"/></td>
+<td align="LEFT" nowrap="" width="50%"><img align="MIDDLE" alt="$\displaystyle O(\ensuremath{\ensuremath{size}(\ensuremath{\ensuremath{\mathit{u...
+... O(\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{w}})}}) \enspace ,$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3331.png" width="182"/></td>
+<td align="RIGHT" class="eqno" width="10">
+ </td></tr>
+</tbody></table></div>
+<br clear="ALL"/>
+where the last line follows from the fact that the sum is a geometrically decreasing series.
+ <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3313.png" width="17"/>
+</div><p></p>
+<p>
+All that remains is to prove an upper-bound on the cost of all calls to
+<!-- MATH
+ $\ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3332.png" width="75"/></span> during a sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3333.png" width="17"/></span> operations:
+</p><p>
+</p><p>
+</p><div><a name="lem:scapegoat-amortized"><b>Lemma  <span class="arabic">8</span>..<span class="arabic">3</span></b></a>   
+<i>Starting with an empty ScapegoatTree any sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3334.png" width="17"/></span> <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3335.png" width="50"/></span>
+  and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3336.png" width="75"/></span> operations causes at most <!-- MATH
+ $O(m\log m)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(m\log m)$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3337.png" width="78"/></span> time to be used
+  by <!-- MATH
+ $\ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3338.png" width="75"/></span> operations.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  To prove this, we will use a <span class="textit">credit scheme</span>.
+  <a name="40463"></a>We imagine that each node
+  stores a number of credits.  Each credit can pay for some constant,
+  <span class="MATH"><img align="MIDDLE" alt="$ c$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3340.png" width="11"/></span>, units of time spent rebuilding.  The scheme gives out a total of
+  <!-- MATH
+ $O(m\log m)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(m\log m)$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3341.png" width="78"/></span> credits and every call to <!-- MATH
+ $\ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3342.png" width="75"/></span> is paid for with
+  credits stored at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3343.png" width="13"/></span>.
+<p>
+During an insertion or deletion, we give one credit to each node on the
+  path to the inserted node, or deleted node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3344.png" width="13"/></span>.  In this way we hand
+  out at most <!-- MATH
+ $\log_{3/2}\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}\le \log_{3/2}m$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log_{3/2}\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}\le \log_{3/2}m$" border="0" height="30" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3345.png" width="127"/></span> credits per operation.
+  During a deletion we also store an additional credit ``on the side.''
+  Thus, in total we give out at most <!-- MATH
+ $O(m\log m)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(m\log m)$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3346.png" width="78"/></span> credits.  All that
+  remains is to show that these credits are sufficient to pay for all
+  calls to <!-- MATH
+ $\ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3347.png" width="75"/></span>.
+</p><p>
+If we call <!-- MATH
+ $\ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3348.png" width="75"/></span> during an insertion, it is because <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3349.png" width="13"/></span> is
+  a scapegoat.  Suppose, without loss of generality, that
+  </p><p><!-- MATH
+ \begin{displaymath}
+\frac{\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}})}}}{\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}}} > \frac{2}{3} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \frac{\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u...
+...ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}}} &gt; \frac{2}{3} \enspace .
+$" border="0" height="52" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3350.png" width="120"/>
+</div><p></p>
+Using the fact that
+  <p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}} = 1 + \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}})}} + \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}})}}
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}} ...
+...uremath{\mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}})}}
+$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3351.png" width="261"/>
+</div><p></p>
+we deduce that
+  <p><!-- MATH
+ \begin{displaymath}
+\frac{1}{2}\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}})}} > \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}})}}  \enspace
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \frac{1}{2}\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mat...
+...mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}})}} \enspace
+$" border="0" height="50" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3352.png" width="195"/>
+</div><p></p>
+and therefore
+  <p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}})}} - \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}})}} > \frac{1}{2}\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}})}} >
+    \frac{1}{3}\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}}  \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\en...
+...3}\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}} \enspace .
+$" border="0" height="50" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3353.png" width="361"/>
+</div><p></p>
+Now, the last time a subtree containing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3354.png" width="13"/></span> was rebuilt (or when <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3355.png" width="13"/></span>
+  was inserted, if a subtree containing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3356.png" width="13"/></span> was never rebuilt), we had
+  <p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}})}} - \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}})}} \le 1 \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}}.\en...
+...size}(\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}})}} \le 1 \enspace .
+$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3357.png" width="211"/>
+</div><p></p>
+Therefore, the number of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3358.png" width="50"/></span> or <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3359.png" width="75"/></span> operations that have
+  affected <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}}}$" border="0" height="30" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3360.png" width="38"/></span> or <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}}}$" border="0" height="30" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3361.png" width="50"/></span> since then is at least
+  <p><!-- MATH
+ \begin{displaymath}
+\frac{1}{3}\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}} - 1 \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \frac{1}{3}\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}} - 1 \enspace .
+$" border="0" height="50" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3362.png" width="98"/>
+</div><p></p>
+and there are therefore at least this many credits stored at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3363.png" width="13"/></span>
+  that are available to pay for the <!-- MATH
+ $O(\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\mathrm{size}(\ensuremath{\mathit{u}})}})$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3364.png" width="74"/></span> time it takes to
+  call <!-- MATH
+ $\ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3365.png" width="75"/></span>.
+<p>
+If we call <!-- MATH
+ $\ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3366.png" width="75"/></span> during a deletion, it is because <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}} > 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}} &gt; 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3367.png" width="46"/></span>.
+  In this case, we have <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}> \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{q}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}&gt; \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3368.png" width="62"/></span> credits stored ``on the side,'' and
+  we use these to pay for the <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3369.png" width="36"/></span> time it takes to rebuild the root.
+  This completes the proof.
+ <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3339.png" width="17"/>
+</p></div><p></p>
+<p>
+</p><h2><a name="SECTION001112000000000000000">
+<span class="arabic">8</span>.<span class="arabic">1</span>.<span class="arabic">2</span> Summary</a>
+</h2>
+The following theorem summarizes the performance of the ScapegoatTree data structure:
+<p>
+</p><p>
+</p><div><a name="thm:scapegoat"><b>Theorem  <span class="arabic">8</span>..<span class="arabic">1</span></b></a>   
+<i>A ScapegoatTree implements the SSet interface. Ignoring the cost
+  of <!-- MATH
+ $\ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3370.png" width="75"/></span> operations, a ScapegoatTree supports the operations
+  <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3371.png" width="50"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3372.png" width="75"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3373.png" width="52"/></span> in <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3374.png" width="60"/></span> time per operation.
+</i>
+<p>
+<i>Furthermore, beginning with an empty ScapegoatTree, any sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3375.png" width="17"/></span>
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3376.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3377.png" width="75"/></span> operations results in a total of <!-- MATH
+ $O(m\log m)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(m\log m)$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3378.png" width="78"/></span>
+  time spent during all calls to <!-- MATH
+ $\ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rebuild}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/img3379.png" width="75"/></span>.</i></p></div><p></p>
+<p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/8.1 ScapegoatTree_ A Binary Search Tree with Partial Rebuilding_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

@@ -1,0 +1,982 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/3_3_SEList_Space_Efficient_.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>3.3 SEList: A Space-Efficient Linked List</title>
+<meta content="3.3 SEList: A Space-Efficient Linked List" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/3.3 SEList_ A Space-Efficient Linked List_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/3_4_Discussion_Exercises.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/3_2_DLList_Doubly_Linked_Li.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/3_Linked_Lists.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/3_4_Discussion_Exercises.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<hr/>
+<h1><a name="SECTION00630000000000000000"></a>
+<a name="sec:selist"></a>
+<br/>
+<span class="arabic">3</span>.<span class="arabic">3</span> SEList: A Space-Efficient Linked List
+</h1>
+<p>
+<a name="13689"></a><a name="13690"></a>One of the drawbacks of linked lists (besides the time it takes to access
+elements that are deep within the list) is their space usage.  Each node
+in a DLList requires an additional two references to the next and
+previous nodes in the list.  Two of the fields in a Node are dedicated
+to maintaining the list, and only one of the fields is for storing data!
+</p><p>
+An SEList (space-efficient list) reduces this wasted space using
+a simple idea: Rather than store individual elements in a DLList,
+we store a block (array) containing several items. More precisely, an
+SEList is parameterized by a <span class="textit">block size</span> <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1252.png" width="12"/></span>. Each individual
+node in an SEList stores a block that can hold up to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}+1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}+1}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1253.png" width="36"/></span> elements.
+</p><p>
+For reasons that will become clear later, it will be helpful if we can
+do Deque operations on each block.  The data structure that we choose
+for this is a BDeque (bounded deque),
+<a name="13694"></a><a name="13695"></a><a name="13696"></a>derived from the ArrayDeque
+structure described in Section <a href="http://opendatastructures.org/ods-python/2_4_ArrayDeque_Fast_Deque_O.html#sec:arraydeque">2.4</a>.  The BDeque differs from the
+ArrayDeque in one small way: When a new BDeque is created, the size
+of the backing array <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1254.png" width="12"/></span> is fixed at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}+1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}+1}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1255.png" width="36"/></span> and never grows or shrinks.
+The important property of a BDeque is that it allows for the addition
+or removal of elements at either the front or back in constant time. This
+will be useful as elements are shifted from one block to another.
+</p><p>
+</p><p>
+An SEList is just a doubly-linked list of blocks. In addition to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{next}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{next}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1256.png" width="33"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{prev}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{prev}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1257.png" width="33"/></span> pointers, each node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1258.png" width="13"/></span> in an SEList contains a BDeque, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{d}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{d}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1259.png" width="25"/></span>.
+</p><p>
+</p><h2><a name="SECTION00631000000000000000">
+<span class="arabic">3</span>.<span class="arabic">3</span>.<span class="arabic">1</span> Space Requirements</a>
+</h2>
+<p>
+An SEList places very tight restrictions on the number of elements
+in a block: Unless a block is the last block, then that block contains
+at least <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1260.png" width="36"/></span> and at most <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1261.png" width="36"/></span> elements.  This means that, if an
+SEList contains <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1262.png" width="13"/></span> elements, then it has at most
+</p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1) + 1 = O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/(\ensuremath{\e...
+...h{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})
+$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1263.png" width="149"/>
+</div><p></p>
+blocks.  The BDeque for each block contains an array of length <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1264.png" width="36"/></span>
+but, for every block except the last, at most a constant amount of
+space is wasted in this array.  The remaining memory used by a block is
+also constant.  This means that the wasted space in an SEList is only
+<!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1265.png" width="74"/></span>.  By choosing a value of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1266.png" width="12"/></span> within a constant factor
+of <!-- MATH
+ $\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}$" border="0" height="35" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1267.png" width="25"/></span>, we can make the space-overhead of an SEList approach
+the <!-- MATH
+ $\sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \sqrt{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}$" border="0" height="35" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1268.png" width="25"/></span> lower bound given in Section <a href="http://opendatastructures.org/ods-python/2_6_RootishArrayStack_Space.html#sec:rootishspaceusage">2.6.2</a>.
+<p>
+</p><h2><a name="SECTION00632000000000000000">
+<span class="arabic">3</span>.<span class="arabic">3</span>.<span class="arabic">2</span> Finding Elements</a>
+</h2>
+<p>
+The first challenge we face with an SEList is finding the list item
+with a given index <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1269.png" width="9"/></span>.  Note that the location of an element consists
+of two parts: 
+</p><ol>
+<li>The node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1270.png" width="13"/></span> that contains the block that contains the element
+  with index <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1271.png" width="9"/></span>; and
+</li>
+<li>the index <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{j}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{j}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1272.png" width="9"/></span> of the element within its block.
+</li>
+</ol>
+<p>
+To find the block that contains a particular element, we proceed the same
+way as we do in a DLList.  We either start at the front of the list and
+traverse in the forward direction, or at the back of the list and traverse
+backwards until we reach the node we want.  The only difference is that,
+each time we move from one node to the next, we skip over a whole block
+of elements.
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{get\_locatio...
+...nsuremath{\mathit{i}}-\ensuremath{\mathit{idx}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="294" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1273.png" width="242"/>
+<br/>
+</p><p>
+Remember that, with the exception of at most one block, each block
+contains at least <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1274.png" width="36"/></span> elements, so each step in our search gets
+us <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1275.png" width="36"/></span> elements closer to the element we are looking for.  If we
+are searching forward, this means that we reach the node we want after
+<!-- MATH
+ $O(1+\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1276.png" width="70"/></span> steps.  If we search backwards, then we reach the node we
+want after <!-- MATH
+ $O(1+(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}})/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}})/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1277.png" width="105"/></span> steps.  The algorithm takes the smaller
+of these two quantities depending on the value of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1278.png" width="9"/></span>, so the time to
+locate the item with index <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1279.png" width="9"/></span> is <!-- MATH
+ $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensur...
+...{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1280.png" width="143"/></span>.
+</p><p>
+Once we know how to locate the item with index <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1281.png" width="9"/></span>, the <!-- MATH
+ $\ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1282.png" width="41"/></span> and
+<!-- MATH
+ $\ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1283.png" width="53"/></span> operations translate into getting or setting a particular
+index in the correct block:
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{get}(\ensure...
+...nsuremath{\mathit{j}}, \ensuremath{\mathit{x}})}\\
+\end{flushleft}\end{leftbar}" border="0" height="163" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1284.png" width="203"/>
+<br/>
+</p><p>
+The running times of these operations are dominated by the time it takes
+to locate the item, so they also run in <!-- MATH
+ $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensur...
+...{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1285.png" width="143"/></span>
+time.
+</p><p>
+</p><h2><a name="SECTION00633000000000000000">
+<span class="arabic">3</span>.<span class="arabic">3</span>.<span class="arabic">3</span> Adding an Element</a>
+</h2>
+<p>
+Adding elements to an SEList is a little more complicated.  Before
+considering the general case, we consider the easier operation, <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1286.png" width="50"/></span>,
+in which <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1287.png" width="12"/></span> is added to the end of the list.  If the last block is full
+(or does not exist because there are no blocks yet), then we first
+allocate a new block and append it to the list of blocks.  Now that
+we are sure that the last block exists and is not full, we append <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1288.png" width="12"/></span>
+to the last block.
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{append}(\ens...
+... \gets \ensuremath{\ensuremath{\mathit{n}} + 1}}\\
+\end{flushleft}\end{leftbar}" border="0" height="140" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1289.png" width="358"/>
+<br/>
+</p><p>
+Things get more complicated when we add to the interior of the list
+using <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1290.png" width="60"/></span>.  We first locate <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1291.png" width="9"/></span> to get the node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1292.png" width="13"/></span> whose block
+contains the <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1293.png" width="9"/></span>th list item.  The problem is that we want to insert
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1294.png" width="12"/></span> into <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1295.png" width="13"/></span>'s block, but we have to be prepared for the case where
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1296.png" width="13"/></span>'s block already contains <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1297.png" width="36"/></span> elements, so that it is full and
+there is no room for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1298.png" width="12"/></span>.
+</p><p>
+Let <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_1,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_2,\ldots$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ensuremath{\ensuremath{\e...
+...math{\mathit{u}}}}_1,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_2,\ldots$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1299.png" width="86"/></span> denote <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1300.png" width="13"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{next}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{next}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1301.png" width="46"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{next}}.\ensuremath{\mathit{next}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{next}}.\ensuremath{\mathit{next}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1302.png" width="79"/></span>,
+and so on.  We explore <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_1,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_2,\ldots$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ensuremath{\ensuremath{\e...
+...math{\mathit{u}}}}_1,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_2,\ldots$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1303.png" width="86"/></span> looking for a node
+that can provide space for <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1304.png" width="12"/></span>.  Three cases can occur during our
+space exploration (see Figure <a href="http://opendatastructures.org/ods-python/3_3_SEList_Space_Efficient_.html#fig:selist-add">3.4</a>):
+</p><p>
+</p><div align="CENTER"><a name="fig:selist-add"></a><a name="16800"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 3.4:</strong>
+The three cases that occur during the addition of an item <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1308.png" width="12"/></span> in the interior of an SEList.  (This SEList has block size <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}=3$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}=3$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1309.png" width="38"/></span>.)</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table align="CENTER" cellpadding="3">
+<tbody><tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/selist-add-a}" border="0" height="76" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1305.png" width="427"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/selist-add-b}" border="0" height="76" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1306.png" width="389"/></td>
+<td align="LEFT"> </td></tr>
+<tr><td align="LEFT"> </td><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/selist-add-c}" border="0" height="76" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1307.png" width="551"/></td>
+<td align="LEFT"> </td></tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><ol>
+<li>We quickly (in <!-- MATH
+ $r+1\le \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ r+1\le \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1310.png" width="61"/></span> steps) find a node <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1311.png" width="19"/></span> whose block
+is not full.  In this case, we perform <span class="MATH"><img align="MIDDLE" alt="$ r$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1312.png" width="11"/></span> shifts of an element from
+one block into the next, so that the free space in <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1313.png" width="19"/></span> becomes a
+free space in <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1314.png" width="21"/></span>.  We can then insert <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1315.png" width="12"/></span> into <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1316.png" width="21"/></span>'s block.
+<p>
+</p></li>
+<li>We quickly (in <!-- MATH
+ $r+1\le \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ r+1\le \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1317.png" width="61"/></span> steps) run off the end of the list
+of blocks.  In this case, we add a new empty block to the end of the
+list of blocks and proceed as in the first case.
+<p>
+</p></li>
+<li>After <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1318.png" width="12"/></span> steps we do not find any block that is not full.
+In this case, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensure...
+...\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1319.png" width="79"/></span> is a sequence of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1320.png" width="12"/></span> blocks
+that each contain <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1321.png" width="36"/></span> elements.  We insert a new block <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1322.png" width="20"/></span>
+at the end of this sequence and <span class="textit">spread</span> the original <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1)$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1323.png" width="54"/></span>
+elements so that each block of <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1324.png" width="65"/></span> contains exactly
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1325.png" width="12"/></span> elements.  Now <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1326.png" width="21"/></span>'s block contains only <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1327.png" width="12"/></span> elements so it has
+room for us to insert <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1328.png" width="12"/></span>.
+</li>
+</ol>
+<p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+% latex2html id marker 14000\begin{flushleft}
+\hspace*{1em} \e...
+... \gets \ensuremath{\ensuremath{\mathit{n}} + 1}}\\
+\end{flushleft}\end{leftbar}" border="0" height="407" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1329.png" width="492"/>
+<br/>
+</p><p>
+The running time of the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1330.png" width="60"/></span> operation depends on which of
+the three cases above occurs.  Cases 1 and 2 involve examining and
+shifting elements through at most <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1331.png" width="12"/></span> blocks and take <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1332.png" width="35"/></span> time.
+Case 3 involves calling the <!-- MATH
+ $\ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1333.png" width="71"/></span> method, which  moves <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1)$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1334.png" width="54"/></span>
+elements and takes <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}^2)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}^2)$" border="0" height="35" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1335.png" width="43"/></span> time.  If we ignore the cost of Case 3
+(which we will account for later with amortization) this means that
+the total running time to locate <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1336.png" width="9"/></span> and perform the insertion of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1337.png" width="12"/></span>
+is <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+\min\{\ensuremath{\ensurem...
+...{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1338.png" width="142"/></span>.
+</p><p>
+</p><h2><a name="SECTION00634000000000000000">
+<span class="arabic">3</span>.<span class="arabic">3</span>.<span class="arabic">4</span> Removing an Element</a>
+</h2>
+<p>
+Removing an element from an SEList is similar to adding an element.
+We first locate the node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1339.png" width="13"/></span> that contains the element with index <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1340.png" width="9"/></span>.
+Now, we have to be prepared for the case where we cannot remove an element
+from <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1341.png" width="13"/></span> without causing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1342.png" width="13"/></span>'s block to become smaller than <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1343.png" width="36"/></span>.
+</p><p>
+Again, let <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_1,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_2,\ldots$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ensuremath{\ensuremath{\e...
+...math{\mathit{u}}}}_1,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_2,\ldots$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1344.png" width="86"/></span> denote <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1345.png" width="13"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{next}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{next}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1346.png" width="46"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{next}}.\ensuremath{\mathit{next}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{next}}.\ensuremath{\mathit{next}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1347.png" width="79"/></span>,
+and so on.  We examine <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_1,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_2,\ldots$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ensuremath{\ensuremath{\e...
+...math{\mathit{u}}}}_1,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_2,\ldots$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1348.png" width="86"/></span> in order to look
+for a node from which we can borrow an element to make the size of
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1349.png" width="21"/></span>'s block at least <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1350.png" width="36"/></span>.  There are three cases to consider
+(see Figure <a href="http://opendatastructures.org/ods-python/3_3_SEList_Space_Efficient_.html#fig:selist-remove">3.5</a>):
+</p><p>
+</p><div align="CENTER"><a name="fig:selist-remove"></a><a name="16804"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 3.5:</strong>
+The three cases that occur during the removal of an item <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1354.png" width="12"/></span> in the interior of an SEList.  (This SEList has block size <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}=3$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}=3$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1355.png" width="38"/></span>.)</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table align="CENTER" cellpadding="3">
+<tbody><tr><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/selist-remove-a}" border="0" height="72" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1351.png" width="401"/></td>
+</tr>
+<tr><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/selist-remove-b}" border="0" height="72" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1352.png" width="366"/></td>
+</tr>
+<tr><td align="LEFT"><img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/selist-remove-c}" border="0" height="72" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1353.png" width="401"/></td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><ol>
+<li>We quickly (in <!-- MATH
+ $r+1\le \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ r+1\le \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1356.png" width="61"/></span> steps) find a node whose block contains
+more than <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1357.png" width="36"/></span> elements. In this case, we perform <span class="MATH"><img align="MIDDLE" alt="$ r$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1358.png" width="11"/></span> shifts of an
+element from one block into the previous one, so that the extra element
+in <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1359.png" width="19"/></span> becomes an extra element in <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1360.png" width="21"/></span>.  We can then remove the
+appropriate element from <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1361.png" width="21"/></span>'s block.
+<p>
+</p></li>
+<li>We quickly (in <!-- MATH
+ $r+1\le \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ r+1\le \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1362.png" width="61"/></span> steps) run off the end of the list of
+blocks.  In this case, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1363.png" width="19"/></span> is the last block, and there is no need
+for <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1364.png" width="19"/></span>'s block to contain at least <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1365.png" width="36"/></span> elements.  Therefore,
+we proceed as above, borrowing an element from <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1366.png" width="19"/></span> to make an extra
+element in <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1367.png" width="21"/></span>.  If this causes <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1368.png" width="19"/></span>'s block to become empty,
+then we remove it.
+<p>
+</p></li>
+<li>After <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1369.png" width="12"/></span> steps, we do not find any block containing more than
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1370.png" width="36"/></span> elements.  In this case, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensure...
+...\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1371.png" width="79"/></span> is a sequence
+of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1372.png" width="12"/></span> blocks that each contain <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1373.png" width="36"/></span> elements.  We <span class="textit">gather</span>
+these <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1)$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1374.png" width="54"/></span> elements into <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-2}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensure...
+...\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-2}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1375.png" width="79"/></span> so that each
+of these <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1376.png" width="36"/></span> blocks contains exactly <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1377.png" width="12"/></span> elements and we remove
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1378.png" width="34"/></span>, which is now empty.  Now <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1379.png" width="21"/></span>'s block contains <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1380.png" width="12"/></span>
+elements and we can then remove the appropriate element from it.
+</li>
+</ol>
+<p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+% latex2html id marker 14215\begin{flushleft}
+\hspace*{1em} \e...
+... \gets \ensuremath{\ensuremath{\mathit{n}} - 1}}\\
+\end{flushleft}\end{leftbar}" border="0" height="331" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1381.png" width="427"/>
+<br/>
+</p><p>
+Like the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1382.png" width="60"/></span> operation, the running time of the <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1383.png" width="72"/></span>
+operation is <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+\min\{\ensuremath{\ensurem...
+...{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1384.png" width="142"/></span> if we ignore the cost of
+the <!-- MATH
+ $\ensuremath{\mathrm{gather}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{gather}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1385.png" width="69"/></span> method that occurs in Case 3.
+</p><p>
+</p><h2><a name="SECTION00635000000000000000">
+<span class="arabic">3</span>.<span class="arabic">3</span>.<span class="arabic">5</span> Amortized Analysis of Spreading and Gathering</a>
+</h2>
+<p>
+Next, we consider the cost of the <!-- MATH
+ $\ensuremath{\mathrm{gather}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{gather}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1386.png" width="69"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1387.png" width="71"/></span> methods
+that may be executed by the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1388.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1389.png" width="72"/></span> methods.  For the
+sake of completeness, here they are:
+</p><p>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{spread}(\ens...
+...\gets \ensuremath{\ensuremath{\mathit{w}}.prev}}\\
+\end{flushleft}\end{leftbar}" border="0" height="201" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1390.png" width="353"/>
+<br/>
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{gather}(\ens...
+...{\mathrm{remove\_node}(\ensuremath{\mathit{w}})}\\
+\end{flushleft}\end{leftbar}" border="0" height="163" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1391.png" width="353"/>
+<br/>
+</p><p>
+The running time of each of these methods is dominated by the two
+nested loops.  Both the inner and outer loops execute at most
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1392.png" width="36"/></span> times, so the total running time of each of these methods
+is <!-- MATH
+ $O((\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1)^2)=O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}^2)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O((\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1)^2)=O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}^2)$" border="0" height="35" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1393.png" width="133"/></span>. However, the following lemma shows that
+these methods execute on at most one out of every <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1394.png" width="12"/></span> calls to <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1395.png" width="60"/></span>
+or <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1396.png" width="72"/></span>.
+</p><p>
+</p><p>
+</p><div><a name="lem:selist-amortized"><b>Lemma  <span class="arabic">3</span>..<span class="arabic">1</span></b></a>   
+<i>If an empty SEList is created and any sequence of <span class="MATH"><img align="MIDDLE" alt="$ m\ge 1$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1397.png" width="43"/></span> calls
+  to <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1398.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1399.png" width="72"/></span> is performed, then the total time
+  spent during all calls to <!-- MATH
+ $\ensuremath{\mathrm{spread}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{spread}()}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1400.png" width="62"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{gather}()}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{gather}()}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1401.png" width="60"/></span> is <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}m)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}m)$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1402.png" width="48"/></span>.</i></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  We will use the potential method of amortized analysis.
+  <a name="14490"></a>We say that
+  a node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1404.png" width="13"/></span> is <span class="textit">fragile</span> if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1405.png" width="13"/></span>'s block does not contain <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1406.png" width="12"/></span>
+  elements (so that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1407.png" width="13"/></span> is either the last node, or contains <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1408.png" width="36"/></span>
+  or <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1409.png" width="36"/></span> elements).  Any node whose block contains <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1410.png" width="12"/></span> elements is
+  <span class="textit">rugged</span>. Define the <span class="textit">potential</span> of an SEList as the number
+  of fragile nodes it contains.  We will consider only the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1411.png" width="60"/></span>
+  operation and its relation to the number of calls to <!-- MATH
+ $\ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1412.png" width="71"/></span>.
+  The analysis of <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1413.png" width="72"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{gather}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{gather}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1414.png" width="69"/></span> is identical.
+<p>
+Notice that, if Case 1 occurs during the <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1415.png" width="60"/></span> method, then
+  only one node, <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1416.png" width="19"/></span> has the size of its block changed. Therefore,
+  at most one node, namely <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_r$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1417.png" width="19"/></span>, goes from being rugged to being
+  fragile.  If Case 2 occurs, then a new node is created, and this node
+  is fragile, but no other node changes size, so the number of fragile
+  nodes increases by one.  Thus, in either Case 1 or Case 2 the potential
+  of the SEList increases by at most one.
+</p><p>
+Finally, if Case 3 occurs, it is because <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0,\ldots,\ensuremath{\ensure...
+...\ensuremath{\mathit{u}}}}_{\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1418.png" width="79"/></span>
+  are all fragile nodes.  Then <!-- MATH
+ $\ensuremath{\ensuremath{spread}(}u_0\ensuremath{)}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{spread}(}u_0\ensuremath{)}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1419.png" width="78"/></span> is called and these <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1420.png" width="12"/></span>
+  fragile nodes are replaced with <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1421.png" width="36"/></span> rugged nodes.  Finally, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1422.png" width="12"/></span>
+  is added to <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1423.png" width="21"/></span>'s block, making <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}_0$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1424.png" width="21"/></span> fragile.  In total the
+  potential decreases by <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1425.png" width="36"/></span>.
+</p><p>
+In summary, the potential starts at 0 (there are no nodes in the list).
+  Each time Case 1 or Case 2 occurs, the potential increases by at
+  most 1.  Each time Case 3 occurs, the potential decreases by <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1426.png" width="36"/></span>.
+  The potential (which counts the number of fragile nodes) is never
+  less than 0.  We conclude that, for every occurrence of Case 3, there
+  are at least <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}-1$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1427.png" width="36"/></span> occurrences of Case 1 or Case 2.  Thus, for every
+  call to <!-- MATH
+ $\ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1428.png" width="71"/></span> there are at least <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1429.png" width="12"/></span> calls to <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1430.png" width="60"/></span>.  This
+  completes the proof.
+ <img align="BOTTOM" alt="$ \qedsymbol$" border="0" height="14" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1403.png" width="17"/>
+</p></div><p></p>
+<p>
+</p><h2><a name="SECTION00636000000000000000">
+<span class="arabic">3</span>.<span class="arabic">3</span>.<span class="arabic">6</span> Summary</a>
+</h2>
+<p>
+The following theorem summarizes the performance of the SEList data
+structure:
+</p><p>
+</p><p>
+</p><div><a name="thm:selist"><b>Theorem  <span class="arabic">3</span>..<span class="arabic">3</span></b></a>   
+<i>An SEList implements the List interface.  Ignoring the cost of
+  calls to <!-- MATH
+ $\ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1431.png" width="71"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{gather}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{gather}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1432.png" width="69"/></span>, an SEList with block size <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1433.png" width="12"/></span>
+  supports the operations
+  </i>
+<ul>
+<li><!-- MATH
+ $\ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{get}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1434.png" width="41"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{set}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1435.png" width="53"/></span> in <!-- MATH
+ $O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensur...
+...{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1436.png" width="143"/></span> time per operation; and
+</li>
+<li><!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1437.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1438.png" width="72"/></span> in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+\min\{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}},\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}+\min\{\ensuremath{\ensurem...
+...{\ensuremath{\mathit{i}}}}\}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1439.png" width="142"/></span> time per operation.
+  
+</li>
+</ul><i>
+  Furthermore, beginning with an empty SEList, any sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1440.png" width="17"/></span>
+<!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{i}},\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1441.png" width="60"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1442.png" width="72"/></span> operations results in a total of <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}m)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}m)$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1443.png" width="48"/></span>
+  time spent during all calls to <!-- MATH
+ $\ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{spread}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1444.png" width="71"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{gather}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{gather}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1445.png" width="69"/></span>.
+</i>
+<p>
+<i>The space (measured in words)<a href="http://opendatastructures.org/ods-python/3_3_SEList_Space_Efficient_.html#foot15544" name="tex2html30"><sup><span class="arabic">3</span>.<span class="arabic">1</span></sup></a> used by an SEList
+  that stores <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1446.png" width="13"/></span> elements is <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} +O(\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}} + \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} +O(\ensuremath{\ensuremath{\...
+...th{\ensuremath{\mathit{n}}}}/\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}})$" border="0" height="31" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1447.png" width="98"/></span>.</i></p></div><p></p>
+<p>
+The SEList is a trade-off between an ArrayList and a DLList where
+the relative mix of these two structures depends on the block size <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{b}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{b}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1448.png" width="12"/></span>.
+At the extreme <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}=2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}=2$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1449.png" width="38"/></span>, each SEList node stores at most three values,
+which is not much different than a DLList. At the other extreme,
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}>\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{b}}}}&gt;\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/3.3 SEList_ A Space-Efficient Linked List_files/img1450.png" width="38"/></span>, all the elements are stored in a single array, just like in
+an ArrayList.  In between these two extremes lies a trade-off between
+the time it takes to add or remove a list item and the time it takes to
+locate a particular list item.
+</p><p>
+<br/></p><hr/><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot15544">... words)</a><a href="http://opendatastructures.org/ods-python/3_3_SEList_Space_Efficient_.html#tex2html30"><sup><span class="arabic">3</span>.<span class="arabic">1</span></sup></a></dt>
+<dd>Recall Section <a href="http://opendatastructures.org/ods-python/1_4_Model_Computation.html#sec:model">1.4</a> for a
+  discussion of how memory is measured.
+</dd>
+</dl>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/3.3 SEList_ A Space-Efficient Linked List_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

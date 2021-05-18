@@ -1,0 +1,776 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0058)http://opendatastructures.org/ods-java/5_3_Hash_Codes.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>5.3 Hash Codes</title>
+<meta name="description" content="5.3 Hash Codes">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/5.3 Hash Codes_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/5_4_Discussion_Exercises.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/5_2_LinearHashTable_Linear_.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/5_Hash_Tables.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/5_4_Discussion_Exercises.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<hr>
+<h1><a name="SECTION00830000000000000000">
+<span class="arabic">5</span>.<span class="arabic">3</span> Hash Codes</a>
+</h1>
+<p>
+<a name="14849"></a>The hash tables discussed in the previous section are used to associate
+data with integer keys consisting of <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2363.png" alt="$ \mathtt{w}$"></span> bits.  In many cases, we
+have keys that are not integers.  They may be strings, objects, arrays,
+or other compound structures.  To use hash tables for these types of data,
+we must map these data types to <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2364.png" alt="$ \mathtt{w}$"></span>-bit hash codes.  Hash code mappings should
+have the following properties:
+</p><p>
+</p><ol>
+<li>If <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2365.png" alt="$ \mathtt{x}$"></span> and <!-- MATH
+ $\mathtt{y}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2366.png" alt="$ \mathtt{y}$"></span> are equal, then <!-- MATH
+ $\mathtt{x.hashCode()}$
+ -->
+<span class="MATH"><img width="95" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2367.png" alt="$ \mathtt{x.hashCode()}$"></span> and <!-- MATH
+ $\mathtt{y.hashCode()}$
+ -->
+<span class="MATH"><img width="95" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2368.png" alt="$ \mathtt{y.hashCode()}$"></span>
+  are equal.
+<p>
+</p></li>
+<li>If <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2369.png" alt="$ \mathtt{x}$"></span> and <!-- MATH
+ $\mathtt{y}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2370.png" alt="$ \mathtt{y}$"></span> are not equal, then the probability that
+  <!-- MATH
+ $\ensuremath{\mathtt{x.hashCode()}}=\ensuremath{\mathtt{y.hashCode()}}$
+ -->
+<span class="MATH"><img width="202" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2371.png" alt="$ \ensuremath{\mathtt{x.hashCode()}}=\ensuremath{\mathtt{y.hashCode()}}$"></span> should be small (close to
+  <!-- MATH
+ $1/2^{\ensuremath{\mathtt{w}}}$
+ -->
+<span class="MATH"><img width="35" height="30" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2372.png" alt="$ 1/2^{\ensuremath{\mathtt{w}}}$"></span>).
+</li>
+</ol>
+<p>
+The first property ensures that if we store <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2373.png" alt="$ \mathtt{x}$"></span> in a hash table and later
+look up a value <!-- MATH
+ $\mathtt{y}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2374.png" alt="$ \mathtt{y}$"></span> equal to <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2375.png" alt="$ \mathtt{x}$"></span>, then we will find <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2376.png" alt="$ \mathtt{x}$"></span>--as we should.
+The second property minimizes the loss from converting our objects
+to integers.  It ensures that unequal objects usually have different
+hash codes and so are likely to be stored at different locations in
+our hash table.
+</p><p>
+</p><h2><a name="SECTION00831000000000000000">
+<span class="arabic">5</span>.<span class="arabic">3</span>.<span class="arabic">1</span> Hash Codes for Primitive Data Types</a>
+</h2>
+<p>
+<a name="14868"></a>Small primitive data types like <!-- MATH
+ $\mathtt{char}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2377.png" alt="$ \mathtt{char}$"></span>, <!-- MATH
+ $\mathtt{byte}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2378.png" alt="$ \mathtt{byte}$"></span>, <!-- MATH
+ $\mathtt{int}$
+ -->
+<span class="MATH"><img width="29" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2379.png" alt="$ \mathtt{int}$"></span>, and <!-- MATH
+ $\mathtt{float}$
+ -->
+<span class="MATH"><img width="46" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2380.png" alt="$ \mathtt{float}$"></span> are
+usually easy to find hash codes for.  These data types always have a
+binary representation and this binary representation usually consists of
+<!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2381.png" alt="$ \mathtt{w}$"></span> or fewer bits. (For example, in Java, <!-- MATH
+ $\mathtt{byte}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2382.png" alt="$ \mathtt{byte}$"></span> is an 8-bit
+type and <!-- MATH
+ $\mathtt{float}$
+ -->
+<span class="MATH"><img width="46" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2383.png" alt="$ \mathtt{float}$"></span> is a 32-bit type.) In these
+cases, we just treat these bits as the representation of an integer in
+the range <!-- MATH
+ $\{0,\ldots,2^\ensuremath{\mathtt{w}}-1\}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2384.png" alt="$ \{0,\ldots,2^\ensuremath{\mathtt{w}}-1\}$"></span>.  If two values are different, they get
+different hash codes.  If they are the same, they get the same hash code.
+</p><p>
+A few primitive data types are made up of more than <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2385.png" alt="$ \mathtt{w}$"></span> bits, usually
+<!-- MATH
+ $c\ensuremath{\mathtt{w}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2386.png" alt="$ c\ensuremath{\mathtt{w}}$"></span> bits for some constant integer <span class="MATH"><img width="11" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2387.png" alt="$ c$"></span>. (Java's <!-- MATH
+ $\mathtt{long}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2388.png" alt="$ \mathtt{long}$"></span> and <!-- MATH
+ $\mathtt{double}$
+ -->
+<span class="MATH"><img width="55" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2389.png" alt="$ \mathtt{double}$"></span>
+types are examples of this with <span class="MATH"><img width="37" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2390.png" alt="$ c=2$"></span>.)  These data types can be treated
+as compound objects made of <span class="MATH"><img width="11" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2391.png" alt="$ c$"></span> parts, as described in the next section.
+</p><p>
+</p><h2><a name="SECTION00832000000000000000"></a>
+<a name="sec:stringhash"></a>
+<br>
+<span class="arabic">5</span>.<span class="arabic">3</span>.<span class="arabic">2</span> Hash Codes for Compound Objects
+</h2>
+<p>
+<a name="14885"></a>For a compound object, we want to create a hash code by combining the
+individual hash codes of the object's constituent parts.  This is not
+as easy as it sounds.  Although one can find many hacks for this (for
+example, combining the hash codes with bitwise exclusive-or operations),
+many of these hacks turn out to be easy to foil (see Exercises&nbsp;<a href="http://opendatastructures.org/ods-java/5_4_Discussion_Exercises.html#exc:hash-hack-first">5.7</a>-<a href="http://opendatastructures.org/ods-java/5_4_Discussion_Exercises.html#exc:hash-hack-last">5.9</a>).
+However, if one is willing to do arithmetic with <!-- MATH
+ $2\ensuremath{\mathtt{w}}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2392.png" alt="$ 2\ensuremath{\mathtt{w}}$"></span> bits of
+precision, then there are simple and robust methods available.
+Suppose we have an object made up of several parts
+<!-- MATH
+ $P_0,\ldots,P_{r-1}$
+ -->
+<span class="MATH"><img width="75" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2393.png" alt="$ P_0,\ldots,P_{r-1}$"></span> whose hash codes are <!-- MATH
+ $\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}$
+ -->
+<span class="MATH"><img width="77" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2394.png" alt="$ \ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}$"></span>.
+Then we can choose mutually independent random <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2395.png" alt="$ \mathtt{w}$"></span>-bit integers
+<!-- MATH
+ $\ensuremath{\mathtt{z}}_0,\ldots,\ensuremath{\mathtt{z}}_{r-1}$
+ -->
+<span class="MATH"><img width="77" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2396.png" alt="$ \ensuremath{\mathtt{z}}_0,\ldots,\ensuremath{\mathtt{z}}_{r-1}$"></span> and a random <!-- MATH
+ $2\ensuremath{\mathtt{w}}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2397.png" alt="$ 2\ensuremath{\mathtt{w}}$"></span>-bit odd integer <!-- MATH
+ $\mathtt{z}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2398.png" alt="$ \mathtt{z}$"></span> and
+compute a hash code for our object with
+</p><p><!-- MATH
+ \begin{displaymath}
+h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}) =
+   \left(\left(\ensuremath{\mathtt{z}}\sum_{i=0}^{r-1} \ensuremath{\mathtt{z}}_i \ensuremath{\mathtt{x}}_i\right)\bmod 2^{2\ensuremath{\mathtt{w}}}\right)
+   \ddiv 2^{\ensuremath{\mathtt{w}}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="319" height="67" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2399.png" alt="$\displaystyle h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1})...
+...2\ensuremath{\mathtt{w}}}\right)
+\ddiv 2^{\ensuremath{\mathtt{w}}} \enspace .
+$">
+</div><p></p>
+Note that this hash code has a final step (multiplying by <!-- MATH
+ $\mathtt{z}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2400.png" alt="$ \mathtt{z}$"></span> and
+dividing by <!-- MATH
+ $2^{\ensuremath{\mathtt{w}}}$
+ -->
+<span class="MATH"><img width="20" height="30" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2401.png" alt="$ 2^{\ensuremath{\mathtt{w}}}$"></span>) that uses the multiplicative hash function
+from Section&nbsp;<a href="http://opendatastructures.org/ods-java/5_1_ChainedHashTable_Hashin.html#sec:multihash">5.1.1</a> to take the <!-- MATH
+ $2\ensuremath{\mathtt{w}}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2402.png" alt="$ 2\ensuremath{\mathtt{w}}$"></span>-bit intermediate result and
+reduce it to a <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2403.png" alt="$ \mathtt{w}$"></span>-bit final result.  Here is an example of this method applied to a simple compound object with three parts <!-- MATH
+ $\mathtt{x0}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2404.png" alt="$ \mathtt{x0}$"></span>, <!-- MATH
+ $\mathtt{x1}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2405.png" alt="$ \mathtt{x1}$"></span>, and <!-- MATH
+ $\mathtt{x2}$
+ -->
+<span class="MATH"><img width="21" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2406.png" alt="$ \mathtt{x2}$"></span>:
+<pre>    int hashCode() {
+        // random numbers from rand.org
+        long[] z = {0x2058cc50L, 0xcb19137eL, 0x2cb6b6fdL}; 
+        long zz = 0xbea0107e5067d19dL;
+        // convert (unsigned) hashcodes to long
+        long h0 = x0.hashCode() &amp; ((1L&lt;&lt;32)-1);
+        long h1 = x1.hashCode() &amp; ((1L&lt;&lt;32)-1);
+        long h2 = x2.hashCode() &amp; ((1L&lt;&lt;32)-1);
+        
+        return (int)(((z[0]*h0 + z[1]*h1 + z[2]*h2)*zz)
+                     &gt;&gt;&gt; 32);
+    }
+</pre>
+The following theorem shows that, in addition to being straightforward to implement, this method is provably good:
+<p>
+</p><p>
+</p><div><a name="thm:multihash"><b>Theorem  <span class="arabic">5</span>..<span class="arabic">3</span></b></a> &nbsp; 
+<i>Let <!-- MATH
+ $\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}$
+ -->
+<span class="MATH"><img width="77" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2407.png" alt="$ \ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}$"></span> and <!-- MATH
+ $\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1}$
+ -->
+<span class="MATH"><img width="77" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2408.png" alt="$ \ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1}$"></span> each be sequences of <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2409.png" alt="$ \mathtt{w}$"></span> bit integers in <!-- MATH
+ $\{0,\ldots,2^{\ensuremath{\mathtt{w}}}-1\}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2410.png" alt="$ \{0,\ldots,2^{\ensuremath{\mathtt{w}}}-1\}$"></span> and assume <!-- MATH
+ $\ensuremath{\mathtt{x}}_i \neq \ensuremath{\mathtt{y}}_i$
+ -->
+<span class="MATH"><img width="48" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2411.png" alt="$ \ensuremath{\mathtt{x}}_i \neq \ensuremath{\mathtt{y}}_i$"></span> for at least one index <!-- MATH
+ $i\in\{0,\ldots,r-1\}$
+ -->
+<span class="MATH"><img width="104" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2412.png" alt="$ i\in\{0,\ldots,r-1\}$"></span>. Then 
+</i><p><!-- MATH
+ \begin{displaymath}
+\Pr\{ h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}) =  h(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1}) \}
+        \le 3/2^{\ensuremath{\mathtt{w}}} \enspace .  
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="292" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2413.png" alt="$\displaystyle \Pr\{ h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_...
+...suremath{\mathtt{y}}_{r-1}) \}
+\le 3/2^{\ensuremath{\mathtt{w}}} \enspace .
+$">
+</div><p></p></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  We will first ignore the final multiplicative hashing step and see how
+  that step contributes later.  Define:
+  <p><!-- MATH
+ \begin{displaymath}
+h'(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}) =
+       \left(\sum_{j=0}^{r-1} \ensuremath{\mathtt{z}}_j \ensuremath{\mathtt{x}}_j\right)\bmod 2^{2\ensuremath{\mathtt{w}}} \enspace .
+  
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="260" height="69" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2415.png" alt="$\displaystyle h&#39;(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}...
+...\ensuremath{\mathtt{x}}_j\right)\bmod 2^{2\ensuremath{\mathtt{w}}} \enspace .
+$">
+</div><p></p>
+Suppose that <!-- MATH
+ $h'(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}) =  h'(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1})$
+ -->
+<span class="MATH"><img width="215" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2416.png" alt="$ h&#39;(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}) = h&#39;(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1})$"></span>.
+  We can rewrite this as:
+  <p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:bighash-x"></a><!-- MATH
+ \begin{equation}
+\ensuremath{\mathtt{z}}_i(\ensuremath{\mathtt{x}}_i-\ensuremath{\mathtt{y}}_i) \bmod 2^{2\ensuremath{\mathtt{w}}} = t
+\end{equation}
+ -->
+<table class="equation" cellpadding="0" width="100%" align="CENTER">
+<tbody><tr valign="MIDDLE">
+<td nowrap="" align="CENTER"><span class="MATH"><img width="157" height="37" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2417.png" alt="$\displaystyle \ensuremath{\mathtt{z}}_i(\ensuremath{\mathtt{x}}_i-\ensuremath{\mathtt{y}}_i) \bmod 2^{2\ensuremath{\mathtt{w}}} = t$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+(<span class="arabic">5</span>.<span class="arabic">4</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"><p></p>
+where 
+  <p><!-- MATH
+ \begin{displaymath}
+t = \left(\sum_{j=0}^{i-1} \ensuremath{\mathtt{z}}_j(\ensuremath{\mathtt{y}}_j-\ensuremath{\mathtt{x}}_j) + \sum_{j=i+1}^{r-1} \ensuremath{\mathtt{z}}_j(\ensuremath{\mathtt{y}}_j-\ensuremath{\mathtt{x}}_j)\right) \bmod 2^{2\ensuremath{\mathtt{w}}}
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="315" height="69" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2418.png" alt="$\displaystyle t = \left(\sum_{j=0}^{i-1} \ensuremath{\mathtt{z}}_j(\ensuremath{...
+...tt{y}}_j-\ensuremath{\mathtt{x}}_j)\right) \bmod 2^{2\ensuremath{\mathtt{w}}}
+$">
+</div><p></p>
+If we assume, without loss of generality that <!-- MATH
+ $\ensuremath{\mathtt{x}}_i> \ensuremath{\mathtt{y}}_i$
+ -->
+<span class="MATH"><img width="48" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2419.png" alt="$ \ensuremath{\mathtt{x}}_i&gt; \ensuremath{\mathtt{y}}_i$"></span>, then
+  (<a href="http://opendatastructures.org/ods-java/5_3_Hash_Codes.html#eq:bighash-x">5.4</a>) becomes
+  <p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:bighash-xx"></a><!-- MATH
+ \begin{equation}
+\ensuremath{\mathtt{z}}_i(\ensuremath{\mathtt{x}}_i-\ensuremath{\mathtt{y}}_i) = t\enspace ,
+\end{equation}
+ -->
+<table class="equation" cellpadding="0" width="100%" align="CENTER">
+<tbody><tr valign="MIDDLE">
+<td nowrap="" align="CENTER"><span class="MATH"><img width="106" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2420.png" alt="$\displaystyle \ensuremath{\mathtt{z}}_i(\ensuremath{\mathtt{x}}_i-\ensuremath{\mathtt{y}}_i) = t\enspace ,$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+(<span class="arabic">5</span>.<span class="arabic">5</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"><p></p>
+since each of <!-- MATH
+ $\ensuremath{\mathtt{z}}_i$
+ -->
+<span class="MATH"><img width="18" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2421.png" alt="$ \ensuremath{\mathtt{z}}_i$"></span> and <!-- MATH
+ $(\ensuremath{\mathtt{x}}_i-\ensuremath{\mathtt{y}}_i)$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2422.png" alt="$ (\ensuremath{\mathtt{x}}_i-\ensuremath{\mathtt{y}}_i)$"></span> is at most <!-- MATH
+ $2^{\ensuremath{\mathtt{w}}}-1$
+ -->
+<span class="MATH"><img width="44" height="30" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2423.png" alt="$ 2^{\ensuremath{\mathtt{w}}}-1$"></span>, so
+  their product is at most <!-- MATH
+ $2^{2\ensuremath{\mathtt{w}}}-2^{\ensuremath{\mathtt{w}}+1}+1 < 2^{2\ensuremath{\mathtt{w}}}-1$
+ -->
+<span class="MATH"><img width="159" height="35" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2424.png" alt="$ 2^{2\ensuremath{\mathtt{w}}}-2^{\ensuremath{\mathtt{w}}+1}+1 &lt; 2^{2\ensuremath{\mathtt{w}}}-1$"></span>.
+  By assumption, <!-- MATH
+ $\ensuremath{\mathtt{x}}_i-\ensuremath{\mathtt{y}}_i\neq 0$
+ -->
+<span class="MATH"><img width="72" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2425.png" alt="$ \ensuremath{\mathtt{x}}_i-\ensuremath{\mathtt{y}}_i\neq 0$"></span>, so (<a href="http://opendatastructures.org/ods-java/5_3_Hash_Codes.html#eq:bighash-xx">5.5</a>) has at most one
+  solution in <!-- MATH
+ $\ensuremath{\mathtt{z}}_i$
+ -->
+<span class="MATH"><img width="18" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2426.png" alt="$ \ensuremath{\mathtt{z}}_i$"></span>.  Therefore, since <!-- MATH
+ $\ensuremath{\mathtt{z}}_i$
+ -->
+<span class="MATH"><img width="18" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2427.png" alt="$ \ensuremath{\mathtt{z}}_i$"></span> and <span class="MATH"><img width="10" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2428.png" alt="$ t$"></span> are
+  independent (<!-- MATH
+ $\ensuremath{\mathtt{z}}_0,\ldots,\ensuremath{\mathtt{z}}_{r-1}$
+ -->
+<span class="MATH"><img width="77" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2429.png" alt="$ \ensuremath{\mathtt{z}}_0,\ldots,\ensuremath{\mathtt{z}}_{r-1}$"></span> are mutually independent), the
+  probability that we select <!-- MATH
+ $\ensuremath{\mathtt{z}}_i$
+ -->
+<span class="MATH"><img width="18" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2430.png" alt="$ \ensuremath{\mathtt{z}}_i$"></span>
+  so that <!-- MATH
+ $h'(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1})=h'(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1})$
+ -->
+<span class="MATH"><img width="215" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2431.png" alt="$ h&#39;(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1})=h&#39;(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1})$"></span> is at most
+  <!-- MATH
+ $1/2^{\ensuremath{\mathtt{w}}}$
+ -->
+<span class="MATH"><img width="35" height="30" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2432.png" alt="$ 1/2^{\ensuremath{\mathtt{w}}}$"></span>.
+<p>
+The final step of the hash function is to apply multiplicative hashing
+  to reduce our <!-- MATH
+ $2\ensuremath{\mathtt{w}}$
+ -->
+<span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2433.png" alt="$ 2\ensuremath{\mathtt{w}}$"></span>-bit intermediate result <!-- MATH
+ $h'(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1})$
+ -->
+<span class="MATH"><img width="101" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2434.png" alt="$ h&#39;(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1})$"></span> to
+  a <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2435.png" alt="$ \mathtt{w}$"></span>-bit final result <!-- MATH
+ $h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1})$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2436.png" alt="$ h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1})$"></span>.  By Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/5_3_Hash_Codes.html#thm:multihash">5.3</a>,
+  if <!-- MATH
+ $h'(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1})\neq h'(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1})$
+ -->
+<span class="MATH"><img width="214" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2437.png" alt="$ h&#39;(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1})\neq h&#39;(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1})$"></span>, then
+  <!-- MATH
+ $\Pr\{h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}) = h(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1})\} \le 2/2^{\ensuremath{\mathtt{w}}}$
+ -->
+<span class="MATH"><img width="280" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2438.png" alt="$ \Pr\{h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}) = h(\en...
+...y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1})\} \le 2/2^{\ensuremath{\mathtt{w}}}$"></span>.
+</p><p>
+To summarize, 
+  </p><p></p>
+<div align="CENTER" class="mathdisplay"><table cellpadding="0" width="100%" align="CENTER">
+<tbody><tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="179" height="56" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2439.png" alt="$\displaystyle \Pr\left\{\begin{array}{l} h(\ensuremath{\mathtt{x}}_0,\ldots,\en...
+...suremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1})\end{array}\right\}$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="422" height="74" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2440.png" alt="$\displaystyle = \Pr\left\{\begin{array}{ll} \mbox{$h&#39;(\ensuremath{\mathtt{x}}_0...
+...emath{\mathtt{y}}_{r-1})\ddiv 2^{\ensuremath{\mathtt{w}}}$} \end{array}\right\}$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+<tr valign="MIDDLE">
+<td>&nbsp;</td>
+<td nowrap="" align="LEFT"><span class="MATH"><img width="155" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2441.png" alt="$\displaystyle \le 1/2^{\ensuremath{\mathtt{w}}} + 2/2^{\ensuremath{\mathtt{w}}} = 3/2^{\ensuremath{\mathtt{w}}} \enspace . \qedhere$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+&nbsp;&nbsp;&nbsp;</td></tr>
+</tbody></table></div>
+<br clear="ALL"><p></p> <img width="17" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2414.png" alt="$ \qedsymbol$">
+</div><p></p>
+<p>
+<a name="15067"></a><a name="15068"></a>
+</p><h2><a name="SECTION00833000000000000000"></a>
+<a name="sec:polyhash"></a>
+<br>
+<span class="arabic">5</span>.<span class="arabic">3</span>.<span class="arabic">3</span> Hash Codes for Arrays and Strings
+</h2>
+<p>
+The method from the previous section works well for objects that have a
+fixed, constant, number of components.  However, it breaks down when we
+want to use it with objects that have a variable number of components,
+since it requires a random <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2442.png" alt="$ \mathtt{w}$"></span>-bit integer <!-- MATH
+ $\ensuremath{\mathtt{z}}_i$
+ -->
+<span class="MATH"><img width="18" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2443.png" alt="$ \ensuremath{\mathtt{z}}_i$"></span> for each component.
+We could use a pseudorandom sequence to generate as many <!-- MATH
+ $\ensuremath{\mathtt{z}}_i$
+ -->
+<span class="MATH"><img width="18" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2444.png" alt="$ \ensuremath{\mathtt{z}}_i$"></span>'s as we
+need, but then the <!-- MATH
+ $\ensuremath{\mathtt{z}}_i$
+ -->
+<span class="MATH"><img width="18" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2445.png" alt="$ \ensuremath{\mathtt{z}}_i$"></span>'s are not mutually independent, and it becomes
+difficult to prove that the pseudorandom numbers don't interact badly
+with the hash function we are using.  In particular, the values of <span class="MATH"><img width="10" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2446.png" alt="$ t$"></span>
+and <!-- MATH
+ $\ensuremath{\mathtt{z}}_i$
+ -->
+<span class="MATH"><img width="18" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2447.png" alt="$ \ensuremath{\mathtt{z}}_i$"></span> in the proof of Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/5_3_Hash_Codes.html#thm:multihash">5.3</a> are no longer independent.
+</p><p>
+<a name="15077"></a>A more rigorous approach is to base our hash codes on polynomials over
+prime fields;  these are just regular polynomials that are evaluated
+modulo some prime number, <!-- MATH
+ $\mathtt{p}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2448.png" alt="$ \mathtt{p}$"></span>. This method is based on the following
+theorem, which says that polynomials over prime fields behave pretty-much
+like usual polynomials:
+</p><p>
+</p><p>
+</p><div><a name="thm:prime-polynomial"><b>Theorem  <span class="arabic">5</span>..<span class="arabic">4</span></b></a> &nbsp; 
+<i>Let <!-- MATH
+ $\ensuremath{\mathtt{p}}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2449.png" alt="$ \ensuremath{\mathtt{p}}$"></span> be a prime number, and let <!-- MATH
+ $f(\ensuremath{\mathtt{z}}) = \ensuremath{\mathtt{x}}_0\ensuremath{\mathtt{z}}^0 + \ensuremath{\mathtt{x}}_1\ensuremath{\mathtt{z}}^1 +
+ \cdots + \ensuremath{\mathtt{x}}_{r-1}\ensuremath{\mathtt{z}}^{r-1}$
+ -->
+<span class="MATH"><img width="232" height="35" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2450.png" alt="$ f(\ensuremath{\mathtt{z}}) = \ensuremath{\mathtt{x}}_0\ensuremath{\mathtt{z}}^...
+...tt{z}}^1 +
+\cdots + \ensuremath{\mathtt{x}}_{r-1}\ensuremath{\mathtt{z}}^{r-1}$"></span> be a non-trivial polynomial with coefficients
+ <!-- MATH
+ $\ensuremath{\mathtt{x}}_i\in\{0,\ldots,\ensuremath{\mathtt{p}}-1\}$
+ -->
+<span class="MATH"><img width="114" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2451.png" alt="$ \ensuremath{\mathtt{x}}_i\in\{0,\ldots,\ensuremath{\mathtt{p}}-1\}$"></span>. Then the equation <!-- MATH
+ $f(\ensuremath{\mathtt{z}})\bmod \ensuremath{\mathtt{p}} = 0$
+ -->
+<span class="MATH"><img width="108" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2452.png" alt="$ f(\ensuremath{\mathtt{z}})\bmod \ensuremath{\mathtt{p}} = 0$"></span>
+ has at most <span class="MATH"><img width="35" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2453.png" alt="$ r-1$"></span> solutions for <!-- MATH
+ $\ensuremath{\mathtt{z}}\in\{0,\ldots,p-1\}$
+ -->
+<span class="MATH"><img width="109" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2454.png" alt="$ \ensuremath{\mathtt{z}}\in\{0,\ldots,p-1\}$"></span>.</i></div><p></p>
+<p>
+To use Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/5_3_Hash_Codes.html#thm:prime-polynomial">5.4</a>, we hash a sequence of integers
+<!-- MATH
+ $\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}$
+ -->
+<span class="MATH"><img width="77" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2455.png" alt="$ \ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}$"></span> with each <!-- MATH
+ $\ensuremath{\mathtt{x}}_i\in \{0,\ldots,\ensuremath{\mathtt{p}}-2\}$
+ -->
+<span class="MATH"><img width="114" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2456.png" alt="$ \ensuremath{\mathtt{x}}_i\in \{0,\ldots,\ensuremath{\mathtt{p}}-2\}$"></span> using
+a random integer <!-- MATH
+ $\ensuremath{\mathtt{z}}\in\{0,\ldots,\ensuremath{\mathtt{p}}-1\}$
+ -->
+<span class="MATH"><img width="108" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2457.png" alt="$ \ensuremath{\mathtt{z}}\in\{0,\ldots,\ensuremath{\mathtt{p}}-1\}$"></span> via the formula
+</p><p><!-- MATH
+ \begin{displaymath}
+h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1})
+    = \left(\ensuremath{\mathtt{x}}_0\ensuremath{\mathtt{z}}^0+\cdots+\ensuremath{\mathtt{x}}_{r-1}\ensuremath{\mathtt{z}}^{r-1}+(\ensuremath{\mathtt{p}}-1)\ensuremath{\mathtt{z}}^r \right)\bmod \ensuremath{\mathtt{p}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="394" height="40" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2458.png" alt="$\displaystyle h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1})...
+...}}-1)\ensuremath{\mathtt{z}}^r \right)\bmod \ensuremath{\mathtt{p}} \enspace .
+$">
+</div><p></p>
+<p>
+Note the extra <!-- MATH
+ $(\ensuremath{\mathtt{p}}-1)\ensuremath{\mathtt{z}}^r$
+ -->
+<span class="MATH"><img width="61" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2459.png" alt="$ (\ensuremath{\mathtt{p}}-1)\ensuremath{\mathtt{z}}^r$"></span> term at the end of the formula.  It helps
+to think of <!-- MATH
+ $(\ensuremath{\mathtt{p}}-1)$
+ -->
+<span class="MATH"><img width="47" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2460.png" alt="$ (\ensuremath{\mathtt{p}}-1)$"></span> as the last element, <!-- MATH
+ $\ensuremath{\mathtt{x}}_r$
+ -->
+<span class="MATH"><img width="19" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2461.png" alt="$ \ensuremath{\mathtt{x}}_r$"></span>, in the sequence
+<!-- MATH
+ $\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r}$
+ -->
+<span class="MATH"><img width="63" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2462.png" alt="$ \ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r}$"></span>.  Note that this element differs from every other
+element in the sequence (each of which is in the set <!-- MATH
+ $\{0,\ldots,\ensuremath{\mathtt{p}}-2\}$
+ -->
+<span class="MATH"><img width="84" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2463.png" alt="$ \{0,\ldots,\ensuremath{\mathtt{p}}-2\}$"></span>).
+We can think of <!-- MATH
+ $\ensuremath{\mathtt{p}}-1$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2464.png" alt="$ \ensuremath{\mathtt{p}}-1$"></span> as an end-of-sequence marker.
+</p><p>
+The following theorem, which considers the case of two sequences of
+the same length, shows that this hash function gives a good return for
+the small amount of randomization needed to choose <!-- MATH
+ $\mathtt{z}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2465.png" alt="$ \mathtt{z}$"></span>:
+</p><p>
+</p><p>
+</p><div><a name="thm:stringhash-eqlen"><b>Theorem  <span class="arabic">5</span>..<span class="arabic">5</span></b></a> &nbsp; 
+<i>Let <!-- MATH
+ $\ensuremath{\mathtt{p}}>2^{\ensuremath{\mathtt{w}}}+1$
+ -->
+<span class="MATH"><img width="69" height="30" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2466.png" alt="$ \ensuremath{\mathtt{p}}&gt;2^{\ensuremath{\mathtt{w}}}+1$"></span> be a prime, let <!-- MATH
+ $\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}$
+ -->
+<span class="MATH"><img width="77" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2467.png" alt="$ \ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}$"></span> and
+  <!-- MATH
+ $\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1}$
+ -->
+<span class="MATH"><img width="77" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2468.png" alt="$ \ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1}$"></span> each be sequences of <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2469.png" alt="$ \mathtt{w}$"></span>-bit integers in
+  <!-- MATH
+ $\{0,\ldots,2^{\ensuremath{\mathtt{w}}}-1\}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2470.png" alt="$ \{0,\ldots,2^{\ensuremath{\mathtt{w}}}-1\}$"></span>, and assume <!-- MATH
+ $\ensuremath{\mathtt{x}}_i \neq \ensuremath{\mathtt{y}}_i$
+ -->
+<span class="MATH"><img width="48" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2471.png" alt="$ \ensuremath{\mathtt{x}}_i \neq \ensuremath{\mathtt{y}}_i$"></span> for at least
+  one index <!-- MATH
+ $i\in\{0,\ldots,r-1\}$
+ -->
+<span class="MATH"><img width="104" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2472.png" alt="$ i\in\{0,\ldots,r-1\}$"></span>. Then
+  </i><p><!-- MATH
+ \begin{displaymath}
+\Pr\{ h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}) =  h(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1}) \}
+          \le (r-1)/\ensuremath{\mathtt{p}} \} \enspace .  
+  
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="323" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2473.png" alt="$\displaystyle \Pr\{ h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_...
+...math{\mathtt{y}}_{r-1}) \}
+\le (r-1)/\ensuremath{\mathtt{p}} \} \enspace .
+$">
+</div><p></p></div><p></p>
+<p>
+</p><p></p>
+<div><i>Proof</i>.
+  The equation <!-- MATH
+ $h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}) =  h(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1})$
+ -->
+<span class="MATH"><img width="205" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2475.png" alt="$ h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}) = h(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1})$"></span>
+  can be rewritten as
+  <p></p>
+<div align="CENTER" class="mathdisplay"><a name="eq:strhash-eqlen"></a><!-- MATH
+ \begin{equation}
+\left(
+       (\ensuremath{\mathtt{x}}_0-\ensuremath{\mathtt{y}}_0)\ensuremath{\mathtt{z}}^0+\cdots+(\ensuremath{\mathtt{x}}_{r-1}-\ensuremath{\mathtt{y}}_{r-1})\ensuremath{\mathtt{z}}^{r-1}
+    \right)\bmod \ensuremath{\mathtt{p}} = 0.
+  
+\end{equation}
+ -->
+<table class="equation" cellpadding="0" width="100%" align="CENTER">
+<tbody><tr valign="MIDDLE">
+<td nowrap="" align="CENTER"><span class="MATH"><img width="326" height="40" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2476.png" alt="$\displaystyle \left( (\ensuremath{\mathtt{x}}_0-\ensuremath{\mathtt{y}}_0)\ensu...
+...}_{r-1})\ensuremath{\mathtt{z}}^{r-1} \right)\bmod \ensuremath{\mathtt{p}} = 0.$"></span></td>
+<td nowrap="" class="eqno" width="10" align="RIGHT">
+(<span class="arabic">5</span>.<span class="arabic">6</span>)</td></tr>
+</tbody></table></div>
+<br clear="ALL"><p></p>
+Since <!-- MATH
+ $\ensuremath{\mathtt{x}}_\ensuremath{\mathtt{i}}\neq \ensuremath{\mathtt{y}}_\ensuremath{\mathtt{i}}$
+ -->
+<span class="MATH"><img width="52" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2477.png" alt="$ \ensuremath{\mathtt{x}}_\ensuremath{\mathtt{i}}\neq \ensuremath{\mathtt{y}}_\ensuremath{\mathtt{i}}$"></span>, this polynomial is non-trivial.  Therefore,
+  by Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/5_3_Hash_Codes.html#thm:prime-polynomial">5.4</a>, it has at most <span class="MATH"><img width="35" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2478.png" alt="$ r-1$"></span> solutions in <!-- MATH
+ $\mathtt{z}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2479.png" alt="$ \mathtt{z}$"></span>.
+  The probability that we pick <!-- MATH
+ $\mathtt{z}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2480.png" alt="$ \mathtt{z}$"></span> to be one of these solutions is therefore
+  at most <!-- MATH
+ $(r-1)/\ensuremath{\mathtt{p}}$
+ -->
+<span class="MATH"><img width="60" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2481.png" alt="$ (r-1)/\ensuremath{\mathtt{p}}$"></span>.
+ <img width="17" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2474.png" alt="$ \qedsymbol$">
+</div><p></p>
+<p>
+Note that this hash function also deals with the case in which two
+sequences have different lengths, even when one of the sequences is a
+prefix of the other. This is because this function effectively hashes
+the infinite sequence
+</p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}, \ensuremath{\mathtt{p}}-1,0,0,\ldots \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="178" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2482.png" alt="$\displaystyle \ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}, \ensuremath{\mathtt{p}}-1,0,0,\ldots \enspace .
+$">
+</div><p></p>
+This guarantees that if we have two sequences of length <span class="MATH"><img width="11" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2483.png" alt="$ r$"></span> and <span class="MATH"><img width="16" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2484.png" alt="$ r&#39;$"></span>
+with <span class="MATH"><img width="40" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2485.png" alt="$ r &gt; r&#39;$"></span>, then these two sequences differ at index <span class="MATH"><img width="35" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2486.png" alt="$ i=r$"></span>.  In
+this case, (<a href="http://opendatastructures.org/ods-java/5_3_Hash_Codes.html#eq:strhash-eqlen">5.6</a>) becomes
+<p><!-- MATH
+ \begin{displaymath}
+\left(
+     \sum_{i=0}^{i=r'-1}(\ensuremath{\mathtt{x}}_i-\ensuremath{\mathtt{y}}_i)\ensuremath{\mathtt{z}}^i + (\ensuremath{\mathtt{x}}_{r'} - \ensuremath{\mathtt{p}} + 1)\ensuremath{\mathtt{z}}^{r'}
+     +\sum_{i=r'+1}^{i=r-1}\ensuremath{\mathtt{x}}_i\ensuremath{\mathtt{z}}^i + (\ensuremath{\mathtt{p}}-1)\ensuremath{\mathtt{z}}^{r}
+  \right)\bmod \ensuremath{\mathtt{p}} = 0 \enspace ,
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="470" height="69" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2487.png" alt="$\displaystyle \left(
+\sum_{i=0}^{i=r&#39;-1}(\ensuremath{\mathtt{x}}_i-\ensuremath...
+...nsuremath{\mathtt{z}}^{r}
+\right)\bmod \ensuremath{\mathtt{p}} = 0 \enspace ,
+$">
+</div><p></p>
+which, by Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/5_3_Hash_Codes.html#thm:prime-polynomial">5.4</a>, has at most <span class="MATH"><img width="11" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2488.png" alt="$ r$"></span> solutions in <!-- MATH
+ $\ensuremath{\mathtt{z}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2489.png" alt="$ \ensuremath{\mathtt{z}}$"></span>.
+This combined with Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/5_3_Hash_Codes.html#thm:stringhash-eqlen">5.5</a> suffice to prove the
+following more general theorem:
+<p>
+</p><p>
+</p><div><a name="thm:stringhash"><b>Theorem  <span class="arabic">5</span>..<span class="arabic">6</span></b></a> &nbsp; 
+<i>Let <!-- MATH
+ $\ensuremath{\mathtt{p}}>2^{\ensuremath{\mathtt{w}}}+1$
+ -->
+<span class="MATH"><img width="69" height="30" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2490.png" alt="$ \ensuremath{\mathtt{p}}&gt;2^{\ensuremath{\mathtt{w}}}+1$"></span> be a prime, let <!-- MATH
+ $\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}$
+ -->
+<span class="MATH"><img width="77" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2491.png" alt="$ \ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}$"></span> and
+  <!-- MATH
+ $\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r'-1}$
+ -->
+<span class="MATH"><img width="81" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2492.png" alt="$ \ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r&#39;-1}$"></span> be distinct sequences of <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2493.png" alt="$ \mathtt{w}$"></span>-bit integers in
+  <!-- MATH
+ $\{0,\ldots,2^{\ensuremath{\mathtt{w}}}-1\}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2494.png" alt="$ \{0,\ldots,2^{\ensuremath{\mathtt{w}}}-1\}$"></span>. Then
+  </i><p><!-- MATH
+ \begin{displaymath}
+\Pr\{ h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_{r-1}) =  h(\ensuremath{\mathtt{y}}_0,\ldots,\ensuremath{\mathtt{y}}_{r-1}) \}
+          \le \max\{r,r'\}/\ensuremath{\mathtt{p}}  \enspace .  
+  
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="341" height="33" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2495.png" alt="$\displaystyle \Pr\{ h(\ensuremath{\mathtt{x}}_0,\ldots,\ensuremath{\mathtt{x}}_...
+...{\mathtt{y}}_{r-1}) \}
+\le \max\{r,r&#39;\}/\ensuremath{\mathtt{p}} \enspace .
+$">
+</div><p></p></div><p></p>
+<p>
+The following example code shows how this hash function is applied to
+an object that contains an array, <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/5.3 Hash Codes_files/img2496.png" alt="$ \mathtt{x}$"></span>, of values:
+</p><pre>    int hashCode() {
+        long p = (1L&lt;&lt;32)-5;   // prime: 2^32 - 5
+        long z = 0x64b6055aL;  // 32 bits from random.org
+        int z2 = 0x5067d19d;   // random odd 32 bit number
+        long s = 0;
+        long zi = 1;
+        for (int i = 0; i &lt; x.length; i++) {
+            // reduce to 31 bits
+            long xi = (x[i].hashCode() * z2) &gt;&gt;&gt; 1; 
+            s = (s + zi * xi) % p;
+            zi = (zi * z) % p;    
+        }
+        s = (s + zi * (p-1)) % p;
+        return (int)s;
+    }
+</pre>
+<p>
+The preceding code sacrifices some collision probability for implementation
+convenience.  In particular, it applies the multiplicative hash function
+from Section&nbsp;<a href="http://opendatastructures.org/ods-java/5_1_ChainedHashTable_Hashin.html#sec:multihash">5.1.1</a>, with <!-- MATH
+ $\ensuremath{\mathtt{d}}=31$
+ -->
+<span class="MATH"><img width="47" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2497.png" alt="$ \ensuremath{\mathtt{d}}=31$"></span> to reduce <!-- MATH
+ $\mathtt{x[i].hashCode()}$
+ -->
+<span class="MATH"><img width="113" height="31" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2498.png" alt="$ \mathtt{x[i].hashCode()}$"></span> to a
+31-bit value.  This is so that the additions and multiplications that are
+done modulo the prime <!-- MATH
+ $\ensuremath{\mathtt{p}}=2^{32}-5$
+ -->
+<span class="MATH"><img width="77" height="35" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2499.png" alt="$ \ensuremath{\mathtt{p}}=2^{32}-5$"></span> can be carried out using unsigned
+63-bit arithmetic.  Thus the probability of two different sequences,
+the longer of which has length <span class="MATH"><img width="11" height="29" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2500.png" alt="$ r$"></span>, having the same hash code is at most
+</p><p><!-- MATH
+ \begin{displaymath}
+2/2^{31} + r/(2^{32}-5)
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="127" height="37" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2501.png" alt="$\displaystyle 2/2^{31} + r/(2^{32}-5)
+$">
+</div><p></p>
+rather than the <!-- MATH
+ $r/(2^{32}-5)$
+ -->
+<span class="MATH"><img width="74" height="35" align="MIDDLE" border="0" src="static/5.3 Hash Codes_files/img2502.png" alt="$ r/(2^{32}-5)$"></span> specified in Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/5_3_Hash_Codes.html#thm:stringhash">5.6</a>.
+<p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/5.3 Hash Codes_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

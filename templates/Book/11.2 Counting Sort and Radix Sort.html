@@ -1,0 +1,506 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-java/11_2_Counting_Sort_Radix_So.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>11.2 Counting Sort and Radix Sort</title>
+<meta name="description" content="11.2 Counting Sort and Radix Sort">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/11.2 Counting Sort and Radix Sort_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/11_3_Discussion_Exercises.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/11_1_Comparison_Based_Sorti.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/11_Sorting_Algorithms.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/11_3_Discussion_Exercises.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<hr>
+<h1><a name="SECTION001420000000000000000">
+<span class="arabic">11</span>.<span class="arabic">2</span> Counting Sort and Radix Sort</a>
+</h1>
+<p>
+In this section we study two sorting algorithms that are not
+comparison-based. Specialized for sorting small integers, these algorithms
+elude the lower-bounds of Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/11_1_Comparison_Based_Sorti.html#thm:deterministic-sorting-lower-bound">11.5</a>
+by using (parts of) the elements in <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4338.png" alt="$ \mathtt{a}$"></span> as indices into an array.
+Consider a statement of the form
+</p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\mathtt{c[a[i]]}} = 1 \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="88" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4339.png" alt="$\displaystyle \ensuremath{\mathtt{c[a[i]]}} = 1 \enspace .
+$">
+</div><p></p>
+This statement executes in constant time, but has <!-- MATH
+ $\mathtt{c.length}$
+ -->
+<span class="MATH"><img width="67" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4340.png" alt="$ \mathtt{c.length}$"></span> possible
+different outcomes, depending on the value of <!-- MATH
+ $\mathtt{a[i]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4341.png" alt="$ \mathtt{a[i]}$"></span>.  This means that the
+execution of an algorithm that makes such a statement cannot be modelled
+as a binary tree.  Ultimately, this is the reason that the algorithms
+in this section are able to sort faster than comparison-based algorithms.
+<p>
+</p><h2><a name="SECTION001421000000000000000">
+<span class="arabic">11</span>.<span class="arabic">2</span>.<span class="arabic">1</span> Counting Sort</a>
+</h2>
+<p>
+Suppose we have an input array <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4342.png" alt="$ \mathtt{a}$"></span> consisting of <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4343.png" alt="$ \mathtt{n}$"></span> integers, each in
+the range <!-- MATH
+ $0,\ldots,\ensuremath{\mathtt{k}}-1$
+ -->
+<span class="MATH"><img width="73" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4344.png" alt="$ 0,\ldots,\ensuremath{\mathtt{k}}-1$"></span>.  The <span class="textit">counting-sort</span>
+<a name="29018"></a>algorithm sorts <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4345.png" alt="$ \mathtt{a}$"></span>
+using an auxiliary array <!-- MATH
+ $\mathtt{c}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4346.png" alt="$ \mathtt{c}$"></span> of counters.  It outputs a sorted version
+of <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4347.png" alt="$ \mathtt{a}$"></span> as an auxiliary array <!-- MATH
+ $\mathtt{b}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4348.png" alt="$ \mathtt{b}$"></span>.
+</p><p>
+The idea behind counting-sort is simple:  For each
+<!-- MATH
+ $\ensuremath{\mathtt{i}}\in\{0,\ldots,\ensuremath{\mathtt{k}}-1\}$
+ -->
+<span class="MATH"><img width="108" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4349.png" alt="$ \ensuremath{\mathtt{i}}\in\{0,\ldots,\ensuremath{\mathtt{k}}-1\}$"></span>, count the number of occurrences of <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4350.png" alt="$ \mathtt{i}$"></span> in <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4351.png" alt="$ \mathtt{a}$"></span>
+and store this in <!-- MATH
+ $\mathtt{c[i]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4352.png" alt="$ \mathtt{c[i]}$"></span>.  Now, after sorting, the output will look like
+<!-- MATH
+ $\mathtt{c[0]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4353.png" alt="$ \mathtt{c[0]}$"></span> occurrences of 0, followed by <!-- MATH
+ $\mathtt{c[1]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4354.png" alt="$ \mathtt{c[1]}$"></span> occurrences of 1, followed by
+<!-- MATH
+ $\mathtt{c[2]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4355.png" alt="$ \mathtt{c[2]}$"></span> occurrences of 2,..., followed by <!-- MATH
+ $\mathtt{c[k-1]}$
+ -->
+<span class="MATH"><img width="55" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4356.png" alt="$ \mathtt{c[k-1]}$"></span> occurrences of <!-- MATH
+ $\mathtt{k-1}$
+ -->
+<span class="MATH"><img width="36" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4357.png" alt="$ \mathtt{k-1}$"></span>.
+The code that does this is very slick, and its execution is illustrated in
+Figure&nbsp;<a href="http://opendatastructures.org/ods-java/11_2_Counting_Sort_Radix_So.html#fig:countingsort">11.7</a>:
+</p><pre>    int[] countingSort(int[] a, int k) {
+        int c[] = new int[k];
+        for (int i = 0; i &lt; a.length; i++)
+            c[a[i]]++;
+        for (int i = 1; i &lt; k; i++)
+            c[i] += c[i-1];
+        int b[] = new int[a.length];
+        for (int i = a.length-1; i &gt;= 0; i--)
+            b[--c[a[i]]] = a[i];
+        return b;
+    }
+</pre>
+<p>
+</p><div align="CENTER"><a name="fig:countingsort"></a><a name="29834"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 11.7:</strong>
+The operation of counting sort on an array of length <!-- MATH
+ $\ensuremath{\mathtt{n}}=20$
+ -->
+<span class="MATH"><img width="47" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4359.png" alt="$ \ensuremath{\mathtt{n}}=20$"></span> that stores integers <!-- MATH
+ $0,\ldots,\ensuremath{\mathtt{k}}-1=9$
+ -->
+<span class="MATH"><img width="100" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4360.png" alt="$ 0,\ldots,\ensuremath{\mathtt{k}}-1=9$"></span>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="552" height="375" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4358.png" alt="\includegraphics[width=\textwidth ]{figs/countingsort}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The first <!-- MATH
+ $\mathtt{for}$
+ -->
+<span class="MATH"><img width="29" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4363.png" alt="$ \mathtt{for}$"></span> loop in this code sets each counter <!-- MATH
+ $\mathtt{c[i]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4364.png" alt="$ \mathtt{c[i]}$"></span> so that it
+counts the number of occurrences of <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4365.png" alt="$ \mathtt{i}$"></span> in <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4366.png" alt="$ \mathtt{a}$"></span>.  By using the values
+of <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4367.png" alt="$ \mathtt{a}$"></span> as indices, these counters can all be computed in <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4368.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span> time
+with a single for loop.  At this point, we could use <!-- MATH
+ $\mathtt{c}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4369.png" alt="$ \mathtt{c}$"></span> to
+fill in the output array <!-- MATH
+ $\mathtt{b}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4370.png" alt="$ \mathtt{b}$"></span> directly. However, this would not work if
+the elements of <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4371.png" alt="$ \mathtt{a}$"></span> have associated data.  Therefore we spend a little
+extra effort to copy the elements of <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4372.png" alt="$ \mathtt{a}$"></span> into <!-- MATH
+ $\mathtt{b}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4373.png" alt="$ \mathtt{b}$"></span>.
+</p><p>
+The next <!-- MATH
+ $\mathtt{for}$
+ -->
+<span class="MATH"><img width="29" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4374.png" alt="$ \mathtt{for}$"></span> loop, which takes <!-- MATH
+ $O(\ensuremath{\mathtt{k}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4375.png" alt="$ O(\ensuremath{\mathtt{k}})$"></span> time, computes a running-sum
+of the counters so that <!-- MATH
+ $\mathtt{c[i]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4376.png" alt="$ \mathtt{c[i]}$"></span> becomes the number of elements in
+<!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4377.png" alt="$ \mathtt{a}$"></span> that are less than or equal to <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4378.png" alt="$ \mathtt{i}$"></span>.  In particular, for every
+<!-- MATH
+ $\ensuremath{\mathtt{i}}\in\{0,\ldots,\ensuremath{\mathtt{k}}-1\}$
+ -->
+<span class="MATH"><img width="108" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4379.png" alt="$ \ensuremath{\mathtt{i}}\in\{0,\ldots,\ensuremath{\mathtt{k}}-1\}$"></span>, the output array, <!-- MATH
+ $\mathtt{b}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4380.png" alt="$ \mathtt{b}$"></span>, will have
+</p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\mathtt{b[c[i-1]]}}=\ensuremath{\mathtt{b[c[i-1]+1]=}}\cdots=\ensuremath{\mathtt{b[c[i]-1]}}=\ensuremath{\mathtt{i}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="340" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4381.png" alt="$\displaystyle \ensuremath{\mathtt{b[c[i-1]]}}=\ensuremath{\mathtt{b[c[i-1]+1]=}}\cdots=\ensuremath{\mathtt{b[c[i]-1]}}=\ensuremath{\mathtt{i}} \enspace .
+$">
+</div><p></p>
+Finally, the algorithm scans <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4382.png" alt="$ \mathtt{a}$"></span> backwards to place its elements, in order,
+into an output array <!-- MATH
+ $\mathtt{b}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4383.png" alt="$ \mathtt{b}$"></span>.  When scanning, the element <!-- MATH
+ $\mathtt{a[i]=j}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4384.png" alt="$ \mathtt{a[i]=j}$"></span> is placed
+at location <!-- MATH
+ $\mathtt{b[c[j]-1]}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4385.png" alt="$ \mathtt{b[c[j]-1]}$"></span> and the value <!-- MATH
+ $\mathtt{c[j]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4386.png" alt="$ \mathtt{c[j]}$"></span> is decremented.
+<p>
+</p><p>
+</p><div><b>Theorem  <span class="arabic">11</span>..<span class="arabic">7</span></b> &nbsp; 
+<i>The <!-- MATH
+ $\mathtt{countingSort(a,k)}$
+ -->
+<span class="MATH"><img width="138" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4387.png" alt="$ \mathtt{countingSort(a,k)}$"></span> method can sort an array <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4388.png" alt="$ \mathtt{a}$"></span> containing <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4389.png" alt="$ \mathtt{n}$"></span>
+  integers in the set <!-- MATH
+ $\{0,\ldots,\ensuremath{\mathtt{k}}-1\}$
+ -->
+<span class="MATH"><img width="84" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4390.png" alt="$ \{0,\ldots,\ensuremath{\mathtt{k}}-1\}$"></span> in <!-- MATH
+ $O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{k}})$
+ -->
+<span class="MATH"><img width="60" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4391.png" alt="$ O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{k}})$"></span> time.</i></div><p></p>
+<p>
+The counting-sort algorithm has the nice property of being <span class="textit">stable</span>;
+<a name="29081"></a>it preserves the relative order of equal elements.  If two elements
+<!-- MATH
+ $\mathtt{a[i]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4392.png" alt="$ \mathtt{a[i]}$"></span> and <!-- MATH
+ $\mathtt{a[j]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4393.png" alt="$ \mathtt{a[j]}$"></span> have the same value, and <!-- MATH
+ $\ensuremath{\mathtt{i}}<\ensuremath{\mathtt{j}}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4394.png" alt="$ \ensuremath{\mathtt{i}}&lt;\ensuremath{\mathtt{j}}$"></span> then <!-- MATH
+ $\mathtt{a[i]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4395.png" alt="$ \mathtt{a[i]}$"></span> will
+appear before <!-- MATH
+ $\mathtt{a[j]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4396.png" alt="$ \mathtt{a[j]}$"></span> in <!-- MATH
+ $\mathtt{b}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4397.png" alt="$ \mathtt{b}$"></span>.  This will be useful in the next section.
+</p><p>
+</p><h2><a name="SECTION001422000000000000000">
+<span class="arabic">11</span>.<span class="arabic">2</span>.<span class="arabic">2</span> Radix-Sort</a>
+</h2>
+<p>
+Counting-sort is very efficient for sorting an array of integers when the
+length, <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4398.png" alt="$ \mathtt{n}$"></span>, of the array is not much smaller than the maximum value,
+<!-- MATH
+ $\ensuremath{\mathtt{k}}-1$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4399.png" alt="$ \ensuremath{\mathtt{k}}-1$"></span>, that appears in the array.  The <span class="textit">radix-sort</span>
+<a name="29093"></a>algorithm,
+which we now describe, uses several passes of counting-sort to allow
+for a much greater range of maximum values.
+</p><p>
+Radix-sort sorts <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4400.png" alt="$ \mathtt{w}$"></span>-bit integers by using <!-- MATH
+ $\ensuremath{\mathtt{w}}/\ensuremath{\mathtt{d}}$
+ -->
+<span class="MATH"><img width="27" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4401.png" alt="$ \ensuremath{\mathtt{w}}/\ensuremath{\mathtt{d}}$"></span> passes of counting-sort
+to sort these integers <!-- MATH
+ $\mathtt{d}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4402.png" alt="$ \mathtt{d}$"></span> bits at a time.<a name="tex2html95" href="http://opendatastructures.org/ods-java/11_2_Counting_Sort_Radix_So.html#foot29835"><sup><span class="arabic">11</span>.<span class="arabic">2</span></sup></a>  More precisely, radix sort first sorts the integers by
+their least significant <!-- MATH
+ $\mathtt{d}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4407.png" alt="$ \mathtt{d}$"></span> bits, then their next significant <!-- MATH
+ $\mathtt{d}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4408.png" alt="$ \mathtt{d}$"></span> bits,
+and so on until, in the last pass, the integers are sorted by their most
+significant <!-- MATH
+ $\mathtt{d}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4409.png" alt="$ \mathtt{d}$"></span> bits.
+</p><pre>    int[] radixSort(int[] a) {
+        int[] b = null;
+        for (int p = 0; p &lt; w/d; p++) {
+            int c[] = new int[1&lt;&lt;d];
+            // the next three for loops implement counting-sort
+            b = new int[a.length];
+            for (int i = 0; i &lt; a.length; i++)
+                c[(a[i] &gt;&gt; d*p)&amp;((1&lt;&lt;d)-1)]++;
+            for (int i = 1; i &lt; 1&lt;&lt;d; i++)
+                c[i] += c[i-1];
+            for (int i = a.length-1; i &gt;= 0; i--)
+                b[--c[(a[i] &gt;&gt; d*p)&amp;((1&lt;&lt;d)-1)]] = a[i];
+            a = b;
+        }
+        return b;
+    }
+</pre>
+(In this code, the expression <!-- MATH
+ $\mathtt{(a[i]\text{\ttfamily >>}d*p)\text{\ttfamily\&}((1\text{\ttfamily <<}d)-1)}$
+ -->
+<span class="MATH"><img width="174" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4410.png" alt="$ \mathtt{(a[i]\text{\ttfamily &gt;&gt;}d*p)\text{\ttfamily\&amp;}((1\text{\ttfamily &lt;&lt;}d)-1)}$"></span> extracts the integer
+whose binary representation is given by bits
+<!-- MATH
+ $(\ensuremath{\mathtt{p}}+1)\ensuremath{\mathtt{d}}-1,\ldots,\ensuremath{\mathtt{p}}\ensuremath{\mathtt{d}}$
+ -->
+<span class="MATH"><img width="124" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4411.png" alt="$ (\ensuremath{\mathtt{p}}+1)\ensuremath{\mathtt{d}}-1,\ldots,\ensuremath{\mathtt{p}}\ensuremath{\mathtt{d}}$"></span> of <!-- MATH
+ $\mathtt{a[i]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4412.png" alt="$ \mathtt{a[i]}$"></span>.)
+An example of the steps of this algorithm is shown in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/11_2_Counting_Sort_Radix_So.html#fig:radixsort">11.8</a>.
+<p>
+</p><div align="CENTER"><a name="fig:radixsort"></a><a name="29837"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 11.8:</strong>
+Using radixsort to sort <!-- MATH
+ $\ensuremath{\mathtt{w}}=8$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4414.png" alt="$ \ensuremath{\mathtt{w}}=8$"></span>-bit integers by using 4 passes
+   of counting sort on <!-- MATH
+ $\ensuremath{\mathtt{d}}=2$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4415.png" alt="$ \ensuremath{\mathtt{d}}=2$"></span>-bit integers.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="554" height="191" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4413.png" alt="\includegraphics[width=\textwidth ]{figs/radixsort}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+This remarkable algorithm sorts correctly because counting-sort is
+a stable sorting algorithm.  If <!-- MATH
+ $\ensuremath{\mathtt{x}} < \ensuremath{\mathtt{y}}$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4418.png" alt="$ \ensuremath{\mathtt{x}} &lt; \ensuremath{\mathtt{y}}$"></span> are two elements of <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4419.png" alt="$ \mathtt{a}$"></span>,
+and the most significant bit at which <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4420.png" alt="$ \mathtt{x}$"></span> differs from <!-- MATH
+ $\mathtt{y}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4421.png" alt="$ \mathtt{y}$"></span> has index <span class="MATH"><img width="11" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4422.png" alt="$ r$"></span>,
+then <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4423.png" alt="$ \mathtt{x}$"></span> will be placed before <!-- MATH
+ $\mathtt{y}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4424.png" alt="$ \mathtt{y}$"></span> during pass <!-- MATH
+ $\lfloor r/\ensuremath{\mathtt{d}}\rfloor$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4425.png" alt="$ \lfloor r/\ensuremath{\mathtt{d}}\rfloor$"></span>
+and subsequent passes will not change the relative order of <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4426.png" alt="$ \mathtt{x}$"></span> and <!-- MATH
+ $\mathtt{y}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4427.png" alt="$ \mathtt{y}$"></span>.
+</p><p>
+Radix-sort performs <!-- MATH
+ $\mathtt{w/d}$
+ -->
+<span class="MATH"><img width="27" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4428.png" alt="$ \mathtt{w/d}$"></span> passes of counting-sort.  Each pass requires
+<!-- MATH
+ $O(\ensuremath{\mathtt{n}}+2^{\ensuremath{\mathtt{d}}})$
+ -->
+<span class="MATH"><img width="67" height="34" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4429.png" alt="$ O(\ensuremath{\mathtt{n}}+2^{\ensuremath{\mathtt{d}}})$"></span> time. Therefore, the performance of radix-sort is given
+by the following theorem.
+</p><p>
+</p><div><a name="thm:radix-sort"><b>Theorem  <span class="arabic">11</span>..<span class="arabic">8</span></b></a> &nbsp; 
+<i>For any integer <!-- MATH
+ $\ensuremath{\mathtt{d}}>0$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4430.png" alt="$ \ensuremath{\mathtt{d}}&gt;0$"></span>, the <!-- MATH
+ $\mathtt{radixSort(a,k)}$
+ -->
+<span class="MATH"><img width="113" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4431.png" alt="$ \mathtt{radixSort(a,k)}$"></span> method can sort an array
+  <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4432.png" alt="$ \mathtt{a}$"></span> containing <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4433.png" alt="$ \mathtt{n}$"></span> <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4434.png" alt="$ \mathtt{w}$"></span>-bit integers in <!-- MATH
+ $O((\ensuremath{\mathtt{w}}/\ensuremath{\mathtt{d}})(\ensuremath{\mathtt{n}}+2^{\ensuremath{\mathtt{d}}}))$
+ -->
+<span class="MATH"><img width="111" height="34" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4435.png" alt="$ O((\ensuremath{\mathtt{w}}/\ensuremath{\mathtt{d}})(\ensuremath{\mathtt{n}}+2^{\ensuremath{\mathtt{d}}}))$"></span> time.</i></div><p></p>
+<p>
+If we think, instead, of the elements of the array being in the range
+<!-- MATH
+ $\{0,\ldots,\ensuremath{\mathtt{n}}^c-1\}$
+ -->
+<span class="MATH"><img width="90" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4436.png" alt="$ \{0,\ldots,\ensuremath{\mathtt{n}}^c-1\}$"></span>, and take <!-- MATH
+ $\ensuremath{\mathtt{d}}=\lceil\log\ensuremath{\mathtt{n}}\rceil$
+ -->
+<span class="MATH"><img width="74" height="30" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4437.png" alt="$ \ensuremath{\mathtt{d}}=\lceil\log\ensuremath{\mathtt{n}}\rceil$"></span> we obtain
+the following version of Theorem&nbsp;<a href="http://opendatastructures.org/ods-java/11_2_Counting_Sort_Radix_So.html#thm:radix-sort">11.8</a>.
+</p><p>
+</p><div><a name="cor:radix-sort-poly"><b>Corollary  <span class="arabic">11</span>..<span class="arabic">1</span></b></a> &nbsp; 
+<i>The <!-- MATH
+ $\mathtt{radixSort(a,k)}$
+ -->
+<span class="MATH"><img width="113" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4438.png" alt="$ \mathtt{radixSort(a,k)}$"></span> method can sort an array <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4439.png" alt="$ \mathtt{a}$"></span> containing <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4440.png" alt="$ \mathtt{n}$"></span>
+  integer values in the range <!-- MATH
+ $\{0,\ldots,\ensuremath{\mathtt{n}}^c-1\}$
+ -->
+<span class="MATH"><img width="90" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4441.png" alt="$ \{0,\ldots,\ensuremath{\mathtt{n}}^c-1\}$"></span> in <!-- MATH
+ $O(c\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="43" height="31" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4442.png" alt="$ O(c\ensuremath{\mathtt{n}})$"></span> time.</i></div><p></p>
+<p>
+<br></p><hr><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot29835">... time.</a><a href="http://opendatastructures.org/ods-java/11_2_Counting_Sort_Radix_So.html#tex2html95"><sup><span class="arabic">11</span>.<span class="arabic">2</span></sup></a></dt>
+<dd>We assume that
+<!-- MATH
+ $\mathtt{d}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4403.png" alt="$ \mathtt{d}$"></span> divides <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4404.png" alt="$ \mathtt{w}$"></span>, otherwise we can always increase <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4405.png" alt="$ \mathtt{w}$"></span> to <!-- MATH
+ $\ensuremath{\mathtt{d}}\lceil
+\ensuremath{\mathtt{w}}/\ensuremath{\mathtt{d}}\rceil$
+ -->
+<span class="MATH"><img width="48" height="29" align="MIDDLE" border="0" src="static/11.2 Counting Sort and Radix Sort_files/img4406.png" alt="$ \ensuremath{\mathtt{d}}\lceil
+\ensuremath{\mathtt{w}}/\ensuremath{\mathtt{d}}\rceil$"></span>.
+</dd>
+</dl>
+<div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/11.2 Counting Sort and Radix Sort_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-python/11_3_Discussion_Exercises.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>11.3 Discussion and Exercises</title>
+<meta content="11.3 Discussion and Exercises" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/11.3 Discussion and Exercises_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/11_2_Counting_Sort_Radix_So.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/11_Sorting_Algorithms.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/12_Graphs.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION001430000000000000000">
+<span class="arabic">11</span>.<span class="arabic">3</span> Discussion and Exercises</a>
+</h1>
+<p>
+Sorting is <span class="textit">the</span> fundamental algorithmic problem in computer science,
+and it has a long history.  Knuth [<a href="http://opendatastructures.org/ods-python/Bibliography.html#k97v3">48</a>] attributes the merge-sort
+algorithm to von Neumann (1945).  Quicksort is due to Hoare [<a href="http://opendatastructures.org/ods-python/Bibliography.html#h61">39</a>].
+The original heap-sort algorithm is due to Williams [<a href="http://opendatastructures.org/ods-python/Bibliography.html#w64">76</a>], but the
+version presented here (in which the heap is constructed bottom-up
+in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4477.png" width="36"/></span> time) is due to Floyd [<a href="http://opendatastructures.org/ods-python/Bibliography.html#f64">28</a>].  Lower-bounds for
+comparison-based sorting appear to be folklore.  The following table
+summarizes the performance of these comparison-based algorithms:
+</p><p>
+</p><div align="CENTER">
+<table border="1" cellpadding="3">
+<tbody><tr><td align="LEFT"> </td>
+<td align="CENTER" colspan="3"><span>comparisons</span></td>
+<td align="LEFT"> </td><td align="LEFT">in-place</td>
+<td align="LEFT"> </td>
+</tr>
+<tr><td align="LEFT">Merge-sort</td>
+<td align="RIGHT"><!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/11.3 Discussion and Exercises_files/img4478.png" width="47"/></span></td>
+<td align="LEFT"> </td><td align="LEFT"> </td>
+<td align="LEFT"> </td><td align="LEFT">worst-case</td>
+<td align="LEFT">No</td>
+</tr>
+<tr><td align="LEFT">Quicksort</td>
+<td align="RIGHT"><!-- MATH
+ $1.38\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1.38\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/11.3 Discussion and Exercises_files/img4479.png" width="77"/></span></td>
+<td align="LEFT"> </td><td align="LEFT"><!-- MATH
+ ${}+ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ {}+ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4480.png" width="52"/></span></td>
+<td align="LEFT"> </td><td align="LEFT">expected</td>
+<td align="LEFT">Yes</td>
+</tr>
+<tr><td align="LEFT">Heap-sort</td>
+<td align="RIGHT"><!-- MATH
+ $2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/11.3 Discussion and Exercises_files/img4481.png" width="56"/></span></td>
+<td align="LEFT"> </td><td align="LEFT"><!-- MATH
+ ${}+ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ {}+ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4482.png" width="52"/></span></td>
+<td align="LEFT"> </td><td align="LEFT">worst-case</td>
+<td align="LEFT">Yes</td>
+</tr>
+</tbody></table>
+</div>
+<p>
+Each of these comparison-based algorithms has its advantages and
+disadvantages.  Merge-sort does the fewest comparisons and does not rely
+on randomization.  Unfortunately, it uses an auxilliary array during its
+merge phase.  Allocating this array can be expensive and is a potential
+point of failure if memory is limited.  Quicksort is an <span class="textit">in-place</span>
+<a name="50837"></a>algorithm and is a close second in terms of the number of comparisons,
+but is randomized, so this running time is not always guaranteed.
+Heap-sort does the most comparisons, but it is in-place and deterministic.
+</p><p>
+There is one setting in which merge-sort is a clear-winner;  this
+occurs when sorting a linked-list.  In this case, the auxiliary
+array is not needed;  two sorted linked lists are very easily merged
+into a single sorted linked-list by pointer manipulations (see
+Exercise <a href="http://opendatastructures.org/ods-python/11_3_Discussion_Exercises.html#exc:list-merge-sort">11.2</a>).
+</p><p>
+The counting-sort and radix-sort algorithms described here are due
+to Seward [<a href="http://opendatastructures.org/ods-python/Bibliography.html#s54">66</a>, Section 2.4.6].  However, variants of radix-sort
+have been used since the 1920s to sort punch cards using punched card
+sorting machines.  These machines can sort a stack of cards into two
+piles based on the existence (or not) of a hole in a specific location
+on the card.  Repeating this process for different hole locations gives
+an implementation of radix-sort.
+</p><p>
+Finally, we note that counting sort and radix-sort can be used to sort
+other types of numbers besides non-negative integers.  Straightforward
+modifications of counting sort can sort integers, in any interval
+<!-- MATH
+ $\{a,\ldots,b\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{a,\ldots,b\}$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4483.png" width="59"/></span>, in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+b-a)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+b-a)$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4484.png" width="83"/></span> time.  Similarly, radix sort can sort
+integers in the same interval in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}(\log_{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}(b-a))$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}(\log_{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}(b-a))$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4485.png" width="113"/></span> time.  Finally, both of these
+algorithms can also be used to sort floating point numbers in the IEEE 754
+floating point format.  This is because the IEEE format is designed to
+allow the comparison of two floating point numbers by comparing their values
+as if they were integers in a signed-magnitude binary representation
+[<a href="http://opendatastructures.org/ods-python/Bibliography.html#ieee754">2</a>].
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">11</span>..<span class="arabic">1</span></b>   
+Illustrate the execution of merge-sort and heap-sort on an input array
+  containing <!-- MATH
+ $1,7,4,6,2,8,3,5$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 1,7,4,6,2,8,3,5$" border="0" height="29" src="static/11.3 Discussion and Exercises_files/img4486.png" width="113"/></span>.  Give a sample illustration of one possible
+  execution of quicksort on the same array.</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:list-merge-sort"><b>Exercise  <span class="arabic">11</span>..<span class="arabic">2</span></b></a>   
+Implement a version of the merge-sort algorithm that sorts a DLList
+  without using an auxiliary array. (See Exercise <a href="http://opendatastructures.org/ods-python/3_4_Discussion_Exercises.html#exc:dllist-sort">3.13</a>.) </div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">11</span>..<span class="arabic">3</span></b>   
+Some implementations of <!-- MATH
+ $\ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4487.png" width="132"/></span> always use <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4488.png" width="27"/></span>
+  as a pivot.  Give an example of an input array of length <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.3 Discussion and Exercises_files/img4489.png" width="13"/></span> in which
+  such an implementation would perform <!-- MATH
+ $\binom{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}{2}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \binom{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}{2}$" border="0" height="33" src="static/11.3 Discussion and Exercises_files/img4490.png" width="23"/></span> comparisons.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">11</span>..<span class="arabic">4</span></b>   
+Some implementations of <!-- MATH
+ $\ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4491.png" width="132"/></span> always use <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}+\ensuremath{\mathit{n}}/2]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}+\ensuremath{\mathit{n}}/2]}$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4492.png" width="66"/></span>
+  as a pivot.  Given an example of an input array of length <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.3 Discussion and Exercises_files/img4493.png" width="13"/></span> in which
+  such an implementation would perform <!-- MATH
+ $\binom{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}{2}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \binom{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}{2}$" border="0" height="33" src="static/11.3 Discussion and Exercises_files/img4494.png" width="23"/></span> comparisons.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">11</span>..<span class="arabic">5</span></b>   
+Show that, for any implementation of <!-- MATH
+ $\ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4495.png" width="132"/></span>
+  that chooses a pivot deterministically, without first looking at
+  any values in <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}},\ldots,\ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}+\ensuremath{\mathit{n}}-1]}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}},\ld...
+...th{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}+\ensuremath{\mathit{n}}-1]}}$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4496.png" width="126"/></span>, there exists an input array of length <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/11.3 Discussion and Exercises_files/img4497.png" width="13"/></span>
+  that causes this implementation to perform <!-- MATH
+ $\binom{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}{2}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \binom{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}{2}$" border="0" height="33" src="static/11.3 Discussion and Exercises_files/img4498.png" width="23"/></span> comparisons.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">11</span>..<span class="arabic">6</span></b>   
+Design a Comparator, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{c}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{c}}}$" border="0" height="29" src="static/11.3 Discussion and Exercises_files/img4499.png" width="11"/></span>, that you could pass as an argument
+  to <!-- MATH
+ $\ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}},\ensuremath{\mathit{c}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{quick\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{i}},\ensuremath{\mathit{n}},\ensuremath{\mathit{c}})}$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4500.png" width="132"/></span> and that would cause quicksort to perform
+  <!-- MATH
+ $\binom{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}{2}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \binom{\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}{2}$" border="0" height="33" src="static/11.3 Discussion and Exercises_files/img4501.png" width="23"/></span> comparisons.  (Hint: Your comparator does not actually
+  need to look at the values being compared.)</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">11</span>..<span class="arabic">7</span></b>   
+Analyze the expected number of comparisons done by Quicksort a little
+  more carefully than the proof of Theorem <a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#thm:quicksort">11.3</a>.  In particular, show
+  that the expected number of comparisons is <!-- MATH
+ $2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}H_\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} -\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} + H_\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}H_\ensuremath{\ensuremath{\e...
+...\ensuremath{\mathit{n}}}} + H_\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="29" src="static/11.3 Discussion and Exercises_files/img4502.png" width="101"/></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">11</span>..<span class="arabic">8</span></b>   
+Describe an input array that causes heap sort to perform at least
+  <!-- MATH
+ $2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4503.png" width="103"/></span> comparisons.  Justify your answer.</div><p></p>
+<p>
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">11</span>..<span class="arabic">9</span></b>   
+Find another pair of permutations of <span class="MATH"><img align="MIDDLE" alt="$ 1,2,3$" border="0" height="29" src="static/11.3 Discussion and Exercises_files/img4504.png" width="41"/></span> that are not correctly
+  sorted by the comparison tree in Figure <a href="http://opendatastructures.org/ods-python/11_1_Comparison_Based_Sorti.html#fig:comparison-tree-2">11.6</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:log-factorial"><b>Exercise  <span class="arabic">11</span>..<span class="arabic">10</span></b></a>   
+Prove that <!-- MATH
+ $\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}! = \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}-O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}! = \ensuremath{\ensurem...
+...{\ensuremath{\mathit{n}}}}-O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4505.png" width="149"/></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">11</span>..<span class="arabic">11</span></b>   
+Prove that a binary tree with <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/11.3 Discussion and Exercises_files/img4506.png" width="13"/></span> leaves has height at least <span class="MATH"><img align="MIDDLE" alt="$ \log k$" border="0" height="30" src="static/11.3 Discussion and Exercises_files/img4507.png" width="36"/></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:randomized-lower-bound"><b>Exercise  <span class="arabic">11</span>..<span class="arabic">12</span></b></a>   
+Prove that, if we pick a random leaf from a binary tree with <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/11.3 Discussion and Exercises_files/img4508.png" width="13"/></span>
+  leaves, then the expected height of this leaf is at least <span class="MATH"><img align="MIDDLE" alt="$ \log k$" border="0" height="30" src="static/11.3 Discussion and Exercises_files/img4509.png" width="36"/></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">11</span>..<span class="arabic">13</span></b>   
+The implementation of <!-- MATH
+ $\ensuremath{\mathrm{radix\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{k}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{radix\_sort}(\ensuremath{\mathit{a}},\ensuremath{\mathit{k}})}$" border="0" height="31" src="static/11.3 Discussion and Exercises_files/img4510.png" width="105"/></span> given here works when the input
+  array, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}}$" border="0" height="29" src="static/11.3 Discussion and Exercises_files/img4511.png" width="12"/></span> contains only 
+  integers.  </div><p></p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/11.3 Discussion and Exercises_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

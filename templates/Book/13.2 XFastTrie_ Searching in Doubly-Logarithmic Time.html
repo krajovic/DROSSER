@@ -1,0 +1,438 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-java/13_2_XFastTrie_Searching_in.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>13.2 XFastTrie: Searching in Doubly-Logarithmic Time</title>
+<meta name="description" content="13.2 XFastTrie: Searching in Doubly-Logarithmic Time">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/13_3_YFastTrie_Doubly_Logar.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/13_1_BinaryTrie_digital_sea.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/13_Data_Structures_Integers.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/13_3_YFastTrie_Doubly_Logar.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<h1><a name="SECTION001620000000000000000"></a>
+<a name="sec:xfast"></a>
+<br>
+<span class="arabic">13</span>.<span class="arabic">2</span> <tt>XFastTrie</tt>: Searching in Doubly-Logarithmic Time
+</h1>
+<p>
+<a name="34486"></a>The performance of the <tt>BinaryTrie</tt> structure is not very impressive.
+The number of elements, <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4958.png" alt="$ \mathtt{n}$"></span>, stored in the structure is at most <!-- MATH
+ $2^{\ensuremath{\mathtt{w}}}$
+ -->
+<span class="MATH"><img width="20" height="30" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4959.png" alt="$ 2^{\ensuremath{\mathtt{w}}}$"></span>,
+so <!-- MATH
+ $\log \ensuremath{\mathtt{n}}\le \ensuremath{\mathtt{w}}$
+ -->
+<span class="MATH"><img width="62" height="30" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4960.png" alt="$ \log \ensuremath{\mathtt{n}}\le \ensuremath{\mathtt{w}}$"></span>.  In other words, any of the comparison-based <tt>SSet</tt>
+structures described in other parts of this book are at least as efficient
+as a <tt>BinaryTrie</tt>, and are not restricted to only storing integers.
+</p><p>
+Next we describe the <tt>XFastTrie</tt>, which is just a <tt>BinaryTrie</tt> with
+<!-- MATH
+ $\mathtt{w+1}$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4961.png" alt="$ \mathtt{w+1}$"></span> hash tables--one for each level of the trie. These hash tables
+are used to speed up the <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4962.png" alt="$ \mathtt{find(x)}$"></span> operation to <!-- MATH
+ $O(\log \ensuremath{\mathtt{w}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4963.png" alt="$ O(\log \ensuremath{\mathtt{w}})$"></span> time.
+Recall that the <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4964.png" alt="$ \mathtt{find(x)}$"></span> operation in a <tt>BinaryTrie</tt> is almost complete
+once we reach a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4965.png" alt="$ \mathtt{u}$"></span>, where the search path for <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4966.png" alt="$ \mathtt{x}$"></span> would like to
+proceed to <!-- MATH
+ $\mathtt{u.right}$
+ -->
+<span class="MATH"><img width="59" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4967.png" alt="$ \mathtt{u.right}$"></span> (or <!-- MATH
+ $\mathtt{u.left}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4968.png" alt="$ \mathtt{u.left}$"></span>) but <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4969.png" alt="$ \mathtt{u}$"></span> has no right (respectively,
+left) child.  At this point, the search uses <!-- MATH
+ $\mathtt{u.jump}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4970.png" alt="$ \mathtt{u.jump}$"></span> to jump to a leaf,
+<!-- MATH
+ $\mathtt{v}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4971.png" alt="$ \mathtt{v}$"></span>, of the <tt>BinaryTrie</tt> and either return <!-- MATH
+ $\mathtt{v}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4972.png" alt="$ \mathtt{v}$"></span> or its successor in the
+linked list of leaves.  An <tt>XFastTrie</tt> speeds up the search process by
+using binary search
+<a name="33884"></a>on the levels of the trie to locate the node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4973.png" alt="$ \mathtt{u}$"></span>.
+</p><p>
+To use binary search, we need a way to determine if the node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4974.png" alt="$ \mathtt{u}$"></span> we are
+looking for is above a particular level, <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4975.png" alt="$ \mathtt{i}$"></span>, of if <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4976.png" alt="$ \mathtt{u}$"></span> is at or below
+level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4977.png" alt="$ \mathtt{i}$"></span>.  This information is given by the highest-order <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4978.png" alt="$ \mathtt{i}$"></span> bits
+in the binary representation of <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4979.png" alt="$ \mathtt{x}$"></span>; these bits determine the search
+path that <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4980.png" alt="$ \mathtt{x}$"></span> takes from the root to level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4981.png" alt="$ \mathtt{i}$"></span>.   For an example,
+refer to Figure&nbsp;<a href="http://opendatastructures.org/ods-java/13_2_XFastTrie_Searching_in.html#fig:xfast-path">13.6</a>; in this figure the last node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4982.png" alt="$ \mathtt{u}$"></span>, on
+search path for 14 (whose binary representation is 1110) is the node
+labelled <!-- MATH
+ $11{\star\star}$
+ -->
+<span class="MATH"><img width="40" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4983.png" alt="$ 11{\star\star}$"></span> at level 2 because there is no node labelled
+<!-- MATH
+ $111{\star}$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4984.png" alt="$ 111{\star}$"></span> at level 3.  Thus, we can label each node at level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4985.png" alt="$ \mathtt{i}$"></span>
+with an <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4986.png" alt="$ \mathtt{i}$"></span>-bit integer.  Then, the node <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4987.png" alt="$ \mathtt{u}$"></span> we are searching for would
+be at or below level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4988.png" alt="$ \mathtt{i}$"></span> if and only if there is a node at level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4989.png" alt="$ \mathtt{i}$"></span>
+whose label matches the highest-order <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4990.png" alt="$ \mathtt{i}$"></span> bits of <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4991.png" alt="$ \mathtt{x}$"></span>.
+</p><p>
+</p><div align="CENTER"><a name="fig:xfast-path"></a><a name="34520"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 13.6:</strong>
+Since there is no node labelled <span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4993.png" alt="$ 111\star$"></span>, the search path
+    for 14 (1110) ends at the node labelled <!-- MATH
+ $11{\star\star}$
+ -->
+<span class="MATH"><img width="40" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4994.png" alt="$ 11{\star\star}$"></span> .</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="400" height="227" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4992.png" alt="\includegraphics[scale=0.90909]{figs/xfast-path}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+In an <tt>XFastTrie</tt>, we store, for each <!-- MATH
+ $\ensuremath{\mathtt{i}}\in\{0,\ldots,\ensuremath{\mathtt{w}}\}$
+ -->
+<span class="MATH"><img width="85" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4997.png" alt="$ \ensuremath{\mathtt{i}}\in\{0,\ldots,\ensuremath{\mathtt{w}}\}$"></span>, all
+the nodes at level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4998.png" alt="$ \mathtt{i}$"></span> in a <tt>USet</tt>, <!-- MATH
+ $\mathtt{t[i]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img4999.png" alt="$ \mathtt{t[i]}$"></span>, that is implemented as a
+hash table (Chapter&nbsp;<a href="http://opendatastructures.org/ods-java/5_Hash_Tables.html#chap:hashing">5</a>).  Using this <tt>USet</tt> allows us to check
+in constant expected time if there is a node at level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5000.png" alt="$ \mathtt{i}$"></span> whose label
+matches the highest-order <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5001.png" alt="$ \mathtt{i}$"></span> bits of <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5002.png" alt="$ \mathtt{x}$"></span>.  In fact, we can even find
+this node using
+<!-- MATH
+ $\mathtt{t[i].find(x\text{\ttfamily >>>}(w-i))}$
+ -->
+<span class="MATH"><img width="156" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5003.png" alt="$ \mathtt{t[i].find(x\text{\ttfamily &gt;&gt;&gt;}(w-i))}$"></span>
+</p><p>
+The hash tables <!-- MATH
+ $\ensuremath{\mathtt{t[0]}},\ldots,\ensuremath{\mathtt{t[w]}}$
+ -->
+<span class="MATH"><img width="87" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5004.png" alt="$ \ensuremath{\mathtt{t[0]}},\ldots,\ensuremath{\mathtt{t[w]}}$"></span> allow us to use binary search
+to find <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5005.png" alt="$ \mathtt{u}$"></span>.  Initially, we know that <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5006.png" alt="$ \mathtt{u}$"></span> is at some level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5007.png" alt="$ \mathtt{i}$"></span> with
+<!-- MATH
+ $0\le \ensuremath{\mathtt{i}}< \ensuremath{\mathtt{w}}+1$
+ -->
+<span class="MATH"><img width="88" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5008.png" alt="$ 0\le \ensuremath{\mathtt{i}}&lt; \ensuremath{\mathtt{w}}+1$"></span>. We therefore initialize <!-- MATH
+ $\ensuremath{\mathtt{l}}=0$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5009.png" alt="$ \ensuremath{\mathtt{l}}=0$"></span> and <!-- MATH
+ $\ensuremath{\mathtt{h}}=\ensuremath{\mathtt{w}}+1$
+ -->
+<span class="MATH"><img width="63" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5010.png" alt="$ \ensuremath{\mathtt{h}}=\ensuremath{\mathtt{w}}+1$"></span>
+and repeatedly look at the hash table <!-- MATH
+ $\mathtt{t[i]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5011.png" alt="$ \mathtt{t[i]}$"></span>, where <!-- MATH
+ $\ensuremath{\mathtt{i}}=\lfloor
+(\ensuremath{\mathtt{l+h}})/2\rfloor$
+ -->
+<span class="MATH"><img width="100" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5012.png" alt="$ \ensuremath{\mathtt{i}}=\lfloor
+(\ensuremath{\mathtt{l+h}})/2\rfloor$"></span>.  If <!-- MATH
+ $\ensuremath{\mathtt{t[i]}}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5013.png" alt="$ \ensuremath{\mathtt{t[i]}}$"></span> contains a node whose label matches
+<!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5014.png" alt="$ \mathtt{x}$"></span>'s highest-order <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5015.png" alt="$ \mathtt{i}$"></span> bits then we set <!-- MATH
+ $\mathtt{l=i}$
+ -->
+<span class="MATH"><img width="39" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5016.png" alt="$ \mathtt{l=i}$"></span> (<!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5017.png" alt="$ \mathtt{u}$"></span> is at or below level
+<!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5018.png" alt="$ \mathtt{i}$"></span>); otherwise we set <!-- MATH
+ $\mathtt{h=i}$
+ -->
+<span class="MATH"><img width="39" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5019.png" alt="$ \mathtt{h=i}$"></span> (<!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5020.png" alt="$ \mathtt{u}$"></span> is above level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5021.png" alt="$ \mathtt{i}$"></span>).  This process
+terminates when <!-- MATH
+ $\ensuremath{\mathtt{h-l}}\le 1$
+ -->
+<span class="MATH"><img width="62" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5022.png" alt="$ \ensuremath{\mathtt{h-l}}\le 1$"></span>, in which case we determine that <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5023.png" alt="$ \mathtt{u}$"></span> is
+at level <!-- MATH
+ $\mathtt{l}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5024.png" alt="$ \mathtt{l}$"></span>.  We then complete the <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5025.png" alt="$ \mathtt{find(x)}$"></span> operation using <!-- MATH
+ $\mathtt{u.jump}$
+ -->
+<span class="MATH"><img width="50" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5026.png" alt="$ \mathtt{u.jump}$"></span>
+and the doubly-linked list of leaves.
+</p><pre>    T find(T x) {
+        int l = 0, h = w+1, ix = it.intValue(x);
+        Node v, u = r, q = newNode();
+        while (h-l &gt; 1) {
+            int i = (l+h)/2;
+            q.prefix = ix &gt;&gt;&gt; w-i;
+            if ((v = t[i].find(q)) == null) {
+                h = i;
+            } else {
+                u = v;
+                l = i;
+            }
+        }
+        if (l == w) return u.x;
+        Node pred = (((ix &gt;&gt;&gt; w-l-1) &amp; 1) == 1) 
+                 ? u.jump : u.jump.child[0];
+        return (pred.child[next] == dummy) 
+                     ? null : pred.child[next].x;
+    }
+</pre>
+Each iteration of the <!-- MATH
+ $\mathtt{while}$
+ -->
+<span class="MATH"><img width="46" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5027.png" alt="$ \mathtt{while}$"></span> loop in the above method decreases <!-- MATH
+ $\mathtt{h-l}$
+ -->
+<span class="MATH"><img width="36" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5028.png" alt="$ \mathtt{h-l}$"></span>
+by roughly a factor of two, so this loop finds <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5029.png" alt="$ \mathtt{u}$"></span> after <!-- MATH
+ $O(\log \ensuremath{\mathtt{w}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5030.png" alt="$ O(\log \ensuremath{\mathtt{w}})$"></span>
+iterations.  Each iteration performs a constant amount of work and one
+<!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5031.png" alt="$ \mathtt{find(x)}$"></span> operation in a <tt>USet</tt>, which takes a constant expected amount
+of time.  The remaining work takes only constant time, so the <!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5032.png" alt="$ \mathtt{find(x)}$"></span>
+method in an <tt>XFastTrie</tt> takes only <!-- MATH
+ $O(\log\ensuremath{\mathtt{w}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5033.png" alt="$ O(\log\ensuremath{\mathtt{w}})$"></span> expected time.
+<p>
+The <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5034.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5035.png" alt="$ \mathtt{remove(x)}$"></span> methods for an <tt>XFastTrie</tt> are almost
+identical to the same methods in a <tt>BinaryTrie</tt>.  The only modifications
+are for managing the hash tables <!-- MATH
+ $\mathtt{t[0]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5036.png" alt="$ \mathtt{t[0]}$"></span>,...,<!-- MATH
+ $\mathtt{t[w]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5037.png" alt="$ \mathtt{t[w]}$"></span>.  During the
+<!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5038.png" alt="$ \mathtt{add(x)}$"></span> operation, when a new node is created at level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5039.png" alt="$ \mathtt{i}$"></span>, this node
+is added to <!-- MATH
+ $\mathtt{t[i]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5040.png" alt="$ \mathtt{t[i]}$"></span>.  During a <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5041.png" alt="$ \mathtt{remove(x)}$"></span> operation, when a node is
+removed form level <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5042.png" alt="$ \mathtt{i}$"></span>, this node is removed from <!-- MATH
+ $\mathtt{t[i]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5043.png" alt="$ \mathtt{t[i]}$"></span>.  Since adding
+and removing from a hash table take constant expected time, this does
+not increase the running times of <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5044.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5045.png" alt="$ \mathtt{remove(x)}$"></span> by more than
+a constant factor. We omit a code listing for <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5046.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5047.png" alt="$ \mathtt{remove(x)}$"></span>
+since the code is almost identical to the (long) code listing already
+provided for the same methods in a <tt>BinaryTrie</tt>.
+</p><p>
+The following theorem summarizes the performance of an <tt>XFastTrie</tt>:
+</p><p>
+</p><p>
+</p><div><b>Theorem  <span class="arabic">13</span>..<span class="arabic">2</span></b> &nbsp; 
+<i>An <tt>XFastTrie</tt> implements the <tt>SSet</tt> interface for <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5048.png" alt="$ \mathtt{w}$"></span>-bit integers. An
+<tt>XFastTrie</tt> supports the operations
+</i>
+<ul>
+<li><!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5049.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove(x)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5050.png" alt="$ \mathtt{remove(x)}$"></span> in <!-- MATH
+ $O(\ensuremath{\mathtt{w}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5051.png" alt="$ O(\ensuremath{\mathtt{w}})$"></span> expected time per operation and 
+</li>
+<li><!-- MATH
+ $\mathtt{find(x)}$
+ -->
+<span class="MATH"><img width="57" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5052.png" alt="$ \mathtt{find(x)}$"></span> in <!-- MATH
+ $O(\log \ensuremath{\mathtt{w}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5053.png" alt="$ O(\log \ensuremath{\mathtt{w}})$"></span> expected time per operation.
+</li>
+</ul><i>
+The space used by an <tt>XFastTrie</tt> that
+stores <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5054.png" alt="$ \mathtt{n}$"></span> values is <!-- MATH
+ $O(\ensuremath{\mathtt{n}}\cdot\ensuremath{\mathtt{w}})$
+ -->
+<span class="MATH"><img width="54" height="31" align="MIDDLE" border="0" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/img5055.png" alt="$ O(\ensuremath{\mathtt{n}}\cdot\ensuremath{\mathtt{w}})$"></span>.</i></div><p></p>
+<p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/13.2 XFastTrie_ Searching in Doubly-Logarithmic Time_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

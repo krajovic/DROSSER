@@ -1,0 +1,21 @@
+/* here is the title bar */
+.titlebar {
+    background-color: white;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    max-width: 45em;
+}
+
+body {
+    max-width: 45em;
+    margin: 0 auto;
+    margin-top: 2em;
+    line-height: 1.5em;
+}
+
+.main {
+  margin-top: 250px; /* Add a top margin to avoid content overlay */
+}
+

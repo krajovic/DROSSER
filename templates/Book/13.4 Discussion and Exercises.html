@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-python/13_4_Discussion_Exercises.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>13.4 Discussion and Exercises</title>
+<meta content="13.4 Discussion and Exercises" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/13.4 Discussion and Exercises_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/13_3_YFastTrie_Doubly_Logar.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/13_Data_Structures_Integers.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/14_External_Memory_Searchin.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION001640000000000000000">
+<span class="arabic">13</span>.<span class="arabic">4</span> Discussion and Exercises</a>
+</h1>
+<p>
+The first data structure to provide <!-- MATH
+ $O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5279.png" width="63"/></span> time <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5280.png" width="50"/></span>,
+<!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5281.png" width="75"/></span>, and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5282.png" width="52"/></span> operations was proposed by van Emde Boas and
+has since become known as the <span class="textit">van Emde Boas</span>
+<a name="60115"></a>(or <span class="textit">stratified</span>)
+<a name="60117"></a><span class="textit">tree</span> [<a href="http://opendatastructures.org/ods-python/Bibliography.html#e77">72</a>].  The original van Emde Boas structure had size
+<!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="30" src="static/13.4 Discussion and Exercises_files/img5283.png" width="22"/></span>, making it impractical for large integers.
+</p><p>
+The XFastTrie and YFastTrie data structures were discovered by
+Willard [<a href="http://opendatastructures.org/ods-python/Bibliography.html#w83">75</a>].  The XFastTrie structure is closely related
+to van Emde Boas trees;  for instance, the hash tables in an XFastTrie
+replace arrays in a van Emde Boas tree.  That is, instead of storing
+the hash table <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{t}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5284.png" width="25"/></span>, a van Emde Boas tree stores an array of length
+<!-- MATH
+ $2^{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{i}}}}}$" border="0" height="36" src="static/13.4 Discussion and Exercises_files/img5285.png" width="17"/></span>.
+</p><p>
+Another structure for storing integers is Fredman and Willard's fusion
+trees [<a href="http://opendatastructures.org/ods-python/Bibliography.html#fw93">32</a>].
+<a name="60126"></a>This structure can store <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/13.4 Discussion and Exercises_files/img5286.png" width="13"/></span> <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/13.4 Discussion and Exercises_files/img5287.png" width="16"/></span>-bit integers in
+<!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5288.png" width="36"/></span> space so that the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5289.png" width="52"/></span> operation runs in <!-- MATH
+ $O((\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})/(\log
+\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}))$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O((\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})/(\log
+\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}))$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5290.png" width="122"/></span> time.  By using a fusion tree when <!-- MATH
+ $\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}} > \sqrt{\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}} &gt; \sqrt{\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}$" border="0" height="38" src="static/13.4 Discussion and Exercises_files/img5291.png" width="101"/></span> and
+a YFastTrie when <!-- MATH
+ $\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}} \le \sqrt{\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}} \le \sqrt{\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}}$" border="0" height="38" src="static/13.4 Discussion and Exercises_files/img5292.png" width="102"/></span>, one obtains an <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5293.png" width="36"/></span>
+space data structure that can implement the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5294.png" width="52"/></span> operation in
+<!-- MATH
+ $O(\sqrt{\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\sqrt{\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}})$" border="0" height="38" src="static/13.4 Discussion and Exercises_files/img5295.png" width="72"/></span> time.  Recent lower-bound results of P<img align="MIDDLE" alt="{\v{a\/}}\kern.05em" border="0" height="26" src="static/13.4 Discussion and Exercises_files/img5322.png" width="10"/>tra<img align="MIDDLE" alt="{\c{s\/}}" border="0" height="19" src="static/13.4 Discussion and Exercises_files/img5323.png" width="8"/>cu
+and Thorup [<a href="http://opendatastructures.org/ods-python/Bibliography.html#pt07">57</a>] show that these results are more or less optimal,
+at least for structures that use only <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5296.png" width="36"/></span> space.
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">13</span>..<span class="arabic">1</span></b>   
+Design and implement a simplified version of a BinaryTrie that
+  does not have a linked list or jump pointers, but for which <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5297.png" width="52"/></span>
+<p>
+still runs in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5298.png" width="39"/></span> time.</p></div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">13</span>..<span class="arabic">2</span></b>   
+Design and implement a simplified implementation of an XFastTrie
+  that doesn't use a binary trie at all. Instead, your implementation
+  should store everything in a doubly-linked list and <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}+1$" border="0" height="29" src="static/13.4 Discussion and Exercises_files/img5299.png" width="40"/></span>
+  hash tables.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">13</span>..<span class="arabic">3</span></b>   
+We can think of a BinaryTrie as a structure that stores bit strings
+  of length <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/13.4 Discussion and Exercises_files/img5300.png" width="16"/></span> in such a way that each bitstring is represented as a
+  root to leaf path.  Extend this idea into an SSet implementation that
+  stores variable-length strings and implements <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{s}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{s}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5301.png" width="48"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{s}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{s}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5302.png" width="73"/></span>,
+  and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{s}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{s}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5303.png" width="50"/></span> in time proporitional to the length of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{s}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{s}}}$" border="0" height="29" src="static/13.4 Discussion and Exercises_files/img5304.png" width="10"/></span>.
+<p>
+Hint: Each node in your data structure should store a hash
+  table that is indexed by character values.</p></div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">13</span>..<span class="arabic">4</span></b>   
+For an integer <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5305.png" width="112"/></span>, let <!-- MATH
+ $d(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ d(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}})$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5306.png" width="32"/></span> denote
+  the difference between <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.4 Discussion and Exercises_files/img5307.png" width="12"/></span> and the value returned by <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5308.png" width="52"/></span>
+  [if <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5309.png" width="52"/></span> returns <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/13.4 Discussion and Exercises_files/img5310.png" width="22"/></span>, then define <!-- MATH
+ $d(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ d(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}})$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5311.png" width="32"/></span> as <!-- MATH
+ $2^\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2^\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="30" src="static/13.4 Discussion and Exercises_files/img5312.png" width="22"/></span>].
+  For example, if <!-- MATH
+ $\ensuremath{\mathrm{find}(23)}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(23)}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5313.png" width="61"/></span> returns 43, then <span class="MATH"><img align="MIDDLE" alt="$ d(23)=20$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5314.png" width="76"/></span>.
+  
+<ol>
+<li>Design and implement a modified version of the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5315.png" width="52"/></span>
+      operation in an XFastTrie that runs in <!-- MATH
+ $O(1+\log d(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}))$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\log d(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}))$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5316.png" width="103"/></span>
+      expected time. Hint: The hash table <!-- MATH
+ $t[\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}]$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ t[\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}]$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5317.png" width="32"/></span> contains all the
+      values, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13.4 Discussion and Exercises_files/img5318.png" width="12"/></span>, such that <!-- MATH
+ $d(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}})=0$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ d(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}})=0$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5319.png" width="58"/></span>, so that would be a good place
+      to start.
+</li>
+<li>Design and implement a modified version of the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5320.png" width="52"/></span>
+      operation in an  XFastTrie that runs in <!-- MATH
+ $O(1+\log\log d(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}))$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(1+\log\log d(\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}))$" border="0" height="31" src="static/13.4 Discussion and Exercises_files/img5321.png" width="126"/></span>
+      expected time.
+  
+</li>
+</ol></div><p></p>
+<p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/13.4 Discussion and Exercises_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

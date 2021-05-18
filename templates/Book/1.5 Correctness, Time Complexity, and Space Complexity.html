@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/1_5_Correctness_Time_Comple.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>1.5 Correctness, Time Complexity, and Space Complexity</title>
+<meta content="1.5 Correctness, Time Complexity, and Space Complexity" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/1.5 Correctness, Time Complexity, and Space Complexity_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/1_6_Code_Samples.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/1_4_Model_Computation.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/1_Introduction.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/1_6_Code_Samples.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION00450000000000000000">
+<span class="arabic">1</span>.<span class="arabic">5</span> Correctness, Time Complexity, and Space Complexity</a>
+</h1>
+<p>
+When studying the performance of a data structure, there are three things
+that matter most:
+</p><p>
+</p><dl>
+<dt><strong>Correctness:</strong></dt>
+<dd>The data structure should correctly implement
+    its interface.
+    <a name="2576"></a></dd>
+<dt><strong>Time complexity:</strong></dt>
+<dd>The running times of operations on the data
+    structure should be as small as possible.
+    <a name="2577"></a><a name="2578"></a></dd>
+<dt><strong>Space complexity:</strong></dt>
+<dd>The data structure should use as little memory
+    as possible.
+    <a name="2579"></a><a name="2580"></a></dd>
+</dl>
+<p>
+In this introductory text, we will take correctness as a given;  we
+won't consider data structures that give incorrect answers to queries or
+don't perform updates properly.  We will, however, see data structures
+that make an extra effort to keep space usage to a minimum.  This won't
+usually affect the (asymptotic) running times of operations, but can
+make the data structures a little slower in practice.
+</p><p>
+When studying running times in the context of data structures we tend to
+come across three different kinds of running time guarantees:
+</p><p>
+</p><dl>
+<dt><strong>Worst-case running times:</strong></dt>
+<dd><a name="2583"></a><a name="2584"></a><a name="2585"></a>These are the strongest kind of running
+  time guarantees.  If a data structure operation has a worst-case
+  running time of <!-- MATH
+ $f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img372.png" width="34"/></span>, then one of these operations <span class="textit">never</span>
+  takes longer than <!-- MATH
+ $f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img373.png" width="34"/></span> time.
+</dd>
+<dt><strong>Amortized running times:</strong></dt>
+<dd><a name="2589"></a><a name="2590"></a>If we say that the amortized running
+  time of an operation in a data structure is <!-- MATH
+ $f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img374.png" width="34"/></span>, then this means that
+  the cost of a typical operation is at most <!-- MATH
+ $f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img375.png" width="34"/></span>.  More precisely,
+  if a data structure has an amortized running time of <!-- MATH
+ $f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img376.png" width="34"/></span>,
+  then a sequence of <span class="MATH"><img align="MIDDLE" alt="$ m$" border="0" height="29" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img377.png" width="17"/></span> operations takes at most <!-- MATH
+ $mf(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ mf(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img378.png" width="46"/></span> time.
+  Some individual operations may take more than <!-- MATH
+ $f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img379.png" width="34"/></span> time but the
+  average, over the entire sequence of operations, is at most <!-- MATH
+ $f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img380.png" width="34"/></span>.
+</dd>
+<dt><strong>Expected running times:</strong></dt>
+<dd><a name="2597"></a><a name="2598"></a>If we say that the expected running time
+  of an operation on a data structure is <!-- MATH
+ $f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img381.png" width="34"/></span>, this means that the
+  actual running time is a random variable (see Section <a href="http://opendatastructures.org/ods-python/1_3_Mathematical_Background.html#sec:randomization">1.3.4</a>)
+  and the expected value of this random variable is at most <!-- MATH
+ $f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ f(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img382.png" width="34"/></span>.
+  The randomization here is with respect to random choices made by the
+  data structure.
+</dd>
+</dl>
+<p>
+To understand the difference between worst-case, amortized, and expected
+running times, it helps to consider a financial example.  Consider the
+cost of buying a house:
+</p><h4><a name="SECTION00450010000000000000"></a>
+<a name="2604"></a>
+<br/>
+<span class="arabic">1</span>.<span class="arabic">5</span>.<span class="arabic">0</span>.<span class="arabic">0</span>.<span class="arabic">1</span> Worst-case versus amortized cost:
+</h4>Suppose that a home costs $120000.  In order to buy this home,
+we might get a 120 month (10 year) mortgage with monthly payments of
+$1200 per month.  In this case, the worst-case monthly cost of paying
+this mortgage is $1200 per month.
+<p>
+If we have enough cash on hand, we might choose to buy the house outright,
+with one payment of $120000.  In this case, over a period of 10 years,
+the amortized monthly cost of buying this house is
+</p><p><!-- MATH
+ \begin{displaymath}
+\$120\,000 / 120\text{ months} = \$1\,000\text{ per month} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle \$120\,000 / 120$" border="0" height="30" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img383.png" width="98"/> months<img align="MIDDLE" alt="$\displaystyle = \$1\,000$" border="0" height="30" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img384.png" width="63"/> per month<img align="MIDDLE" alt="$\displaystyle \enspace .
+$" border="0" height="29" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/img385.png" width="16"/>
+</div><p></p>
+This is much less than the $1200 per month we would have to pay if
+we took out a mortgage.
+<p>
+</p><h4><a name="SECTION00450020000000000000"></a>
+<a name="2608"></a>
+<br/>
+<span class="arabic">1</span>.<span class="arabic">5</span>.<span class="arabic">0</span>.<span class="arabic">0</span>.<span class="arabic">2</span> Worst-case versus expected cost:
+</h4>Next, consider the issue of fire insurance on our $120000 home.
+By studying hundreds of thousands of cases, insurance companies have
+determined that the expected amount of fire damage caused to a home
+like ours is $10 per month.  This is a very small number, since most
+homes never have fires, a few homes may have some small fires that
+cause a bit of smoke damage, and a tiny number of homes burn right to
+their foundations.  Based on this information, the insurance company
+charges $15 per month for fire insurance.
+<p>
+Now it's decision time. Should we pay the $15 worst-case monthly cost
+for fire insurance, or should we gamble and self-insure at an expected
+cost of $10 per month?  Clearly, the $10 per month costs less <span class="textit">in
+expectation</span>, but we have to be able to accept the possibility that
+the <span class="textit">actual cost</span> may be much higher.  In the unlikely event that the
+entire house burns down, the actual cost will be $120000.
+</p><p>
+These financial examples also offer insight into why we sometimes settle
+for an amortized or expected running time over a worst-case running time.
+It is often possible to get a lower expected or amortized running time
+than a worst-case running time. At the very least, it is very often possible
+to get a much simpler data structure if one is willing to settle for
+amortized or expected running times.
+</p><p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/1.5 Correctness, Time Complexity, and Space Complexity_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

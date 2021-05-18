@@ -1,0 +1,439 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-java/4_3_SkiplistList_Efficient_.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>4.3 SkiplistList: An Efficient Random-Access List</title>
+<meta name="description" content="4.3 SkiplistList: An Efficient Random-Access List">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/4.3 SkiplistList_ An Efficient Random-Access List_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/4_4_Analysis_Skiplists.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/4_2_SkiplistSSet_Efficient_.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/4_Skiplists.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/4_4_Analysis_Skiplists.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<hr>
+<h1><a name="SECTION00730000000000000000"></a>
+<a name="sec:skiplistlist"></a>
+<br>
+<span class="arabic">4</span>.<span class="arabic">3</span> <tt>SkiplistList</tt>: An Efficient Random-Access <tt>List</tt>
+</h1>
+<p>
+<a name="12460"></a>A <tt>SkiplistList</tt> implements the <tt>List</tt> interface using a skiplist
+structure.  In a <tt>SkiplistList</tt>, <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1710.png" alt="$ L_0$"></span> contains the elements of the
+list in the order in which they appear in the list.   As in a
+<tt>SkiplistSSet</tt>, elements can be added, removed, and accessed in <!-- MATH
+ $O(\log
+\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1711.png" alt="$ O(\log
+\ensuremath{\mathtt{n}})$"></span> time.
+</p><p>
+For this to be possible, we need a way to follow the search path for
+the <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1712.png" alt="$ \mathtt{i}$"></span>th element in <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1713.png" alt="$ L_0$"></span>.  The easiest way to do this is to define
+the notion of the <span class="textit">length</span> of an edge in some list, <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1714.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span>.
+We define the length of every edge in <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1715.png" alt="$ L_{0}$"></span> as 1.  The length of an edge, <!-- MATH
+ $\mathtt{e}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1716.png" alt="$ \mathtt{e}$"></span>,
+in <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1717.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span>, <!-- MATH
+ $\ensuremath{\mathtt{r}}>0$
+ -->
+<span class="MATH"><img width="38" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1718.png" alt="$ \ensuremath{\mathtt{r}}&gt;0$"></span>, is defined as the sum of the lengths of the edges below <!-- MATH
+ $\mathtt{e}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1719.png" alt="$ \mathtt{e}$"></span>
+in <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}-1}$
+ -->
+<span class="MATH"><img width="34" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1720.png" alt="$ L_{\ensuremath{\mathtt{r}}-1}$"></span>.  Equivalently, the length of <!-- MATH
+ $\mathtt{e}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1721.png" alt="$ \mathtt{e}$"></span> is
+the number of edges in <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1722.png" alt="$ L_0$"></span> below <!-- MATH
+ $\mathtt{e}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1723.png" alt="$ \mathtt{e}$"></span>.  See Figure&nbsp;<a href="http://opendatastructures.org/ods-java/4_3_SkiplistList_Efficient_.html#fig:skiplist-lengths">4.5</a> for
+an example of a skiplist with the lengths of its edges shown.  Since the
+edges of skiplists are stored in arrays, the lengths can be stored the same
+way:
+</p><p>
+</p><div align="CENTER"><a name="fig:skiplist-lengths"></a><a name="11955"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 4.5:</strong>
+The lengths of the edges in a skiplist.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="551" height="158" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1724.png" alt="\includegraphics[width=\textwidth ]{figs/skiplist-lengths}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><pre>    class Node {
+        T x;
+        Node[] next;
+        int[] length;
+        @SuppressWarnings("unchecked")
+        Node(T ix, int h) {
+            x = ix;
+            next = (Node[])Array.newInstance(Node.class, h+1);
+            length = new int[h+1];
+        }
+        int height() {
+            return next.length - 1;
+        }
+    }
+</pre>
+<p>
+The useful property of this definition of length is that, if we are
+currently at a node that is at position <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1725.png" alt="$ \mathtt{j}$"></span> in <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1726.png" alt="$ L_0$"></span> and we follow an
+edge of length <span class="MATH"><img width="12" height="30" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1727.png" alt="$ \ell$"></span>, then we move to a node whose position, in <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1728.png" alt="$ L_0$"></span>,
+is <!-- MATH
+ $\ensuremath{\mathtt{j}}+\ell$
+ -->
+<span class="MATH"><img width="35" height="30" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1729.png" alt="$ \ensuremath{\mathtt{j}}+\ell$"></span>.  In this way, while following a search path, we can keep
+track of the position, <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1730.png" alt="$ \mathtt{j}$"></span>, of the current node in <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1731.png" alt="$ L_0$"></span>.  When at a
+node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1732.png" alt="$ \mathtt{u}$"></span>, in <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1733.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span>, we go right if <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1734.png" alt="$ \mathtt{j}$"></span> plus the length of the edge
+<!-- MATH
+ $\mathtt{u.next[r]}$
+ -->
+<span class="MATH"><img width="69" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1735.png" alt="$ \mathtt{u.next[r]}$"></span> is less than <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1736.png" alt="$ \mathtt{i}$"></span>. Otherwise, we go down into <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}-1}$
+ -->
+<span class="MATH"><img width="34" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1737.png" alt="$ L_{\ensuremath{\mathtt{r}}-1}$"></span>.
+</p><p>
+</p><pre>    Node findPred(int i) {
+        Node u = sentinel;
+        int r = h;
+        int j = -1;   // index of the current node in list 0
+        while (r &gt;= 0) {
+            while (u.next[r] != null &amp;&amp; j + u.length[r] &lt; i) {
+                j += u.length[r];
+                u = u.next[r];
+            }
+            r--;
+        }
+        return u;
+    }
+</pre>
+<pre>    T get(int i) {
+        if (i &lt; 0 || i &gt; n-1) throw new IndexOutOfBoundsException();
+        return findPred(i).next[0].x;
+    }
+    T set(int i, T x) {
+        if (i &lt; 0 || i &gt; n-1) throw new IndexOutOfBoundsException();
+        Node u = findPred(i).next[0];
+        T y = u.x;
+        u.x = x;
+        return y;
+    }
+</pre>
+<p>
+Since the hardest part of the operations <!-- MATH
+ $\mathtt{get(i)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1738.png" alt="$ \mathtt{get(i)}$"></span> and <!-- MATH
+ $\mathtt{set(i,x)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1739.png" alt="$ \mathtt{set(i,x)}$"></span> is
+finding the <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1740.png" alt="$ \mathtt{i}$"></span>th node in <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1741.png" alt="$ L_0$"></span>, these operations run in
+<!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1742.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> time.
+</p><p>
+Adding an element to a <tt>SkiplistList</tt> at a position, <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1743.png" alt="$ \mathtt{i}$"></span>, is fairly
+simple.  Unlike in a <tt>SkiplistSSet</tt>, we are sure that a new
+node will actually be added, so we can do the addition at the same time
+as we search for the new node's location. We first pick the height, <!-- MATH
+ $\mathtt{k}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1744.png" alt="$ \mathtt{k}$"></span>,
+of the newly inserted node, <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1745.png" alt="$ \mathtt{w}$"></span>, and then follow the search path for <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1746.png" alt="$ \mathtt{i}$"></span>.
+Any time the search path moves down from <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1747.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span> with <!-- MATH
+ $\ensuremath{\mathtt{r}}\le \ensuremath{\mathtt{k}}$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1748.png" alt="$ \ensuremath{\mathtt{r}}\le \ensuremath{\mathtt{k}}$"></span>, we
+splice <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1749.png" alt="$ \mathtt{w}$"></span> into <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1750.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span>.  The only extra care needed is to ensure that
+the lengths of edges are updated properly.  See Figure&nbsp;<a href="http://opendatastructures.org/ods-java/4_3_SkiplistList_Efficient_.html#fig:skiplist-addix">4.6</a>.
+</p><p>
+</p><div align="CENTER"><a name="fig:skiplist-addix"></a><a name="12493"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 4.6:</strong>
+Adding an element to a <tt>SkiplistList</tt>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="552" height="151" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1751.png" alt="\includegraphics[width=\textwidth ]{figs/skiplist-addix}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Note that, each time the search path goes down at a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1752.png" alt="$ \mathtt{u}$"></span>, in <!-- MATH
+ $L_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1753.png" alt="$ L_{\ensuremath{\mathtt{r}}}$"></span>,
+the length of the edge <!-- MATH
+ $\mathtt{u.next[r]}$
+ -->
+<span class="MATH"><img width="69" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1754.png" alt="$ \mathtt{u.next[r]}$"></span> increases by one, since we are adding
+an element below that edge at position <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1755.png" alt="$ \mathtt{i}$"></span>.  Splicing  the node <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1756.png" alt="$ \mathtt{w}$"></span> between two nodes,
+<!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1757.png" alt="$ \mathtt{u}$"></span> and <!-- MATH
+ $\mathtt{z}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1758.png" alt="$ \mathtt{z}$"></span>, works as shown in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/4_3_SkiplistList_Efficient_.html#fig:skiplist-lengths-splice">4.7</a>.  While
+following the search path we are already keeping track of the position,
+<!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1759.png" alt="$ \mathtt{j}$"></span>, of <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1760.png" alt="$ \mathtt{u}$"></span> in <span class="MATH"><img width="21" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1761.png" alt="$ L_0$"></span>.  Therefore, we know that the length of the edge from
+<!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1762.png" alt="$ \mathtt{u}$"></span> to <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1763.png" alt="$ \mathtt{w}$"></span> is <!-- MATH
+ $\ensuremath{\mathtt{i}}-\ensuremath{\mathtt{j}}$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1764.png" alt="$ \ensuremath{\mathtt{i}}-\ensuremath{\mathtt{j}}$"></span>.  We can also deduce the length of the edge
+from <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1765.png" alt="$ \mathtt{w}$"></span>  to <!-- MATH
+ $\mathtt{z}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1766.png" alt="$ \mathtt{z}$"></span> from the length, <span class="MATH"><img width="12" height="30" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1767.png" alt="$ \ell$"></span>, of the edge from <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1768.png" alt="$ \mathtt{u}$"></span> to <!-- MATH
+ $\mathtt{z}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1769.png" alt="$ \mathtt{z}$"></span>.
+Therefore, we can splice in <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1770.png" alt="$ \mathtt{w}$"></span> and update the lengths of the edges in
+constant time.
+</p><p>
+</p><div align="CENTER"><a name="fig:skiplist-lengths-splice"></a><a name="12713"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 4.7:</strong>
+Updating the lengths of edges while splicing a node 
+   <!-- MATH
+ $\mathtt{w}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1772.png" alt="$ \mathtt{w}$"></span> into a skiplist.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="420" height="150" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1771.png" alt="\includegraphics[scale=0.90909]{figs/skiplist-lengths-splice}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+This sounds more complicated than it is, for the code is actually
+quite simple:
+</p><p>
+</p><pre>    void add(int i, T x) {
+        if (i &lt; 0 || i &gt; n) throw new IndexOutOfBoundsException();
+        Node w = new Node(x, pickHeight());
+        if (w.height() &gt; h) 
+            h = w.height();
+        add(i, w);
+    }
+</pre>
+<pre>    Node add(int i, Node w) {
+        Node u = sentinel;
+        int k = w.height();
+        int r = h;
+        int j = -1; // index of u
+        while (r &gt;= 0) {
+            while (u.next[r] != null &amp;&amp; j+u.length[r] &lt; i) {
+                j += u.length[r];
+                u = u.next[r];
+            }
+            u.length[r]++; // accounts for new node in list 0
+            if (r &lt;= k) {
+                w.next[r] = u.next[r];
+                u.next[r] = w;
+                w.length[r] = u.length[r] - (i - j);
+                u.length[r] = i - j;
+            }
+            r--;
+        }
+        n++;
+        return u;
+    }
+</pre>
+<p>
+By now, the implementation of 
+the <!-- MATH
+ $\mathtt{remove(i)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1773.png" alt="$ \mathtt{remove(i)}$"></span> operation in a <tt>SkiplistList</tt> should be obvious.  We follow the search path for the node at position <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1774.png" alt="$ \mathtt{i}$"></span>.  Each time the search path takes a step down from a node, <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1775.png" alt="$ \mathtt{u}$"></span>, at level <!-- MATH
+ $\mathtt{r}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1776.png" alt="$ \mathtt{r}$"></span> we decrement the length of the edge leaving <!-- MATH
+ $\mathtt{u}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1777.png" alt="$ \mathtt{u}$"></span> at that level.  We also check if <!-- MATH
+ $\mathtt{u.next[r]}$
+ -->
+<span class="MATH"><img width="69" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1778.png" alt="$ \mathtt{u.next[r]}$"></span> is the element of rank <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1779.png" alt="$ \mathtt{i}$"></span> and, if so, splice it out of the list at that level.   An example is shown in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/4_3_SkiplistList_Efficient_.html#fig:skiplist-removei">4.8</a>.
+</p><div align="CENTER"><a name="fig:skiplist-removei"></a><a name="12520"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 4.8:</strong>
+Removing an element from a <tt>SkiplistList</tt>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="551" height="161" align="BOTTOM" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1780.png" alt="\includegraphics[width=\textwidth ]{figs/skiplist-removei}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<pre>    T remove(int i) {
+        if (i &lt; 0 || i &gt; n-1) throw new IndexOutOfBoundsException();
+        T x = null;
+        Node u = sentinel;
+        int r = h;
+        int j = -1; // index of node u
+        while (r &gt;= 0) {
+            while (u.next[r] != null &amp;&amp; j+u.length[r] &lt; i) {
+                j += u.length[r];
+                u = u.next[r];
+            }
+            u.length[r]--;  // for the node we are removing
+            if (j + u.length[r] + 1 == i &amp;&amp; u.next[r] != null) {
+                x = u.next[r].x;
+                u.length[r] += u.next[r].length[r];
+                u.next[r] = u.next[r].next[r];
+                if (u == sentinel &amp;&amp; u.next[r] == null)
+                    h--;
+            }
+            r--;
+        }
+        n--;
+        return x;
+    }
+</pre>
+<p>
+</p><h2><a name="SECTION00731000000000000000">
+<span class="arabic">4</span>.<span class="arabic">3</span>.<span class="arabic">1</span> Summary</a>
+</h2>
+<p>
+The following theorem summarizes the performance of the <tt>SkiplistList</tt>
+data structure:
+</p><p>
+</p><p>
+</p><div><a name="thm:skiplistlist"><b>Theorem  <span class="arabic">4</span>..<span class="arabic">2</span></b></a> &nbsp; 
+<i>A <tt>SkiplistList</tt> implements the <tt>List</tt> interface.  A <tt>SkiplistList</tt>
+  supports the operations <!-- MATH
+ $\mathtt{get(i)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1781.png" alt="$ \mathtt{get(i)}$"></span>, <!-- MATH
+ $\mathtt{set(i,x)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1782.png" alt="$ \mathtt{set(i,x)}$"></span>, <!-- MATH
+ $\mathtt{add(i,x)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1783.png" alt="$ \mathtt{add(i,x)}$"></span>, and
+  <!-- MATH
+ $\mathtt{remove(i)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1784.png" alt="$ \mathtt{remove(i)}$"></span> in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/img1785.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> expected time per operation.</i></div><p></p>
+<p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/4.3 SkiplistList_ An Efficient Random-Access List_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

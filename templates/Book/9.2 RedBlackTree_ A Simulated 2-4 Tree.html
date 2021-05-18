@@ -1,0 +1,1123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>9.2 RedBlackTree: A Simulated 2-4 Tree</title>
+<meta content="9.2 RedBlackTree: A Simulated 2-4 Tree" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/9_3_Summary.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/9_1_2_4_Trees.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/9_Red_Black_Trees.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/9_3_Summary.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<hr/>
+<h1><a name="SECTION001220000000000000000"></a>
+<a name="sec:redblacktree"></a>
+<br/>
+<span class="arabic">9</span>.<span class="arabic">2</span> RedBlackTree: A Simulated 2-4 Tree
+</h1>
+<p>
+A red-black tree is a binary search tree in which each node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3535.png" width="13"/></span>,
+has a <span class="textit">colour</span>
+<a name="42895"></a>which is either <span class="textit">red</span> or <span class="textit">black</span>.  Red is
+represented by the value <span class="MATH">0</span> and black by the value <span class="MATH"><img align="MIDDLE" alt="$ 1$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3536.png" width="13"/></span>.
+<a name="42898"></a><a name="42899"></a>
+</p><p>
+Before and after any operation on a red-black tree, the following two
+properties are satisfied. Each property is defined both in terms of the
+colours red and black, and in terms of the numeric values 0 and 1.
+</p><p>
+</p><div><b>Property  <span class="arabic">9</span>..<span class="arabic">3</span></b> (black-height)    
+<a name="42901"></a>There are the same number of black nodes on every root to leaf
+  path. (The sum of the colours on any root to leaf path is the same.)</div><p></p>
+<p>
+</p><p>
+</p><div><b>Property  <span class="arabic">9</span>..<span class="arabic">4</span></b> (no-red-edge)    
+<a name="42904"></a>No two red nodes are adjacent.  (For any node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3537.png" width="13"/></span>, except the root,
+  <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{colour}}}} + \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{parent}}.\ensuremath{\mathit{colour}}}} \ge 1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{colour}}}}...
+...h{\mathit{u}}.\ensuremath{\mathit{parent}}.\ensuremath{\mathit{colour}}}} \ge 1$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3538.png" width="201"/></span>.)</div><p></p>
+Notice that we can always colour the root, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{r}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{r}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3539.png" width="10"/></span>, of a red-black tree black
+without violating either of these two properties, so we will assume
+that the root is black, and the algorithms for updating a red-black
+tree will maintain this.  Another trick that simplifies red-black trees
+is to treat the external nodes (represented by <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3540.png" width="22"/></span>) as black nodes.
+This way, every real node, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3541.png" width="13"/></span>, of a red-black tree has exactly two
+children, each with a well-defined colour.  An example of a red-black
+tree is shown in Figure <a href="http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html#fig:redblack-example">9.4</a>.
+<p>
+</p><div align="CENTER"><a name="fig:redblack-example"></a><a name="45459"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 9.4:</strong>
+An example of a red-black tree with black-height 3.  External (<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{nil}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{nil}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3543.png" width="22"/></span>) nodes are drawn as squares.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/24rb-1}" border="0" height="149" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3542.png" width="334"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><h2><a name="SECTION001221000000000000000">
+<span class="arabic">9</span>.<span class="arabic">2</span>.<span class="arabic">1</span> Red-Black Trees and 2-4 Trees</a>
+</h2>
+<p>
+At first it might seem surprising that a red-black tree can be efficiently
+updated to maintain the black-height and no-red-edge properties, and
+it seems unusual to even consider these as useful properties.  However,
+red-black trees were designed to be an efficient simulation of 2-4 trees
+as binary trees.
+</p><p>
+Refer to Figure <a href="http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html#fig:twofour-redblack">9.5</a>.
+Consider any red-black tree, <span class="MATH"><img align="MIDDLE" alt="$ T$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3544.png" width="16"/></span>, having <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3545.png" width="13"/></span> nodes and perform the
+following transformation: Remove each red node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3546.png" width="13"/></span> and connect <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3547.png" width="13"/></span>'s two
+children directly to the (black) parent of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3548.png" width="13"/></span>.  After this transformation
+we are left with a tree <span class="MATH"><img align="MIDDLE" alt="$ T'$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3549.png" width="20"/></span> having only black nodes.
+</p><div align="CENTER"><a name="fig:twofour-redblack"></a><a name="42937"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 9.5:</strong>
+Every red-black tree has a corresponding 2-4 tree.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table align="CENTER" cellpadding="3">
+<tbody><tr><td align="CENTER"><img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/24rb-3}" border="0" height="149" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3550.png" width="334"/></td>
+<td align="CENTER"> </td>
+</tr>
+<tr><td align="CENTER"><img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/24rb-2}" border="0" height="149" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3551.png" width="334"/></td>
+<td align="CENTER"> </td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Every internal node in <span class="MATH"><img align="MIDDLE" alt="$ T'$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3552.png" width="20"/></span> has two, three, or four children: A black
+node that started out with two black children will still have two
+black children after this transformation.  A black node that started
+out with one red and one black child will have three children after this
+transformation.  A black node that started out with two red children will
+have four children after this transformation.  Furthermore, the black-height
+property now guarantees that every root-to-leaf path in <span class="MATH"><img align="MIDDLE" alt="$ T'$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3553.png" width="20"/></span> has the
+same length.  In other words, <span class="MATH"><img align="MIDDLE" alt="$ T'$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3554.png" width="20"/></span> is a 2-4 tree!
+</p><p>
+The 2-4 tree <span class="MATH"><img align="MIDDLE" alt="$ T'$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3555.png" width="20"/></span> has <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3556.png" width="37"/></span> leaves that correspond to the <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3557.png" width="37"/></span>
+external nodes of the red-black tree.  Therefore, this tree has height
+at most <!-- MATH
+ $\log (\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log (\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1)$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3558.png" width="69"/></span>. Now, every root to leaf path in the 2-4 tree corresponds
+to a path from the root of the red-black tree <span class="MATH"><img align="MIDDLE" alt="$ T$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3559.png" width="16"/></span> to an external node.
+The first and last node in this path are black and at most one out of
+every two internal nodes is red, so this path has at most <!-- MATH
+ $\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1)$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3560.png" width="69"/></span>
+black nodes and at most <!-- MATH
+ $\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1)-1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1)-1$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3561.png" width="93"/></span> red nodes.  Therefore, the longest path from the root to any <span class="textit">internal</span> node in <span class="MATH"><img align="MIDDLE" alt="$ T$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3562.png" width="16"/></span> is at most
+</p><p><!-- MATH
+ \begin{displaymath}
+2\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1) -2 \le 2\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \enspace ,
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img align="MIDDLE" alt="$\displaystyle 2\log(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}+1) -2 \le 2\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \enspace ,
+$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3563.png" width="176"/>
+</div><p></p>
+for any <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\ge 1$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\ge 1$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3564.png" width="40"/></span>.  This proves the most important property of
+red-black trees:
+<p>
+</p><div><b>Lemma  <span class="arabic">9</span>..<span class="arabic">2</span></b>   
+<i>The height of red-black tree with <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3565.png" width="13"/></span> nodes is at most <!-- MATH
+ $2\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3566.png" width="47"/></span>.</i></div><p></p>
+<p>
+Now that we have seen the relationship between 2-4 trees and
+red-black trees, it is not hard to believe that we can efficiently
+maintain a red-black tree while adding and removing elements.  
+</p><p>
+We have already seen that adding an element in a BinarySearchTree
+can be done by adding a new leaf.  Therefore, to implement <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3567.png" width="50"/></span> in a
+red-black tree we need a method of simulating splitting a node with five
+children in a 2-4 tree.  A 2-4 tree node with five children is represented
+by a black node that has two red children, one of which also has a red
+child. We can ``split'' this node by colouring it red and colouring its
+two children black.  An example of this is shown in Figure <a href="http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html#fig:rb-split">9.6</a>.
+</p><p>
+</p><div align="CENTER"><a name="fig:rb-split"></a><a name="44174"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 9.6:</strong>
+Simulating a 2-4 tree split operation
+    during an addition in a red-black tree.  (This simulates the 2-4
+    tree addition shown in Figure <a href="http://opendatastructures.org/ods-python/9_1_2_4_Trees.html#fig:twofour-add">9.2</a>.)</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<table align="CENTER" cellpadding="3">
+<tbody><tr><td align="CENTER"><img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/rb-split-1}" border="0" height="149" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3568.png" width="334"/></td>
+</tr>
+<tr><td align="CENTER"><img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/rb-split-2}" border="0" height="172" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3569.png" width="334"/></td>
+</tr>
+<tr><td align="CENTER"><img align="BOTTOM" alt="\includegraphics[scale=0.90909]{figs-python/rb-split-3}" border="0" height="172" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3570.png" width="334"/></td>
+</tr>
+</tbody></table>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Similarly, implementing <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3571.png" width="75"/></span> requires a method of merging two nodes
+and borrowing a child from a sibling.  Merging two nodes is the inverse of
+a split (shown in Figure <a href="http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html#fig:rb-split">9.6</a>), and involves colouring two (black)
+siblings red and colouring their (red) parent black.  Borrowing from
+a sibling is the most complicated of the procedures and involves both
+rotations and recolouring nodes.
+</p><p>
+Of course, during all of this we must still maintain the no-red-edge
+property and the black-height property.  While it is no longer surprising
+that this can be done, there are a large number of cases that have to
+be considered if we try to do a direct simulation of a 2-4 tree by a
+red-black tree.  At some point, it just becomes simpler to disregard the
+underlying 2-4 tree and work directly towards maintaining the properties
+of the red-black tree.
+</p><p>
+</p><h2><a name="SECTION001222000000000000000">
+<span class="arabic">9</span>.<span class="arabic">2</span>.<span class="arabic">2</span> Left-Leaning Red-Black Trees</a>
+</h2>
+<p>
+<a name="42972"></a><a name="42973"></a>No single definition of red-black trees exists.  Rather, there is
+a family of structures that manage to maintain the black-height
+and no-red-edge properties during <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3572.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3573.png" width="75"/></span>
+operations. Different structures do this in different ways.
+Here, we implement a data structure that we call a RedBlackTree.
+<a name="42978"></a>This structure implements a particular variant of red-black trees that
+satisfies an additional property:
+</p><p>
+</p><div><a name="prp:left-leaning"><b>Property  <span class="arabic">9</span>..<span class="arabic">5</span></b></a> (left-leaning)    
+<a name="prp:redblack-last"></a> <a name="42982"></a>At any node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3574.png" width="13"/></span>, if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3575.png" width="38"/></span> is black, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3576.png" width="50"/></span> is black.</div><p></p>
+Note that the red-black tree shown in Figure <a href="http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html#fig:redblack-example">9.4</a>  does
+not satisfy the left-leaning property;  it is violated by the parent of
+the red node in the rightmost path.
+<p>
+The reason for maintaining the left-leaning property is that it reduces
+the number of cases encountered when updating the tree during <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3577.png" width="50"/></span>
+and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3578.png" width="75"/></span> operations.  In terms of 2-4 trees, it implies that every
+2-4 tree has a unique representation:  A node of degree two becomes
+a black node with two black children.  A node of degree three becomes
+a black node whose left child is red and whose right child is black.
+A node of degree four becomes a black node with two red children.
+</p><p>
+Before we describe the implementation of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3579.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3580.png" width="75"/></span> in
+detail, we first present some simple subroutines used by these methods
+that are illustrated in Figure <a href="http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html#fig:redblack-flippullpush">9.7</a>.  The first two
+subroutines are for manipulating colours while preserving the black-height
+property. The <!-- MATH
+ $\ensuremath{\mathrm{push\_black}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{push\_black}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3581.png" width="102"/></span> method takes as input a black node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3582.png" width="13"/></span>
+that has two red children and colours <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3583.png" width="13"/></span> red and its two children black.
+The <!-- MATH
+ $\ensuremath{\mathrm{pull\_black}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{pull\_black}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3584.png" width="97"/></span> method reverses this operation:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{push\_black}...
+...athit{right}}.\ensuremath{\mathit{colour}} - 1}}\\
+\end{flushleft}\end{leftbar}" border="0" height="201" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3585.png" width="292"/>
+<br/>
+</p><p>
+</p><div align="CENTER"><a name="fig:redblack-flippullpush"></a><a name="43059"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 9.7:</strong>
+Flips, pulls and pushes</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/flippullpush}" border="0" height="196" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3586.png" width="546"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+The <!-- MATH
+ $\ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3587.png" width="78"/></span> method swaps the colours of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3588.png" width="13"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3589.png" width="50"/></span>
+and then performs a left rotation at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3590.png" width="13"/></span>.  This method reverses the
+colours of these two nodes as well as their parent-child relationship:
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{flip\_left}(...
+...{\mathrm{rotate\_left}(\ensuremath{\mathit{u}})}\\
+\end{flushleft}\end{leftbar}" border="0" height="86" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3591.png" width="224"/>
+<br/>
+The <!-- MATH
+ $\ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3592.png" width="78"/></span> operation
+is especially useful in restoring the left-leaning property at a node
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3593.png" width="13"/></span> that violates it (because <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{left}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3594.png" width="38"/></span> is black and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{right}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3595.png" width="50"/></span> is red).
+In this special case, we can be assured that this operation preserves both
+the black-height and no-red-edge properties.  The <!-- MATH
+ $\ensuremath{\mathrm{flip\_right}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{flip\_right}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3596.png" width="88"/></span> operation
+is symmetric with <!-- MATH
+ $\ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3597.png" width="78"/></span>, when the roles of left and right are reversed.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{flip\_right}...
+...\mathrm{rotate\_right}(\ensuremath{\mathit{u}})}\\
+\end{flushleft}\end{leftbar}" border="0" height="86" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3598.png" width="212"/>
+<br/>
+</p><p>
+</p><h2><a name="SECTION001223000000000000000">
+<span class="arabic">9</span>.<span class="arabic">2</span>.<span class="arabic">3</span> Addition</a>
+</h2>
+<p>
+To implement <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3599.png" width="50"/></span> in a RedBlackTree, we perform a standard
+BinarySearchTree insertion to add a new leaf, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3600.png" width="13"/></span>, with <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{x}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{x}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3601.png" width="51"/></span> and
+set <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{colour}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{red}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{colour}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{red}}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3602.png" width="97"/></span>.  Note that this does not change the black height
+of any node, so it does not violate the black-height property.  It may,
+however, violate the left-leaning property (if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3603.png" width="13"/></span> is the right child of
+its parent), and it may violate the no-red-edge property (if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3604.png" width="13"/></span>'s parent
+is <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{red}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{red}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3605.png" width="25"/></span>).  To restore these properties, we call the method <!-- MATH
+ $\ensuremath{\mathrm{add\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3606.png" width="93"/></span>.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{add}(\ensure...
+...eturn}} \ensuremath{\ensuremath{\mathit{false}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="163" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3607.png" width="200"/>
+<br/>
+</p><p>
+Illustrated in Figure <a href="http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html#fig:rb-addfix">9.8</a>, the <!-- MATH
+ $\ensuremath{\mathrm{add\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3608.png" width="93"/></span> method takes
+as input a node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3609.png" width="13"/></span> whose colour is red and which may violate the
+no-red-edge property and/or the left-leaning property.  The following
+discussion is probably impossible to follow without referring to
+Figure <a href="http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html#fig:rb-addfix">9.8</a> or recreating it on a piece of paper.  Indeed, the
+reader may wish to study this figure before continuing.
+</p><p>
+</p><div align="CENTER"><a name="fig:rb-addfix"></a><a name="43178"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 9.8:</strong>
+A single round in the process of fixing Property 2 after
+  an insertion.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[width=\textwidth ]{figs-python/rb-addfix}" border="0" height="506" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3610.png" width="553"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3611.png" width="13"/></span> is the root of the tree, then we can colour <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3612.png" width="13"/></span> black to restore
+both properties.  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3613.png" width="13"/></span>'s sibling is also red, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3614.png" width="13"/></span>'s parent must be
+black, so both the left-leaning and no-red-edge properties already hold.
+</p><p>
+Otherwise, we first determine if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3615.png" width="13"/></span>'s parent, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3616.png" width="16"/></span>, violates the
+left-leaning property and, if so, perform a <!-- MATH
+ $\ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{w}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{w}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3617.png" width="80"/></span> operation and
+set <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3618.png" width="42"/></span>.  This leaves us in a well-defined state:  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3619.png" width="13"/></span> is the left
+child of its parent, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3620.png" width="16"/></span>, so <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3621.png" width="16"/></span> now satisfies the left-leaning property.
+All that remains is to ensure the no-red-edge property at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3622.png" width="13"/></span>.  We only
+have to worry about the case in which <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3623.png" width="16"/></span> is red, since otherwise <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3624.png" width="13"/></span>
+already satisfies the no-red-edge property.
+</p><p>
+Since we are not done yet, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3625.png" width="13"/></span> is red and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3626.png" width="16"/></span> is red.  The no-red-edge
+property (which is only violated by <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3627.png" width="13"/></span> and not by <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3628.png" width="16"/></span>) implies that
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3629.png" width="13"/></span>'s grandparent <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{g}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{g}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3630.png" width="12"/></span> exists and is black.  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{g}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{g}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3631.png" width="12"/></span>'s right child is red,
+then the left-leaning property ensures that both <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{g}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{g}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3632.png" width="12"/></span>'s children are red,
+and a call to <!-- MATH
+ $\ensuremath{\mathrm{push\_black}(\ensuremath{\mathit{g}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{push\_black}(\ensuremath{\mathit{g}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3633.png" width="101"/></span> makes <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{g}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{g}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3634.png" width="12"/></span> red and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3635.png" width="16"/></span> black.  This restores
+the no-red-edge property at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3636.png" width="13"/></span>, but may cause it to be violated at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{g}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{g}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3637.png" width="12"/></span>,
+so the whole process starts over with <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{g}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{g}}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3638.png" width="38"/></span>.
+</p><p>
+If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{g}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{g}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3639.png" width="12"/></span>'s right child is black, then a call to <!-- MATH
+ $\ensuremath{\mathrm{flip\_right}(\ensuremath{\mathit{g}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{flip\_right}(\ensuremath{\mathit{g}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3640.png" width="87"/></span> makes
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3641.png" width="16"/></span> the (black) parent of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{g}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{g}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3642.png" width="12"/></span> and gives <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3643.png" width="16"/></span> two red children, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3644.png" width="13"/></span> and
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{g}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{g}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3645.png" width="12"/></span>. This ensures that <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3646.png" width="13"/></span> satisfies the no-red-edge property and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{g}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{g}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3647.png" width="12"/></span>
+satisfies the left-leaning property.  In this case we can stop.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{add\_fixup}(...
+...th{\ensuremath{\mathit{u}} \gets \ensuremath{g}}\\
+\end{flushleft}\end{leftbar}" border="0" height="354" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3648.png" width="398"/>
+<br/>
+</p><p>
+The <!-- MATH
+ $\ensuremath{\mathrm{insert\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{insert\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3649.png" width="107"/></span> method takes constant time per iteration and each
+iteration either finishes or moves <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3650.png" width="13"/></span> closer to the root.  Therefore,
+the <!-- MATH
+ $\ensuremath{\mathrm{insert\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{insert\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3651.png" width="107"/></span> method finishes after <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3652.png" width="60"/></span> iterations in
+<!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3653.png" width="60"/></span> time.
+</p><p>
+</p><h2><a name="SECTION001224000000000000000">
+<span class="arabic">9</span>.<span class="arabic">2</span>.<span class="arabic">4</span> Removal</a>
+</h2>
+<p>
+The <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3654.png" width="75"/></span> operation in a RedBlackTree is the most complicated
+to implement, and this is true of all known red-black tree variants.
+Just like the <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3655.png" width="75"/></span> operation in a <tt>BinarySearchTree</tt>,
+this operation boils down to finding a node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3656.png" width="16"/></span> with only one child,
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3657.png" width="13"/></span>, and splicing <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3658.png" width="16"/></span> out of the tree by having <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{parent}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{parent}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3659.png" width="63"/></span> adopt <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3660.png" width="13"/></span>.
+</p><p>
+The problem with this is that, if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3661.png" width="16"/></span> is black, then the black-height
+property will now be violated at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{parent}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{parent}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3662.png" width="63"/></span>.  We may avoid this problem,
+temporarily, by adding <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{colour}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{colour}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3663.png" width="61"/></span> to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{colour}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{colour}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3664.png" width="59"/></span>.  Of course, this introduces
+two other problems:  (1) if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3665.png" width="13"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3666.png" width="16"/></span> both started out black, then
+<!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{colour}}}}+\ensuremath{\ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{colour}}}}=2$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{colour}}}}+\ensuremath{\ensuremath{\ensuremath{\mathit{w}}.\ensuremath{\mathit{colour}}}}=2$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3667.png" width="157"/></span> (double black), which is an invalid colour.
+If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3668.png" width="16"/></span> was red, then it is replaced by a black node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3669.png" width="13"/></span>, which may
+violate the left-leaning property at <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{parent}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{parent}}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3670.png" width="60"/></span>.  Both of these
+problems can be resolved with a call to the <!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3671.png" width="119"/></span> method.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove}(\ens...
+...return}} \ensuremath{\ensuremath{\mathit{true}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="369" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3672.png" width="273"/>
+<br/>
+</p><p>
+The <!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3673.png" width="119"/></span> method takes as its input a node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3674.png" width="13"/></span> whose colour is black
+(1) or double-black (2).  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3675.png" width="13"/></span> is double-black, then <!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3676.png" width="119"/></span>
+performs a series of rotations and recolouring operations that move the
+double-black node up the tree until it can be eliminated.  During this
+process, the node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3677.png" width="13"/></span> changes until, at the end of this process, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3678.png" width="13"/></span>
+refers to the root of the subtree that has been changed.  The root of
+this subtree may have changed colour.  In particular, it may have gone
+from red to black, so the <!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3679.png" width="119"/></span> method finishes by checking
+if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3680.png" width="13"/></span>'s parent violates the left-leaning property and, if so, fixing it.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove\_fixu...
+...th{\mathrm{flip\_left}(\ensuremath{\mathit{w}})}\\
+\end{flushleft}\end{leftbar}" border="0" height="296" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3681.png" width="451"/>
+<br/>
+</p><p>
+The <!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3682.png" width="119"/></span> method is illustrated in Figure <a href="http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html#fig:rb-removefix">9.9</a>.
+Again, the following text will be difficult, if not impossible, to follow
+without referring to Figure <a href="http://opendatastructures.org/ods-python/9_2_RedBlackTree_Simulated_.html#fig:rb-removefix">9.9</a>.  Each iteration of the loop
+in <!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3683.png" width="119"/></span> processes the double-black node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3684.png" width="13"/></span>, based on one
+of four cases:
+</p><p>
+</p><div align="CENTER"><a name="fig:rb-removefix"></a><a name="43618"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 9.9:</strong>
+A single round in the process of eliminating a double-black node
+   after a removal.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img align="BOTTOM" alt="\includegraphics[height=\textheight ]{figs-python/rb-removefix}" border="0" height="950" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3685.png" width="598"/>
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Case 0: <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3686.png" width="13"/></span> is the root.  This is the easiest case to treat.  We recolour
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3687.png" width="13"/></span> to be black (this does not violate any of the red-black tree
+properties).
+</p><p>
+Case 1: <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3688.png" width="13"/></span>'s sibling, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3689.png" width="12"/></span>, is red.  In this case, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3690.png" width="13"/></span>'s sibling is the
+left child of its parent, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3691.png" width="16"/></span> (by the left-leaning property).  We perform
+a right-flip at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3692.png" width="16"/></span> and then proceed to the next iteration.  Note that
+this action causes <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3693.png" width="16"/></span>'s parent to violate the left-leaning property and
+the depth of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3694.png" width="13"/></span> to increase.  However, it also implies that the next
+iteration will be in Case 3 with <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3695.png" width="16"/></span> coloured red.  When examining Case 3
+below, we will see that the process will stop during the next iteration.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove\_fixu...
+...bf{return}} \ensuremath{\ensuremath{\mathit{u}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="83" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3696.png" width="198"/>
+<br/>
+</p><p>
+Case 2: <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3697.png" width="13"/></span>'s sibling, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3698.png" width="12"/></span>, is black, and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3699.png" width="13"/></span> is the left child of its
+parent, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3700.png" width="16"/></span>.  In this case, we call <!-- MATH
+ $\ensuremath{\mathrm{pull\_black}(\ensuremath{\mathit{w}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{pull\_black}(\ensuremath{\mathit{w}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3701.png" width="99"/></span>, making <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3702.png" width="13"/></span> black,
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3703.png" width="12"/></span> red, and darkening the colour of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3704.png" width="16"/></span> to black or double-black.
+At this point, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3705.png" width="16"/></span> does not satisfy the left-leaning property, so we
+call <!-- MATH
+ $\ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{w}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{w}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3706.png" width="80"/></span> to fix this.
+</p><p>
+At this point, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3707.png" width="16"/></span> is red and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3708.png" width="12"/></span> is the root of the subtree with which
+we started.  We need to check if <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3709.png" width="16"/></span> causes the no-red-edge property to
+be violated.  We do this by inspecting <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3710.png" width="16"/></span>'s right child, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3711.png" width="12"/></span>.  If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3712.png" width="12"/></span>
+is black, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3713.png" width="16"/></span> satisfies the no-red-edge property and we can continue
+the next iteration with <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{v}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{v}}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3714.png" width="38"/></span>.
+</p><p>
+Otherwise (<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3715.png" width="12"/></span> is red), so both the no-red-edge property and the left-leaning
+properties are violated at <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3716.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3717.png" width="16"/></span>, respectively.  The left-leaning
+property is restored with a call to  
+<!-- MATH
+ $\ensuremath{\mathrm{rotate\_left}(\ensuremath{\mathit{w}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{rotate\_left}(\ensuremath{\mathit{w}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3718.png" width="97"/></span>, but the no-red-edge
+property is still violated.  At this point, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3719.png" width="12"/></span> is the left child of
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3720.png" width="12"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3721.png" width="16"/></span> is the left child of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3722.png" width="12"/></span>, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3723.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3724.png" width="16"/></span> are both red, and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3725.png" width="12"/></span>
+is black or double-black.  A <!-- MATH
+ $\ensuremath{\mathrm{flip\_right}(\ensuremath{\mathit{v}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{flip\_right}(\ensuremath{\mathit{v}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3726.png" width="87"/></span>  makes <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3727.png" width="12"/></span> the parent of
+both <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3728.png" width="12"/></span> and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3729.png" width="16"/></span>.  Following this up by a <!-- MATH
+ $\ensuremath{\mathrm{push\_black}(\ensuremath{\mathit{q}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{push\_black}(\ensuremath{\mathit{q}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3730.png" width="101"/></span> makes both <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3731.png" width="12"/></span>
+and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3732.png" width="16"/></span> black and sets the colour of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3733.png" width="12"/></span> back to the original colour of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3734.png" width="16"/></span>.
+</p><p>
+At this point, the double-black node is has been eliminated and the
+no-red-edge and black-height properties are reestablished.  Only one possible problem remains: the right child of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3735.png" width="12"/></span> may be red, in which
+case the left-leaning property would be violated.  We check this and
+perform a <!-- MATH
+ $\ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{v}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{v}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3736.png" width="76"/></span> to correct it if necessary.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove\_fixu...
+...bf{return}} \ensuremath{\ensuremath{\mathit{v}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="312" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3737.png" width="264"/>
+<br/>
+</p><p>
+Case 3: <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3738.png" width="13"/></span>'s sibling is black and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3739.png" width="13"/></span> is the right child of its parent,
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3740.png" width="16"/></span>.  This case is symmetric to Case 2 and is handled mostly the same way.
+The only differences come from the fact that the left-leaning property
+is asymmetric, so it requires different handling.
+</p><p>
+As before, we begin with a call to <!-- MATH
+ $\ensuremath{\mathrm{pull\_black}(\ensuremath{\mathit{w}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{pull\_black}(\ensuremath{\mathit{w}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3741.png" width="99"/></span>, which makes <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3742.png" width="12"/></span> red
+and <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3743.png" width="13"/></span> black.  A call to <!-- MATH
+ $\ensuremath{\mathrm{flip\_right}(\ensuremath{\mathit{w}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{flip\_right}(\ensuremath{\mathit{w}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3744.png" width="91"/></span> promotes <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3745.png" width="12"/></span> to the root of
+the subtree.  At this point <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3746.png" width="16"/></span> is red, and the code branches two ways
+depending on the colour of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3747.png" width="16"/></span>'s left child, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3748.png" width="12"/></span>.
+</p><p>
+If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3749.png" width="12"/></span> is red, then the code finishes up exactly the same way as Case 2
+does, but is even simpler since there is no danger of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3750.png" width="12"/></span> not
+satisfying the left-leaning property.
+</p><p>
+The more complicated case occurs when <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{q}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{q}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3751.png" width="12"/></span> is black.  In this case,
+we examine the colour of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3752.png" width="12"/></span>'s left child.  If it is red, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3753.png" width="12"/></span> has
+two red children and its extra black can be pushed down with a call to
+<!-- MATH
+ $\ensuremath{\mathrm{push\_black}(\ensuremath{\mathit{v}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{push\_black}(\ensuremath{\mathit{v}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3754.png" width="101"/></span>.  At this point, <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3755.png" width="12"/></span> now has <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3756.png" width="16"/></span>'s original colour, and we
+are done.
+</p><p>
+If <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3757.png" width="12"/></span>'s left child is black, then <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3758.png" width="12"/></span> violates the left-leaning property,
+and we restore this with a call to <!-- MATH
+ $\ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{v}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{flip\_left}(\ensuremath{\mathit{v}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3759.png" width="76"/></span>.  We then return the
+node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{v}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{v}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3760.png" width="12"/></span> so that the next iteration of <!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3761.png" width="119"/></span> then continues
+with <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{v}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{u}}}}=\ensuremath{\ensuremath{\ensuremath{\mathit{v}}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3762.png" width="38"/></span>.
+<br/>
+<img align="BOTTOM" alt="\begin{leftbar}
+\begin{flushleft}
+\hspace*{1em} \ensuremath{\mathrm{remove\_fixu...
+...bf{return}} \ensuremath{\ensuremath{\mathit{w}}}\\
+\end{flushleft}\end{leftbar}" border="0" height="369" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3763.png" width="324"/>
+<br/>
+</p><p>
+Each iteration of <!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3764.png" width="119"/></span> takes constant time.  Cases 2 and 3
+either finish or move <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3765.png" width="13"/></span> closer to the root of the tree.  Case 0 (where
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3766.png" width="13"/></span> is the root) always terminates and Case 1 leads immediately to Case 3,
+which also terminates.  Since the height of the tree is at most <!-- MATH
+ $2\log
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ 2\log
+\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}$" border="0" height="30" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3767.png" width="47"/></span>, we conclude that there are at most <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3768.png" width="60"/></span> iterations of
+<!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3769.png" width="119"/></span>, so <!-- MATH
+ $\ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove\_fixup}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3770.png" width="119"/></span> runs in <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/img3771.png" width="60"/></span> time.
+</p><p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/9.2 RedBlackTree_ A Simulated 2-4 Tree_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0069)http://opendatastructures.org/ods-java/12_4_Discussion_Exercises.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>12.4 Discussion and Exercises</title>
+<meta name="description" content="12.4 Discussion and Exercises">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/12.4 Discussion and Exercises_files/ods-book.css">
+<link rel="previous" href="http://opendatastructures.org/ods-java/12_3_Graph_Traversal.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/12_Graphs.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/13_Data_Structures_Integers.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<h1><a name="SECTION001540000000000000000">
+<span class="arabic">12</span>.<span class="arabic">4</span> Discussion and Exercises</a>
+</h1>
+<p>
+The running times of the depth-first-search and breadth-first-search
+algorithms are somewhat overstated by the Theorems&nbsp;<a href="http://opendatastructures.org/ods-java/12_3_Graph_Traversal.html#thm:bfs-graph">12.3</a> and
+<a href="http://opendatastructures.org/ods-java/12_3_Graph_Traversal.html#thm:dfs-graph">12.4</a>.  Define <!-- MATH
+ $\ensuremath{\mathtt{n}}_{\ensuremath{\mathtt{r}}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4764.png" alt="$ \ensuremath{\mathtt{n}}_{\ensuremath{\mathtt{r}}}$"></span> as the number of vertices, <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4765.png" alt="$ \mathtt{i}$"></span>,
+of <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4766.png" alt="$ G$"></span>, for which there exists a path from <!-- MATH
+ $\mathtt{r}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4767.png" alt="$ \mathtt{r}$"></span> to <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4768.png" alt="$ \mathtt{i}$"></span>.  Define <!-- MATH
+ $\ensuremath{\mathtt{m}}_\ensuremath{\mathtt{r}}$
+ -->
+<span class="MATH"><img width="20" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4769.png" alt="$ \ensuremath{\mathtt{m}}_\ensuremath{\mathtt{r}}$"></span>
+as the number of edges that have these vertices as their sources.
+Then the following theorem is a more precise statement of the running
+times of the breadth-first-search and depth-first-search algorithms.
+(This more refined statement of the running time is useful in some of
+the applications of these algorithms outlined in the exercises.)
+</p><p>
+</p><div><a name="thm:graph-traversal"><b>Theorem  <span class="arabic">12</span>..<span class="arabic">5</span></b></a> &nbsp; 
+<i>When given as input a <tt>Graph</tt>, <!-- MATH
+ $\mathtt{g}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4770.png" alt="$ \mathtt{g}$"></span>, that is implemented using the
+  <tt>AdjacencyLists</tt> data structure, the <!-- MATH
+ $\mathtt{bfs(g,r)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4771.png" alt="$ \mathtt{bfs(g,r)}$"></span>, <!-- MATH
+ $\mathtt{dfs(g,r)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4772.png" alt="$ \mathtt{dfs(g,r)}$"></span> and <!-- MATH
+ $\mathtt{dfs2(g,r)}$
+ -->
+<span class="MATH"><img width="71" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4773.png" alt="$ \mathtt{dfs2(g,r)}$"></span>
+  algorithms each run in <!-- MATH
+ $O(\ensuremath{\mathtt{n}}_{\ensuremath{\mathtt{r}}}+\ensuremath{\mathtt{m}}_{\ensuremath{\mathtt{r}}})$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4774.png" alt="$ O(\ensuremath{\mathtt{n}}_{\ensuremath{\mathtt{r}}}+\ensuremath{\mathtt{m}}_{\ensuremath{\mathtt{r}}})$"></span> time.</i></div><p></p>
+<p>
+Breadth-first search seems to have been discovered independently by
+Moore [<a href="http://opendatastructures.org/ods-java/Bibliography.html#m59">52</a>] and Lee [<a href="http://opendatastructures.org/ods-java/Bibliography.html#l61">49</a>] in the contexts of maze exploration
+and circuit routing, respectively.
+</p><p>
+Adjacency-list representations of graphs were presented by
+Hopcroft and Tarjan [<a href="http://opendatastructures.org/ods-java/Bibliography.html#ht73">40</a>] as an alternative to the (then more
+common) adjacency-matrix representation.  This representation, as well as
+depth-first-search, played a major part in the celebrated Hopcroft-Tarjan
+planarity testing algorithm 
+<a name="32061"></a>that can determine, in <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4775.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span> time, if
+a graph can be drawn, in the plane, and in such a way that no pair of
+edges cross each other [<a href="http://opendatastructures.org/ods-java/Bibliography.html#ht74">41</a>].
+</p><p>
+In the following exercises, an undirected graph is one in which, for
+every <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4776.png" alt="$ \mathtt{i}$"></span> and <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4777.png" alt="$ \mathtt{j}$"></span>, the edge <!-- MATH
+ $(\ensuremath{\mathtt{i}},\ensuremath{\mathtt{j}})$
+ -->
+<span class="MATH"><img width="37" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4778.png" alt="$ (\ensuremath{\mathtt{i}},\ensuremath{\mathtt{j}})$"></span> is present if and only if the
+edge <!-- MATH
+ $(\ensuremath{\mathtt{j}},\ensuremath{\mathtt{i}})$
+ -->
+<span class="MATH"><img width="37" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4779.png" alt="$ (\ensuremath{\mathtt{j}},\ensuremath{\mathtt{i}})$"></span> is present.
+<a name="32070"></a><a name="32071"></a>
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">12</span>..<span class="arabic">1</span></b> &nbsp; 
+Draw an adjacency list representation and an adjacency matrix
+  representation of the graph in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/12_4_Discussion_Exercises.html#fig:graph-example2">12.7</a>.</div><p></p>
+<p>
+</p><div align="CENTER"><a name="fig:graph-example2"></a><a name="32077"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 12.7:</strong>
+An example graph.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+</div><img width="213" height="223" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4780.png" alt="\includegraphics[scale=0.90909]{figs/graph-example2}"></td></tr>
+</tbody></table>
+</div>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">12</span>..<span class="arabic">2</span></b> &nbsp; 
+<a name="32081"></a>The <span class="textit">incidence matrix</span> representation of a graph,
+  <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4781.png" alt="$ G$"></span>, is an <!-- MATH
+ $\ensuremath{\mathtt{n}}\times\ensuremath{\mathtt{m}}$
+ -->
+<span class="MATH"><img width="36" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4782.png" alt="$ \ensuremath{\mathtt{n}}\times\ensuremath{\mathtt{m}}$"></span> matrix, <span class="MATH"><img width="15" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4783.png" alt="$ A$"></span>, where
+  <p><!-- MATH
+ \begin{displaymath}
+A_{i,j} = \begin{cases}
+        -1 & \text{if vertex $i$\  the source of edge $j$} \\
+        +1 & \text{if vertex $i$\  the target of edge $j$} \\
+        0 & \text{otherwise.}
+     \end{cases}
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="302" height="84" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4784.png" alt="$\displaystyle A_{i,j} = \begin{cases}
+-1 &amp; \text{if vertex $i$\ the source of ...
+...if vertex $i$\ the target of edge $j$} \\
+0 &amp; \text{otherwise.}
+\end{cases} $">
+</div><p></p>
+  
+<ol>
+<li>Draw the incident matrix representation of the graph in
+      Figure&nbsp;<a href="http://opendatastructures.org/ods-java/12_4_Discussion_Exercises.html#fig:graph-example2">12.7</a>.
+</li>
+<li>Design, analyze and implement an incidence matrix representation
+      of a graph.  Be sure to analyze the space, the cost of
+      <!-- MATH
+ $\mathtt{addEdge(i,j)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4785.png" alt="$ \mathtt{addEdge(i,j)}$"></span>, <!-- MATH
+ $\mathtt{removeEdge(i,j)}$
+ -->
+<span class="MATH"><img width="122" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4786.png" alt="$ \mathtt{removeEdge(i,j)}$"></span>, <!-- MATH
+ $\mathtt{hasEdge(i,j)}$
+ -->
+<span class="MATH"><img width="96" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4787.png" alt="$ \mathtt{hasEdge(i,j)}$"></span>, <!-- MATH
+ $\mathtt{inEdges(i)}$
+ -->
+<span class="MATH"><img width="82" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4788.png" alt="$ \mathtt{inEdges(i)}$"></span>,
+      and <!-- MATH
+ $\mathtt{outEdges(i)}$
+ -->
+<span class="MATH"><img width="91" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4789.png" alt="$ \mathtt{outEdges(i)}$"></span>.
+  
+</li>
+</ol></div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">12</span>..<span class="arabic">3</span></b> &nbsp; 
+Illustrate an execution of the <!-- MATH
+ $\mathtt{bfs(G,0)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4790.png" alt="$ \mathtt{bfs(G,0)}$"></span> and <!-- MATH
+ $\mathtt{dfs(G,0)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4791.png" alt="$ \mathtt{dfs(G,0)}$"></span> on the graph, <!-- MATH
+ $\ensuremath{\mathtt{G}}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4792.png" alt="$ \ensuremath{\mathtt{G}}$"></span>,
+  in Figure&nbsp;<a href="http://opendatastructures.org/ods-java/12_4_Discussion_Exercises.html#fig:graph-example2">12.7</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">12</span>..<span class="arabic">4</span></b> &nbsp; 
+<a name="32107"></a><a name="32108"></a>Let <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4793.png" alt="$ G$"></span> be an undirected graph.  We say <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4794.png" alt="$ G$"></span> is <span class="textit">connected</span> if,
+  for every pair of vertices <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4795.png" alt="$ \mathtt{i}$"></span> and <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4796.png" alt="$ \mathtt{j}$"></span> in <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4797.png" alt="$ G$"></span>, there is a path from
+  <!-- MATH
+ $\ensuremath{\mathtt{i}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4798.png" alt="$ \ensuremath{\mathtt{i}}$"></span> to <!-- MATH
+ $\ensuremath{\mathtt{j}}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4799.png" alt="$ \ensuremath{\mathtt{j}}$"></span> (since <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4800.png" alt="$ G$"></span> is undirected, there is also a path from <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4801.png" alt="$ \mathtt{j}$"></span>
+  to <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4802.png" alt="$ \mathtt{i}$"></span>). Show how to test if <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4803.png" alt="$ G$"></span> is connected in <!-- MATH
+ $O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$
+ -->
+<span class="MATH"><img width="60" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4804.png" alt="$ O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$"></span> time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">12</span>..<span class="arabic">5</span></b> &nbsp; 
+<a name="32120"></a>Let <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4805.png" alt="$ G$"></span> be an undirected graph.  A <span class="textit">connected-component labelling</span>
+  of <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4806.png" alt="$ G$"></span> partitions the vertices of <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4807.png" alt="$ G$"></span> into maximal sets, each of which
+  forms a connected subgraph.  Show how to compute a connected component
+  labelling of <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4808.png" alt="$ G$"></span> in <!-- MATH
+ $O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$
+ -->
+<span class="MATH"><img width="60" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4809.png" alt="$ O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$"></span> time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">12</span>..<span class="arabic">6</span></b> &nbsp; 
+<a name="32126"></a>Let <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4810.png" alt="$ G$"></span> be an undirected graph.  A <span class="textit">spanning forest</span> of <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4811.png" alt="$ G$"></span> is a
+  collection of trees, one per component, whose edges are edges of <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4812.png" alt="$ G$"></span>
+  and whose vertices contain all vertices of <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4813.png" alt="$ G$"></span>.  Show how to compute
+  a spanning forest of of <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4814.png" alt="$ G$"></span> in <!-- MATH
+ $O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$
+ -->
+<span class="MATH"><img width="60" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4815.png" alt="$ O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$"></span> time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">12</span>..<span class="arabic">7</span></b> &nbsp; 
+<a name="32132"></a><a name="32133"></a>We say that a graph <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4816.png" alt="$ G$"></span> is <span class="textit">strongly-connected</span> if, for every
+  pair of vertices <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4817.png" alt="$ \mathtt{i}$"></span> and <!-- MATH
+ $\mathtt{j}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4818.png" alt="$ \mathtt{j}$"></span> in <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4819.png" alt="$ G$"></span>, there is a path from <!-- MATH
+ $\ensuremath{\mathtt{i}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4820.png" alt="$ \ensuremath{\mathtt{i}}$"></span> to
+  <!-- MATH
+ $\ensuremath{\mathtt{j}}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4821.png" alt="$ \ensuremath{\mathtt{j}}$"></span>. Show how to test if <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4822.png" alt="$ G$"></span> is strongly-connected in <!-- MATH
+ $O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$
+ -->
+<span class="MATH"><img width="60" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4823.png" alt="$ O(\ensuremath{\mathtt{n}}+\ensuremath{\mathtt{m}})$"></span>
+  time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">12</span>..<span class="arabic">8</span></b> &nbsp; 
+Given a graph <span class="MATH"><img width="73" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4824.png" alt="$ G=(V,E)$"></span> and some special vertex <!-- MATH
+ $\ensuremath{\mathtt{r}}\in V$
+ -->
+<span class="MATH"><img width="42" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4825.png" alt="$ \ensuremath{\mathtt{r}}\in V$"></span>, show how
+  to compute the length of the shortest path from <!-- MATH
+ $\ensuremath{\mathtt{r}}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4826.png" alt="$ \ensuremath{\mathtt{r}}$"></span> to <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4827.png" alt="$ \mathtt{i}$"></span> for every
+  vertex <!-- MATH
+ $\ensuremath{\mathtt{i}}\in V$
+ -->
+<span class="MATH"><img width="42" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4828.png" alt="$ \ensuremath{\mathtt{i}}\in V$"></span>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">12</span>..<span class="arabic">9</span></b> &nbsp; 
+Give a (simple) example where the <!-- MATH
+ $\mathtt{dfs(g,r)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4829.png" alt="$ \mathtt{dfs(g,r)}$"></span> code visits the nodes of a
+  graph in an order that is different from that of the <!-- MATH
+ $\mathtt{dfs2(g,r)}$
+ -->
+<span class="MATH"><img width="71" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4830.png" alt="$ \mathtt{dfs2(g,r)}$"></span> code.
+  Write a version of <!-- MATH
+ $\mathtt{dfs2(g,r)}$
+ -->
+<span class="MATH"><img width="71" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4831.png" alt="$ \mathtt{dfs2(g,r)}$"></span> that always visits nodes in exactly
+  the same order as <!-- MATH
+ $\mathtt{dfs(g,r)}$
+ -->
+<span class="MATH"><img width="63" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4832.png" alt="$ \mathtt{dfs(g,r)}$"></span>.  (Hint: Just start tracing the execution
+  of each algorithm on some graph where <!-- MATH
+ $\mathtt{r}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4833.png" alt="$ \mathtt{r}$"></span> is the source of more than
+  1 edge.)</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">12</span>..<span class="arabic">10</span></b> &nbsp; 
+<a name="32156"></a><a name="32495"></a>A <span class="textit">universal sink</span> in a graph <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4834.png" alt="$ G$"></span> is a vertex that is the target
+  of <!-- MATH
+ $\ensuremath{\mathtt{n}}-1$
+ -->
+<span class="MATH"><img width="36" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4835.png" alt="$ \ensuremath{\mathtt{n}}-1$"></span> edges and the source of no edges.<a name="tex2html104" href="http://opendatastructures.org/ods-java/12_4_Discussion_Exercises.html#foot32517"><sup><span class="arabic">12</span>.<span class="arabic">1</span></sup></a>  Design and implement an algorithm that tests if a graph <span class="MATH"><img width="16" height="29" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4839.png" alt="$ G$"></span>, represented
+  as an <tt>AdjacencyMatrix</tt>, has a universal sink.  Your algorithm should
+  run in <!-- MATH
+ $O(\ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="36" height="31" align="MIDDLE" border="0" src="static/12.4 Discussion and Exercises_files/img4840.png" alt="$ O(\ensuremath{\mathtt{n}})$"></span> time.</div><p></p>
+<p>
+<br></p><hr><h4>Footnotes</h4>
+<dl>
+<dt><a name="foot32517">... edges.</a><a href="http://opendatastructures.org/ods-java/12_4_Discussion_Exercises.html#tex2html104"><sup><span class="arabic">12</span>.<span class="arabic">1</span></sup></a></dt>
+<dd>A universal sink,
+  <!-- MATH
+ $\mathtt{v}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4836.png" alt="$ \mathtt{v}$"></span>, is also sometimes called a <span class="textit">celebrity</span>: Everyone in the room
+  recognizes <!-- MATH
+ $\mathtt{v}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4837.png" alt="$ \mathtt{v}$"></span>, but <!-- MATH
+ $\mathtt{v}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/12.4 Discussion and Exercises_files/img4838.png" alt="$ \mathtt{v}$"></span> doesn't recognize anyone else in the room.
+</dd>
+</dl>
+<div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/12.4 Discussion and Exercises_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

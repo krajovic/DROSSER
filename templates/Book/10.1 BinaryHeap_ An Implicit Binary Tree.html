@@ -1,0 +1,340 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-java/10_1_BinaryHeap_Implicit_Bi.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>10.1 BinaryHeap: An Implicit Binary Tree</title>
+<meta name="description" content="10.1 BinaryHeap: An Implicit Binary Tree">
+<meta name="keywords" content="ods-java-html">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="LaTeX2HTML v2008">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/ods-book.css">
+<link rel="next" href="http://opendatastructures.org/ods-java/10_2_MeldableHeap_Randomize.html">
+<link rel="previous" href="http://opendatastructures.org/ods-java/10_Heaps.html">
+<link rel="up" href="http://opendatastructures.org/ods-java/10_Heaps.html">
+<link rel="next" href="http://opendatastructures.org/ods-java/10_2_MeldableHeap_Randomize.html">
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+<hr>
+<h1><a name="SECTION001310000000000000000"></a>
+<a name="sec:binaryheap"></a>
+<br>
+<span class="arabic">10</span>.<span class="arabic">1</span> <tt>BinaryHeap</tt>: An Implicit Binary Tree
+</h1>
+<p>
+<a name="27569"></a>Our first implementation of a (priority) <tt>Queue</tt> is based on a technique
+that is over four hundred years old.  <span class="textit">Eytzinger's method</span>
+<a name="27194"></a>allows us
+to represent a complete binary tree as an array by laying out the nodes
+of the tree in breadth-first order (see Section&nbsp;<a href="http://opendatastructures.org/ods-java/6_1_BinaryTree_Basic_Binary.html#sec:bintree:traversal">6.1.2</a>).
+In this way, the root is stored at position 0, the root's left child is
+stored at position 1, the root's right child at position 2, the left
+child of the left child of the root is stored at position 3, and so
+on. See Figure&nbsp;<a href="http://opendatastructures.org/ods-java/10_1_BinaryHeap_Implicit_Bi.html#fig:eytzinger">10.1</a>.
+</p><p>
+</p><div align="CENTER"><a name="fig:eytzinger"></a><a name="27201"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 10.1:</strong>
+Eytzinger's method represents a complete binary tree as an array.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="350" height="190" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3839.png" alt="\includegraphics[scale=0.90909]{figs/eytzinger}">
+  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+If we apply Eytzinger's method to a sufficiently large tree, some
+patterns emerge.  The left child of the node at index <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3840.png" alt="$ \mathtt{i}$"></span> is at index
+<!-- MATH
+ $\ensuremath{\mathtt{left(i)}}=2\ensuremath{\mathtt{i}}+1$
+ -->
+<span class="MATH"><img width="115" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3841.png" alt="$ \ensuremath{\mathtt{left(i)}}=2\ensuremath{\mathtt{i}}+1$"></span> and the right child of the node at index <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3842.png" alt="$ \mathtt{i}$"></span> is at
+index <!-- MATH
+ $\ensuremath{\mathtt{right(i)}}=2\ensuremath{\mathtt{i}}+2$
+ -->
+<span class="MATH"><img width="124" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3843.png" alt="$ \ensuremath{\mathtt{right(i)}}=2\ensuremath{\mathtt{i}}+2$"></span>.  The parent of the node at index <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3844.png" alt="$ \mathtt{i}$"></span> is at
+index <!-- MATH
+ $\ensuremath{\mathtt{parent(i)}}=(\ensuremath{\mathtt{i}}-1)/2$
+ -->
+<span class="MATH"><img width="149" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3845.png" alt="$ \ensuremath{\mathtt{parent(i)}}=(\ensuremath{\mathtt{i}}-1)/2$"></span>.
+</p><pre>    int left(int i) {
+        return 2*i + 1;
+    }
+    int right(int i) {
+        return 2*i + 2;
+    }
+    int parent(int i) {
+        return (i-1)/2;
+    }
+</pre>
+<p>
+A <tt>BinaryHeap</tt> uses this technique to implicitly represent a complete
+binary tree in which the elements are <span class="textit">heap-ordered</span>:
+<a name="27217"></a><a name="27218"></a><a name="27219"></a>The value
+stored at any index <!-- MATH
+ $\mathtt{i}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3846.png" alt="$ \mathtt{i}$"></span> is not smaller than the value stored at index
+<!-- MATH
+ $\mathtt{parent(i)}$
+ -->
+<span class="MATH"><img width="74" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3847.png" alt="$ \mathtt{parent(i)}$"></span>, with the exception of the root value, <!-- MATH
+ $\ensuremath{\mathtt{i}}=0$
+ -->
+<span class="MATH"><img width="39" height="29" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3848.png" alt="$ \ensuremath{\mathtt{i}}=0$"></span>.  It follows
+that the smallest value in the priority <tt>Queue</tt> is therefore stored at
+position 0 (the root).
+</p><p>
+In a <tt>BinaryHeap</tt>, the <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3849.png" alt="$ \mathtt{n}$"></span> elements are stored in an array <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3850.png" alt="$ \mathtt{a}$"></span>:
+</p><pre>    T[] a;
+    int n;
+</pre>
+<p>
+Implementing the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3851.png" alt="$ \mathtt{add(x)}$"></span> operation is fairly straightforward.  As with
+all array-based structures, we first check to see if <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3852.png" alt="$ \mathtt{a}$"></span> is full (by checking if <!-- MATH
+ $\ensuremath{\mathtt{a.length}}=\ensuremath{\mathtt{n}}$
+ -->
+<span class="MATH"><img width="93" height="29" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3853.png" alt="$ \ensuremath{\mathtt{a.length}}=\ensuremath{\mathtt{n}}$"></span>) and, if so, we grow <!-- MATH
+ $\mathtt{a}$
+ -->
+<span class="MATH"><img width="13" height="29" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3854.png" alt="$ \mathtt{a}$"></span>.  Next, we place <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3855.png" alt="$ \mathtt{x}$"></span> at location
+<!-- MATH
+ $\mathtt{a[n]}$
+ -->
+<span class="MATH"><img width="31" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3856.png" alt="$ \mathtt{a[n]}$"></span> and increment <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3857.png" alt="$ \mathtt{n}$"></span>.  At this point, all that remains is to ensure
+that we maintain the heap property.  We do this by repeatedly swapping
+<!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3858.png" alt="$ \mathtt{x}$"></span> with its parent until <!-- MATH
+ $\mathtt{x}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3859.png" alt="$ \mathtt{x}$"></span> is no longer smaller than its parent.
+See Figure&nbsp;<a href="http://opendatastructures.org/ods-java/10_1_BinaryHeap_Implicit_Bi.html#fig:heap-insert">10.2</a>.
+</p><pre>    boolean add(T x) {
+        if (n + 1 &gt; a.length) resize();
+        a[n++] = x;
+        bubbleUp(n-1);
+        return true;
+    }
+    void bubbleUp(int i) {
+        int p = parent(i);
+        while (i &gt; 0 &amp;&amp; compare(a[i], a[p]) &lt; 0) {
+            swap(i,p);
+            i = p;
+            p = parent(i);
+        }
+    }
+</pre>
+<p>
+</p><div align="CENTER"><a name="fig:heap-insert"></a><a name="27594"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 10.2:</strong>
+Adding the value 6 to a <tt>BinaryHeap</tt>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="394" height="213" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3860.png" alt="\includegraphics[height=.25\textheight ]{figs/heap-insert-1}"> 
+<br>    <img width="394" height="213" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3861.png" alt="\includegraphics[height=.25\textheight ]{figs/heap-insert-2}"> 
+<br>    <img width="394" height="213" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3862.png" alt="\includegraphics[height=.25\textheight ]{figs/heap-insert-3}"> 
+<br>    <img width="394" height="236" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3863.png" alt="\includegraphics[height=.25\textheight ]{figs/heap-insert-4}"> 
+<br>  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+Implementing the <!-- MATH
+ $\mathtt{remove()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3864.png" alt="$ \mathtt{remove()}$"></span> operation, which removes the smallest value
+from the heap, is a little trickier.  We know where the smallest value is
+(at the root), but we need to replace it after we remove it and ensure
+that we maintain the heap property.
+</p><p>
+The easiest way to do this is to replace the root with the value <!-- MATH
+ $\mathtt{a[n-1]}$
+ -->
+<span class="MATH"><img width="55" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3865.png" alt="$ \mathtt{a[n-1]}$"></span>, delete
+that value, and decrement <!-- MATH
+ $\mathtt{n}$
+ -->
+<span class="MATH"><img width="13" height="14" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3866.png" alt="$ \mathtt{n}$"></span>.  Unfortunately, the new root element is now
+probably not the smallest element, so it needs to be moved downwards.
+We do this by repeatedly comparing this element to its two children.
+If it is the smallest of the three then we are done.  Otherwise, we swap
+this element with the smallest of its two children and continue.
+</p><pre>    T remove() {
+        T x = a[0];
+        a[0] = a[--n];
+        trickleDown(0);
+        if (3*n &lt; a.length) resize();
+        return x;
+    }
+    void trickleDown(int i) {
+        do {
+            int j = -1;
+            int r = right(i);
+            if (r &lt; n &amp;&amp; compare(a[r], a[i]) &lt; 0) {
+                int l = left(i);
+                if (compare(a[l], a[r]) &lt; 0) {
+                    j = l;
+                } else {
+                    j = r;
+                }
+            } else {
+                int l = left(i);
+                if (l &lt; n &amp;&amp; compare(a[l], a[i]) &lt; 0) {
+                    j = l;
+                }
+            }
+            if (j &gt;= 0)    swap(i, j);
+            i = j;
+        } while (i &gt;= 0);
+    }
+</pre>
+<p>
+</p><div align="CENTER"><a name="fig:heap-remove"></a><a name="27598"></a>
+<table>
+<caption align="BOTTOM"><strong>Figure 10.3:</strong>
+Removing the minimum value, 4, from a <tt>BinaryHeap</tt>.</caption>
+<tbody><tr><td>
+<div align="CENTER">
+<img width="393" height="213" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3867.png" alt="\includegraphics[height=.25\textheight ]{figs/heap-remove-1}"> 
+<br>    <img width="393" height="213" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3868.png" alt="\includegraphics[height=.25\textheight ]{figs/heap-remove-2}"> 
+<br>    <img width="393" height="213" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3869.png" alt="\includegraphics[height=.25\textheight ]{figs/heap-remove-3}"> 
+<br>    <img width="393" height="236" align="BOTTOM" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3870.png" alt="\includegraphics[height=.25\textheight ]{figs/heap-remove-4}"> 
+<br>  
+</div></td></tr>
+</tbody></table>
+</div>
+<p>
+As with other array-based structures, we will ignore the time spent in
+calls to <!-- MATH
+ $\mathtt{resize()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3871.png" alt="$ \mathtt{resize()}$"></span>, since these can be accounted for using the amortization
+argument from Lemma&nbsp;<a href="http://opendatastructures.org/ods-java/2_1_ArrayStack_Fast_Stack_O.html#lem:arraystack-amortized">2.1</a>.  The running times of
+both <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3872.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3873.png" alt="$ \mathtt{remove()}$"></span> then depend on the height of the (implicit)
+binary tree.  Luckily, this is a <span class="textit">complete</span>
+<a name="27272"></a><a name="27273"></a>binary tree;  every level
+except the last has the maximum possible number of nodes.  Therefore,
+if the height of this tree is <span class="MATH"><img width="13" height="30" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3874.png" alt="$ h$"></span>, then it has at least <span class="MATH"><img width="20" height="36" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3875.png" alt="$ 2^h$"></span> nodes.
+Stated another way
+</p><p><!-- MATH
+ \begin{displaymath}
+\ensuremath{\mathtt{n}} \ge 2^h \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="58" height="38" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3876.png" alt="$\displaystyle \ensuremath{\mathtt{n}} \ge 2^h \enspace .
+$">
+</div><p></p>
+Taking logarithms on both sides of this equation gives
+<p><!-- MATH
+ \begin{displaymath}
+h \le \log \ensuremath{\mathtt{n}} \enspace .
+\end{displaymath}
+ -->
+</p>
+<div align="CENTER" class="mathdisplay">
+<img width="74" height="30" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3877.png" alt="$\displaystyle h \le \log \ensuremath{\mathtt{n}} \enspace .
+$">
+</div><p></p>
+Therefore, both the <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3878.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3879.png" alt="$ \mathtt{remove()}$"></span> operation run in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3880.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> time.
+<p>
+</p><h2><a name="SECTION001311000000000000000">
+<span class="arabic">10</span>.<span class="arabic">1</span>.<span class="arabic">1</span> Summary</a>
+</h2>
+<p>
+The following theorem summarizes the performance of a <tt>BinaryHeap</tt>:
+</p><p>
+</p><p>
+</p><div><a name="thm:binaryheap"><b>Theorem  <span class="arabic">10</span>..<span class="arabic">1</span></b></a> &nbsp; 
+<i>A <tt>BinaryHeap</tt> implements the (priority) <tt>Queue</tt> interface.  Ignoring
+  the cost of calls to <!-- MATH
+ $\mathtt{resize()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3881.png" alt="$ \mathtt{resize()}$"></span>, a <tt>BinaryHeap</tt> supports the operations
+  <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3882.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3883.png" alt="$ \mathtt{remove()}$"></span> in <!-- MATH
+ $O(\log \ensuremath{\mathtt{n}})$
+ -->
+<span class="MATH"><img width="59" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3884.png" alt="$ O(\log \ensuremath{\mathtt{n}})$"></span> time per operation.
+</i>
+<p>
+<i>Furthermore, beginning with an empty <tt>BinaryHeap</tt>, any sequence of <span class="MATH"><img width="17" height="29" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3885.png" alt="$ m$"></span>
+  <!-- MATH
+ $\mathtt{add(x)}$
+ -->
+<span class="MATH"><img width="49" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3886.png" alt="$ \mathtt{add(x)}$"></span> and <!-- MATH
+ $\mathtt{remove()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3887.png" alt="$ \mathtt{remove()}$"></span> operations results in a total of <span class="MATH"><img width="40" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3888.png" alt="$ O(m)$"></span>
+  time spent during all calls to <!-- MATH
+ $\mathtt{resize()}$
+ -->
+<span class="MATH"><img width="65" height="31" align="MIDDLE" border="0" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/img3889.png" alt="$ \mathtt{resize()}$"></span>.</i></p></div><p></p>
+<p>
+</p><div class="navigation"><hr>
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+    <script type="text/javascript" async="" src="static/10.1 BinaryHeap_ An Implicit Binary Tree_files/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

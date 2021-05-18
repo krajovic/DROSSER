@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0071)http://opendatastructures.org/ods-python/10_3_Discussion_Exercises.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>10.3 Discussion and Exercises</title>
+<meta content="10.3 Discussion and Exercises" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/10.3 Discussion and Exercises_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/10_2_MeldableHeap_Randomize.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/10_Heaps.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/11_Sorting_Algorithms.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION001330000000000000000">
+<span class="arabic">10</span>.<span class="arabic">3</span> Discussion and Exercises</a>
+</h1>
+<p>
+The implicit representation of a complete binary tree as an array,
+or list, seems to have been first proposed by Eytzinger [<a href="http://opendatastructures.org/ods-python/Bibliography.html#e1590">27</a>].
+He used this representation in books containing pedigree family trees
+<a name="47598"></a>of noble families.  The BinaryHeap data structure described here was
+first introduced by Williams [<a href="http://opendatastructures.org/ods-python/Bibliography.html#w64">76</a>].
+</p><p>
+The randomized MeldableHeap data structure described here appears
+to have first been proposed by Gambin and Malinowski [<a href="http://opendatastructures.org/ods-python/Bibliography.html#gm98">34</a>].
+Other meldable heap implementations exist, including 
+leftist heaps [<a href="http://opendatastructures.org/ods-python/Bibliography.html#c72">16</a>,<a href="http://opendatastructures.org/ods-python/Bibliography.html#k97v3">48</a>, Section 5.3.2],
+<a name="47602"></a><a name="47603"></a>binomial heaps [<a href="http://opendatastructures.org/ods-python/Bibliography.html#v78">73</a>],
+<a name="47605"></a><a name="47606"></a>Fibonacci heaps [<a href="http://opendatastructures.org/ods-python/Bibliography.html#ft87">30</a>], 
+<a name="47608"></a><a name="47609"></a>pairing heaps [<a href="http://opendatastructures.org/ods-python/Bibliography.html#fsst86">29</a>], <a name="47611"></a><a name="47612"></a>and skew heaps [<a href="http://opendatastructures.org/ods-python/Bibliography.html#st83">70</a>], 
+<a name="47614"></a><a name="47615"></a>although none of these are as simple as the MeldableHeap
+structure.
+</p><p>
+Some of the above structures also support a <!-- MATH
+ $\ensuremath{\mathrm{decrease\_key}(\ensuremath{\mathit{u}},\ensuremath{\mathit{y}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{decrease\_key}(\ensuremath{\mathit{u}},\ensuremath{\mathit{y}})}$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4029.png" width="128"/></span> operation
+<a name="48534"></a>in which the value stored at node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/10.3 Discussion and Exercises_files/img4031.png" width="13"/></span> is decreased to <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{y}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{y}}}$" border="0" height="29" src="static/10.3 Discussion and Exercises_files/img4032.png" width="12"/></span>.  (It is a
+pre-condition that <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}\le\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{x}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{y}}}}\le\ensuremath{\ensuremath{\ensuremath{\mathit{u}}.\ensuremath{\mathit{x}}}}$" border="0" height="29" src="static/10.3 Discussion and Exercises_files/img4033.png" width="51"/></span>.)  In most of the preceding structures,
+this operation can be supported in <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4034.png" width="60"/></span> time by removing node
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/10.3 Discussion and Exercises_files/img4035.png" width="13"/></span> and adding  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{y}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{y}}}$" border="0" height="29" src="static/10.3 Discussion and Exercises_files/img4036.png" width="12"/></span>.  However, some of these structures can implement
+<!-- MATH
+ $\ensuremath{\mathrm{decrease\_key}(\ensuremath{\mathit{u}},\ensuremath{\mathit{y}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{decrease\_key}(\ensuremath{\mathit{u}},\ensuremath{\mathit{y}})}$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4037.png" width="128"/></span> more efficiently.  In particular, <!-- MATH
+ $\ensuremath{\mathrm{decrease\_key}(\ensuremath{\mathit{u}},\ensuremath{\mathit{y}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{decrease\_key}(\ensuremath{\mathit{u}},\ensuremath{\mathit{y}})}$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4038.png" width="128"/></span>
+takes <span class="MATH"><img align="MIDDLE" alt="$ O(1)$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4039.png" width="36"/></span> amortized time in Fibonacci heaps and <!-- MATH
+ $O(\log\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4040.png" width="83"/></span>
+amortized time in a special version of pairing heaps [<a href="http://opendatastructures.org/ods-python/Bibliography.html#e09">25</a>].
+This more efficient <!-- MATH
+ $\ensuremath{\mathrm{decrease\_key}(\ensuremath{\mathit{u}},\ensuremath{\mathit{y}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{decrease\_key}(\ensuremath{\mathit{u}},\ensuremath{\mathit{y}})}$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4041.png" width="128"/></span> operation has applications in
+speeding up several graph algorithms, including Dijkstra's shortest path
+algorithm [<a href="http://opendatastructures.org/ods-python/Bibliography.html#ft87">30</a>].
+</p><p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">10</span>..<span class="arabic">1</span></b>   
+Illustrate the addition of the values 7 and then 3 to the BinaryHeap
+  shown at the end of Figure <a href="http://opendatastructures.org/ods-python/10_1_BinaryHeap_Implicit_Bi.html#fig:heap-insert">10.2</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">10</span>..<span class="arabic">2</span></b>   
+Illustrate the removal of the next two values (6 and 8) on the
+  BinaryHeap shown at the end of Figure <a href="http://opendatastructures.org/ods-python/10_1_BinaryHeap_Implicit_Bi.html#fig:heap-remove">10.3</a>.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">10</span>..<span class="arabic">3</span></b>   
+Implement the <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{i}})}$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4042.png" width="72"/></span> method, that removes the value stored in
+  <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{a}}[\ensuremath{\mathit{i}}]}$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4043.png" width="27"/></span> in a BinaryHeap.  This method should run in <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4044.png" width="60"/></span> time.
+  Next, explain why this method is not likely to be useful.</div><p></p>
+<p>
+</p><p>
+</p><div><a name="exc:general-eytzinger"><b>Exercise  <span class="arabic">10</span>..<span class="arabic">4</span></b></a>   
+<a name="47657"></a>A <span class="MATH"><img align="MIDDLE" alt="$ d$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4046.png" width="13"/></span>-ary tree is a generalization of a binary tree in which each
+  internal node has <span class="MATH"><img align="MIDDLE" alt="$ d$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4047.png" width="13"/></span> children.  Using Eytzinger's method it is also
+  possible to represent complete <span class="MATH"><img align="MIDDLE" alt="$ d$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4048.png" width="13"/></span>-ary trees using arrays.  Work out
+  the equations that, given an index <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4049.png" width="9"/></span>, determine the index of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4050.png" width="9"/></span>'s
+  parent and each of <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{i}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{i}}}$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4051.png" width="9"/></span>'s <span class="MATH"><img align="MIDDLE" alt="$ d$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4052.png" width="13"/></span> children in this representation.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">10</span>..<span class="arabic">5</span></b>   
+<a name="47663"></a>Using what you learned in Exercise <a href="http://opendatastructures.org/ods-python/10_3_Discussion_Exercises.html#exc:general-eytzinger">10.4</a>, design and
+  implement a <span class="textit">DaryHeap</span>, the <span class="MATH"><img align="MIDDLE" alt="$ d$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4053.png" width="13"/></span>-ary generalization of a
+  BinaryHeap. Analyze the running times of operations on a DaryHeap
+  and test the performance of your DaryHeap implementation against
+  that of the BinaryHeap implementation given here.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">10</span>..<span class="arabic">6</span></b>   
+Illustrate the addition of the values 17 and then 82 in the
+  MeldableHeap <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{h_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{h_1}}}$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4054.png" width="20"/></span> shown in Figure <a href="http://opendatastructures.org/ods-python/10_2_MeldableHeap_Randomize.html#fig:meldable-merge">10.4</a>.  Use a coin to
+  simulate a random bit when needed.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">10</span>..<span class="arabic">7</span></b>   
+Illustrate the removal of the next two values (4 and 8) in the
+  MeldableHeap <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{h_1}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{h_1}}}$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4055.png" width="20"/></span> shown in Figure <a href="http://opendatastructures.org/ods-python/10_2_MeldableHeap_Randomize.html#fig:meldable-merge">10.4</a>.  Use a coin to
+  simulate a random bit when needed.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">10</span>..<span class="arabic">8</span></b>   
+Implement the <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{u}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{u}})}$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4056.png" width="76"/></span> method, that removes the node <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{u}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{u}}}$" border="0" height="29" src="static/10.3 Discussion and Exercises_files/img4057.png" width="13"/></span> from
+  a MeldableHeap.  This method should run in <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4058.png" width="60"/></span> expected time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">10</span>..<span class="arabic">9</span></b>   
+Show how to find the second smallest value in a BinaryHeap or
+  MeldableHeap in constant time.</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">10</span>..<span class="arabic">10</span></b>   
+Show how to find the <span class="MATH"><img align="MIDDLE" alt="$ k$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4059.png" width="13"/></span>th smallest value in a BinaryHeap or
+  MeldableHeap in <!-- MATH
+ $O(k\log k)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(k\log k)$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4060.png" width="69"/></span> time.  (Hint: Using another heap
+  might help.)</div><p></p>
+<p>
+</p><p>
+</p><div><b>Exercise  <span class="arabic">10</span>..<span class="arabic">11</span></b>   
+Suppose you are given <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{k}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{k}}}$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4061.png" width="12"/></span> sorted lists, of total length <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{n}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{n}}}$" border="0" height="29" src="static/10.3 Discussion and Exercises_files/img4062.png" width="13"/></span>.  Using
+  a heap, show how to merge these into a single sorted list in <!-- MATH
+ $O(n\log
+  k)$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(n\log
+k)$" border="0" height="31" src="static/10.3 Discussion and Exercises_files/img4063.png" width="70"/></span> time.  (Hint: Starting with the case <span class="MATH"><img align="MIDDLE" alt="$ k=2$" border="0" height="30" src="static/10.3 Discussion and Exercises_files/img4064.png" width="39"/></span> can be instructive.)</div><p></p>
+<p>
+</p>
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/10.3 Discussion and Exercises_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>

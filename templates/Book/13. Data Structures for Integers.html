@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://opendatastructures.org/ods-python/13_Data_Structures_Integers.html -->
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>13. Data Structures for Integers</title>
+<meta content="13. Data Structures for Integers" name="description"/>
+<meta content="ods-python-html" name="keywords"/>
+<meta content="document" name="resource-type"/>
+<meta content="global" name="distribution"/>
+<meta content="LaTeX2HTML v2008" name="Generator"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<link href="static/13. Data Structures for Integers_files/ods-book.css" rel="STYLESHEET"/>
+<link href="http://opendatastructures.org/ods-python/14_External_Memory_Searchin.html" rel="next"/>
+<link href="http://opendatastructures.org/ods-python/12_Graphs.html" rel="previous"/>
+<link href="http://opendatastructures.org/ods-python/ods-python-html.html" rel="up"/>
+<link href="http://opendatastructures.org/ods-python/13_1_BinaryTrie_digital_sea.html" rel="next"/>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<!--End of Navigation Panel-->
+<h1><a name="SECTION001600000000000000000">
+<span class="arabic">13</span>. Data Structures for Integers</a>
+</h1>
+<p>
+In this chapter, we return to the problem of implementing an SSet.
+The difference now is that we assume the elements stored in the SSet are
+<!-- MATH
+ $\ensuremath{\ensuremath{\mathit{w}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{w}}}$" border="0" height="29" src="static/13. Data Structures for Integers_files/img4882.png" width="16"/></span>-bit integers.  That is, we want to implement <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4883.png" width="50"/></span>, <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4884.png" width="75"/></span>,
+and <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4885.png" width="52"/></span> where <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{x}}}}\in\{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4886.png" width="118"/></span>.  It is not too hard
+to think of plenty of applications where the data--or at least the key
+that we use for sorting the data--is an integer.
+</p><p>
+We will discuss three data structures, each building on the ideas of
+the previous.  The first structure, the BinaryTrie performs all three
+SSet operations in <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4887.png" width="39"/></span> time. This is not very impressive, since
+any subset of <!-- MATH
+ $\{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \{0,\ldots,2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}-1\}$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4888.png" width="94"/></span> has size <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\le 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\le 2^{\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}}$" border="0" height="30" src="static/13. Data Structures for Integers_files/img4889.png" width="49"/></span>, so that
+<!-- MATH
+ $\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \le \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}} \le \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="30" src="static/13. Data Structures for Integers_files/img4890.png" width="66"/></span>.  All the other SSet implementations discussed in
+this book perform all operations in <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4891.png" width="60"/></span> time so they are all
+at least as fast as a BinaryTrie.
+</p><p>
+The second structure, the XFastTrie, speeds up the search in a
+BinaryTrie by using hashing.  With this speedup, the <!-- MATH
+ $\ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{find}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4892.png" width="52"/></span>
+operation runs in <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4893.png" width="63"/></span> time.  However, <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4894.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4895.png" width="75"/></span>
+operations in an XFastTrie still take <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4896.png" width="39"/></span> time and the space used
+by an XFastTrie is <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\cdot\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}}\cdot\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4897.png" width="57"/></span>.
+</p><p>
+The third data structure, the YFastTrie, uses an XFastTrie to store
+only a sample of roughly one out of every <!-- MATH
+ $\ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}}$" border="0" height="29" src="static/13. Data Structures for Integers_files/img4898.png" width="16"/></span> elements and stores the
+remaining elements in a standard SSet structure.  This trick reduces the
+running time of <!-- MATH
+ $\ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{add}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4899.png" width="50"/></span> and <!-- MATH
+ $\ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{remove}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4900.png" width="75"/></span> to <!-- MATH
+ $O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\log \ensuremath{\ensuremath{\ensuremath{\mathit{w}}}})$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4901.png" width="63"/></span> and decreases
+the space to <!-- MATH
+ $O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ O(\ensuremath{\ensuremath{\ensuremath{\mathit{n}}}})$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4902.png" width="36"/></span>.
+</p><p>
+The implementations used as examples in this chapter can store any type of
+data, as long as an integer can be associated with it.  In the code samples,
+the variable <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{ix}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{ix}}}$" border="0" height="30" src="static/13. Data Structures for Integers_files/img4903.png" width="17"/></span> is always the integer value associated with <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13. Data Structures for Integers_files/img4904.png" width="12"/></span>, and the method <!-- MATH
+ $\ensuremath{\mathrm{int\_value}(\ensuremath{\mathit{x}})}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\mathrm{int\_value}(\ensuremath{\mathit{x}})}$" border="0" height="31" src="static/13. Data Structures for Integers_files/img4905.png" width="86"/></span> converts <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13. Data Structures for Integers_files/img4906.png" width="12"/></span> to its associated integer. In
+the text, however, we will simply treat <!-- MATH
+ $\ensuremath{\ensuremath{\mathit{x}}}$
+ -->
+<span class="MATH"><img align="MIDDLE" alt="$ \ensuremath{\ensuremath{\mathit{x}}}$" border="0" height="29" src="static/13. Data Structures for Integers_files/img4907.png" width="12"/></span> as if it is an integer.
+</p><p>
+<br/></p><hr/>
+<!--Table of Child-Links-->
+<!--End of Table of Child-Links-->
+<!--End of Navigation Panel-->
+<address>
+<a href="http://opendatastructures.org/">opendatastructures.org</a>
+<script async="" src="static/13. Data Structures for Integers_files/ga.js" type="text/javascript"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-5860680-3']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</address>
+</body></html>
