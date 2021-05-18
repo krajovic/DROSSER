@@ -1,10 +1,14 @@
-# DROSSER Instructions:
+# DROSSER
+
+DROSSER is a queryable data structures textbook that enables students to input a natural language question and have the most relevant section of the textbook, which will hopefully help to answer their question, displayed to them. A simple web app serves as the interface where students can pose questions and view the results. Users can also rate the effectiveness of each returned section thereby providing metrics that can be used to evaluate system improvements.
+
+## DROSSER Instructions:
 
 1. Install Elasticsearch
     - It can be downloaded from [here](https://www.elastic.co/downloads/elasticsearch)
     - The version I used for this project was 7.12.0
     - Follow the instructions on the above page to run Elasticsearch
-        - Specifically, navigate to Elasticsearch in your file system, for me it is a folder called elasticsearch-7.12.0
+        - Specifically, navigate to Elasticsearch in your file system, to a folder called elasticsearch-7.12.0
         - from there, run the command:
             - `$ bin/elasticsearch`
 
@@ -12,7 +16,7 @@
 2. Create a virtual environment: 
     - `$ python3 -m venv <virtual_env_name>`
 
-    - Then you can activate the environment using: `$ source <virtual_env_name>/bin/activate`
+    - Then activate the environment using: `$ source <virtual_env_name>/bin/activate`
 
     - After this you can install all necessary packages with:
 `$ pip install -r requirements.txt`
